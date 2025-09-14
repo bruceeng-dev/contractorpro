@@ -1,0 +1,54 @@
+{% extends "base.html" %}
+{% block content %}
+
+<div class="container">
+  <div class="page-header">
+    <h1>Lead Management</h1>
+    <a href="{{ url_for('new_lead') }}" class="btn">New Lead</a>
+  </div>
+
+  {% if leads %}
+  <div class="leads-table">
+    <table>
+      <thead>
+        <tr>
+          <th>Name</th>
+          <th>Contact</th>
+          <th>Project Type</th>
+          <th>Budget Range</th>
+          <th>Status</th>
+          <th>Date</th>
+          <th>Actions</th>
+        </tr>
+      </thead>
+      <tbody>
+        {% for lead in leads %}
+        <tr>
+          <td>{{ lead.name }}</td>
+          <td>
+            <div>{{ lead.email }}</div>
+            <div class="muted sm">{{ lead.phone }}</div>
+          </td>
+          <td>{{ lead.project_type }}</td>
+          <td>{{ lead.budget_range }}</td>
+          <td><span class="badge badge--{{ lead.status }}">{{ lead.status }}</span></td>
+          <td>{{ lead.created_date }}</td>
+          <td>
+            <a href="#" class="link">Contact</a>
+            <a href="#" class="link">Convert</a>
+          </td>
+        </tr>
+        {% endfor %}
+      </tbody>
+    </table>
+  </div>
+  {% else %}
+  <div class="empty-state">
+    <h3>No leads yet</h3>
+    <p class="muted">Add your first lead to start tracking potential customers</p>
+    <a href="{{ url_for('new_lead') }}" class="btn">Add First Lead</a>
+  </div>
+  {% endif %}
+</div>
+
+{% endblock %}

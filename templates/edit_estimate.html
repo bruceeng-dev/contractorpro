@@ -1,0 +1,31 @@
+{% extends "base.html" %}
+{% block content %}
+
+<div class="container">
+  <div class="page-header">
+    <h1>Edit Estimate</h1>
+    <a href="{{ url_for('estimate_detail', estimate_id=estimate.id) }}" class="btn btn--sm">Back to Estimate</a>
+  </div>
+
+  <form action="{{ url_for('edit_estimate', estimate_id=estimate.id) }}" method="POST" class="form">
+    <label for="job_id">Associated Job</label>
+    <select id="job_id" name="job_id">
+      <option value="">Select a job (required for email delivery)</option>
+      {% for job in jobs %}
+        <option value="{{ job.id }}" {% if estimate.job_id == job.id %}selected{% endif %}>
+          {{ job.client_name }} - {{ job.project_type }}
+        </option>
+      {% endfor %}
+    </select>
+    
+    <label for="client_name">Client Name</label>
+    <input id="client_name" name="client_name" type="text" value="{{ estimate.client_name }}" required>
+    
+    <label for="project_description">Project Description</label>
+    <textarea id="project_description" name="project_description" rows="3">{{ estimate.project_description or '' }}</textarea>
+    
+    <button type="submit" class="btn">Update Estimate</button>
+  </form>
+</div>
+
+{% endblock %}

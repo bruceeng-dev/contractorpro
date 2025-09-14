@@ -1,0 +1,412 @@
+{% extends "base.html" %}
+{% block content %}
+
+<div class="container">
+  <div class="page-header">
+    <h1>Create New Estimate</h1>
+    <a href="{{ url_for('estimates_list') }}" class="btn btn--sm">← Back to Estimates</a>
+  </div>
+
+  <form action="{{ url_for('new_estimate') }}" method="POST" class="estimate-form">
+    <!-- Client Information -->
+    <div class="form-section">
+      <h3>Client Information</h3>
+      <div class="form-row">
+        <div class="form-col">
+          <label for="client_name">Client Name *</label>
+          <input type="text" id="client_name" name="client_name" required>
+        </div>
+        <div class="form-col">
+          <label for="job_id">Existing Job (Optional)</label>
+          <select id="job_id" name="job_id" onchange="fillFromJob()">
+            <option value="">Select a job...</option>
+            {% for job in jobs %}
+            <option value="{{ job.id }}" data-client="{{ job.client_name }}" data-desc="{{ job.project_type }} - {{ job.address }}">
+              {{ job.client_name }} - {{ job.project_type }}
+            </option>
+            {% endfor %}
+          </select>
+        </div>
+      </div>
+      
+      <div class="form-field">
+        <label for="project_description">Project Description</label>
+        <textarea id="project_description" name="project_description" rows="3" placeholder="Describe the project scope and requirements..."></textarea>
+      </div>
+    </div>
+
+    <!-- Cost Breakdown -->
+    <div class="form-section">
+      <h3>Cost Breakdown</h3>
+      <div class="cost-grid">
+        <div class="cost-card">
+          <label for="labor_cost">👷 Labor Cost</label>
+          <div class="input-group">
+            <span class="input-prefix">$</span>
+            <input type="number" id="labor_cost" name="labor_cost" step="0.01" min="0" value="0" onchange="calculateTotal()">
+          </div>
+        </div>
+        
+        <div class="cost-card">
+          <label for="material_cost">🧱 Material Cost</label>
+          <div class="input-group">
+            <span class="input-prefix">$</span>
+            <input type="number" id="material_cost" name="material_cost" step="0.01" min="0" value="0" onchange="calculateTotal()">
+          </div>
+        </div>
+        
+        <div class="cost-card">
+          <label for="equipment_cost">🔨 Equipment Cost</label>
+          <div class="input-group">
+            <span class="input-prefix">$</span>
+            <input type="number" id="equipment_cost" name="equipment_cost" step="0.01" min="0" value="0" onchange="calculateTotal()">
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Margins & Totals -->
+    <div class="form-section">
+      <h3>Margins & Calculations</h3>
+      <div class="margins-grid">
+        <div class="margin-field">
+          <label for="overhead_percentage">Overhead %</label>
+          <div class="input-group">
+            <input type="number" id="overhead_percentage" name="overhead_percentage" step="0.1" min="0" max="100" value="10.0" onchange="calculateTotal()">
+            <span class="input-suffix">%</span>
+          </div>
+          <div class="calculated-value">$<span id="overhead_amount">0.00</span></div>
+        </div>
+        
+        <div class="margin-field">
+          <label for="profit_percentage">Profit Margin %</label>
+          <div class="input-group">
+            <input type="number" id="profit_percentage" name="profit_percentage" step="0.1" min="0" max="100" value="15.0" onchange="calculateTotal()">
+            <span class="input-suffix">%</span>
+          </div>
+          <div class="calculated-value">$<span id="profit_amount">0.00</span></div>
+        </div>
+      </div>
+
+      <!-- Total Calculation -->
+      <div class="total-section">
+        <div class="subtotal-row">
+          <span>Subtotal (Labor + Materials + Equipment)</span>
+          <span id="subtotal">$0.00</span>
+        </div>
+        <div class="subtotal-row">
+          <span>Overhead</span>
+          <span id="overhead_display">$0.00</span>
+        </div>
+        <div class="subtotal-row">
+          <span>Profit</span>
+          <span id="profit_display">$0.00</span>
+        </div>
+        <div class="total-row">
+          <span>Total Estimate</span>
+          <span id="total_display">$0.00</span>
+        </div>
+      </div>
+    </div>
+
+    <!-- Quick Templates -->
+    <div class="form-section">
+      <h3>Quick Templates</h3>
+      <div class="templates-grid">
+        <button type="button" class="template-btn" onclick="applyTemplate('kitchen')">
+          🍳 Kitchen Remodel
+          <small>Typical kitchen renovation costs</small>
+        </button>
+        <button type="button" class="template-btn" onclick="applyTemplate('bathroom')">
+          🛁 Bathroom Renovation
+          <small>Standard bathroom upgrade</small>
+        </button>
+        <button type="button" class="template-btn" onclick="applyTemplate('addition')">
+          🏠 Home Addition
+          <small>Room addition estimates</small>
+        </button>
+        <button type="button" class="template-btn" onclick="applyTemplate('roofing')">
+          🏘️ Roofing Project
+          <small>Roofing installation/repair</small>
+        </button>
+      </div>
+    </div>
+
+    <!-- Form Actions -->
+    <div class="form-actions">
+      <button type="submit" class="btn btn-primary">Create Estimate</button>
+      <a href="{{ url_for('estimates_list') }}" class="btn btn--sm">Cancel</a>
+    </div>
+  </form>
+</div>
+
+<script>
+// Templates data
+const templates = {
+  kitchen: {
+    labor_cost: 8000,
+    material_cost: 12000,
+    equipment_cost: 2000,
+    description: 'Complete kitchen renovation including cabinets, countertops, appliances, flooring, and electrical work'
+  },
+  bathroom: {
+    labor_cost: 4000,
+    material_cost: 6000,
+    equipment_cost: 1000,
+    description: 'Full bathroom renovation including fixtures, tile work, plumbing, and electrical'
+  },
+  addition: {
+    labor_cost: 15000,
+    material_cost: 20000,
+    equipment_cost: 3000,
+    description: 'Home addition including foundation, framing, electrical, plumbing, and finishing'
+  },
+  roofing: {
+    labor_cost: 5000,
+    material_cost: 8000,
+    equipment_cost: 1500,
+    description: 'Complete roofing installation including materials, labor, and disposal'
+  }
+};
+
+function applyTemplate(templateName) {
+  const template = templates[templateName];
+  if (!template) return;
+  
+  document.getElementById('labor_cost').value = template.labor_cost;
+  document.getElementById('material_cost').value = template.material_cost;
+  document.getElementById('equipment_cost').value = template.equipment_cost;
+  document.getElementById('project_description').value = template.description;
+  
+  calculateTotal();
+}
+
+function fillFromJob() {
+  const jobSelect = document.getElementById('job_id');
+  const selectedOption = jobSelect.options[jobSelect.selectedIndex];
+  
+  if (selectedOption.value) {
+    document.getElementById('client_name').value = selectedOption.getAttribute('data-client');
+    document.getElementById('project_description').value = selectedOption.getAttribute('data-desc');
+  }
+}
+
+function calculateTotal() {
+  const labor = parseFloat(document.getElementById('labor_cost').value) || 0;
+  const material = parseFloat(document.getElementById('material_cost').value) || 0;
+  const equipment = parseFloat(document.getElementById('equipment_cost').value) || 0;
+  const overheadPercent = parseFloat(document.getElementById('overhead_percentage').value) || 0;
+  const profitPercent = parseFloat(document.getElementById('profit_percentage').value) || 0;
+  
+  const subtotal = labor + material + equipment;
+  const overhead = subtotal * (overheadPercent / 100);
+  const profit = (subtotal + overhead) * (profitPercent / 100);
+  const total = subtotal + overhead + profit;
+  
+  // Update displays
+  document.getElementById('subtotal').textContent = `$${subtotal.toLocaleString('en-US', {minimumFractionDigits: 2})}`;
+  document.getElementById('overhead_amount').textContent = overhead.toLocaleString('en-US', {minimumFractionDigits: 2});
+  document.getElementById('overhead_display').textContent = `$${overhead.toLocaleString('en-US', {minimumFractionDigits: 2})}`;
+  document.getElementById('profit_amount').textContent = profit.toLocaleString('en-US', {minimumFractionDigits: 2});
+  document.getElementById('profit_display').textContent = `$${profit.toLocaleString('en-US', {minimumFractionDigits: 2})}`;
+  document.getElementById('total_display').textContent = `$${total.toLocaleString('en-US', {minimumFractionDigits: 2})}`;
+}
+
+// Initialize calculations
+document.addEventListener('DOMContentLoaded', function() {
+  calculateTotal();
+});
+</script>
+
+<style>
+.estimate-form {
+  max-width: 900px;
+}
+
+.form-section {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  padding: 24px;
+  margin-bottom: 20px;
+}
+
+.form-section h3 {
+  margin: 0 0 20px;
+  color: var(--text);
+  font-size: 18px;
+}
+
+.cost-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+  gap: 20px;
+}
+
+.cost-card {
+  background: #f8fafc;
+  border: 1px solid var(--border);
+  border-radius: var(--radius-sm);
+  padding: 16px;
+  text-align: center;
+}
+
+.cost-card label {
+  display: block;
+  font-weight: 600;
+  margin-bottom: 10px;
+  font-size: 14px;
+}
+
+.input-group {
+  position: relative;
+  display: flex;
+  align-items: center;
+}
+
+.input-prefix, .input-suffix {
+  background: var(--border);
+  padding: 10px 12px;
+  font-weight: 600;
+  font-size: 14px;
+  color: var(--muted);
+}
+
+.input-prefix {
+  border-radius: var(--radius-sm) 0 0 var(--radius-sm);
+  border-right: none;
+}
+
+.input-suffix {
+  border-radius: 0 var(--radius-sm) var(--radius-sm) 0;
+  border-left: none;
+}
+
+.input-group input {
+  border-radius: 0;
+  border-left: none;
+  border-right: none;
+  text-align: right;
+}
+
+.input-prefix + input {
+  border-left: 1px solid var(--border);
+}
+
+.input-group input + .input-suffix {
+  border-left: 1px solid var(--border);
+}
+
+.margins-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 30px;
+  margin-bottom: 30px;
+}
+
+.margin-field {
+  text-align: center;
+}
+
+.margin-field label {
+  display: block;
+  font-weight: 600;
+  margin-bottom: 8px;
+}
+
+.calculated-value {
+  margin-top: 8px;
+  font-weight: 600;
+  color: var(--accent);
+  font-size: 14px;
+}
+
+.total-section {
+  background: white;
+  border: 2px solid var(--border);
+  border-radius: var(--radius);
+  padding: 20px;
+}
+
+.subtotal-row, .total-row {
+  display: flex;
+  justify-content: space-between;
+  padding: 8px 0;
+}
+
+.subtotal-row {
+  border-bottom: 1px solid #f1f5f9;
+}
+
+.total-row {
+  border-top: 2px solid var(--border);
+  margin-top: 10px;
+  padding-top: 15px;
+  font-size: 18px;
+  font-weight: 700;
+  color: var(--accent);
+}
+
+.templates-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+  gap: 15px;
+}
+
+.template-btn {
+  background: white;
+  border: 2px solid var(--border);
+  border-radius: var(--radius);
+  padding: 16px;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  text-align: left;
+}
+
+.template-btn:hover {
+  border-color: var(--accent);
+  transform: translateY(-2px);
+}
+
+.template-btn small {
+  display: block;
+  color: var(--muted);
+  margin-top: 4px;
+  font-size: 12px;
+}
+
+.form-actions {
+  display: flex;
+  gap: 12px;
+  justify-content: flex-end;
+  margin-top: 30px;
+}
+
+.btn-primary {
+  background: var(--accent);
+  color: white;
+  padding: 12px 24px;
+  font-weight: 600;
+}
+
+@media (max-width: 768px) {
+  .cost-grid {
+    grid-template-columns: 1fr;
+  }
+  
+  .margins-grid {
+    grid-template-columns: 1fr;
+    gap: 20px;
+  }
+  
+  .templates-grid {
+    grid-template-columns: 1fr;
+  }
+  
+  .form-actions {
+    flex-direction: column;
+  }
+}
+</style>
+
+{% endblock %}

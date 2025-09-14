@@ -1,0 +1,173 @@
+@startuml ContractorPro Database Schema
+!theme aws-orange
+skinparam backgroundColor transparent
+
+title **ContractorPro - Database Entity Relationships**
+
+entity User {
+  * id : INTEGER
+  --
+  * username : VARCHAR(80)
+  * email : VARCHAR(120) 
+  * password_hash : VARCHAR(255)
+  company_name : VARCHAR(200)
+  created_date : DATETIME
+  is_active : BOOLEAN
+}
+
+entity Lead {
+  * id : INTEGER
+  --
+  * user_id : INTEGER FK
+  * name : VARCHAR(200)
+  email : VARCHAR(120)
+  phone : VARCHAR(20)
+  project_type : VARCHAR(100)
+  budget_range : VARCHAR(50)
+  status : VARCHAR(20)
+  follow_up_date : DATE
+}
+
+entity Job {
+  * id : INTEGER
+  --
+  * user_id : INTEGER FK
+  * client_name : VARCHAR(200)
+  * project_type : VARCHAR(100)
+  * address : TEXT
+  client_email : VARCHAR(120)
+  budget : DECIMAL(12,2)
+  status : VARCHAR(20)
+  build_type : VARCHAR(20)
+  total_square_footage : DECIMAL(10,2)
+  permit_required : BOOLEAN
+}
+
+entity ProgressPhoto {
+  * id : INTEGER
+  --
+  * job_id : INTEGER FK
+  * filename : VARCHAR(255)
+  * file_path : VARCHAR(500)
+  photo_type : VARCHAR(50)
+  caption : TEXT
+  location : VARCHAR(200)
+  is_milestone : BOOLEAN
+  milestone_percentage : INTEGER
+  taken_date : DATE
+}
+
+entity Estimate {
+  * id : INTEGER
+  --
+  * user_id : INTEGER FK
+  job_id : INTEGER FK
+  * estimate_number : VARCHAR(50)
+  * client_name : VARCHAR(200)
+  labor_cost : DECIMAL(12,2)
+  material_cost : DECIMAL(12,2)
+  overhead_percentage : DECIMAL(5,2)
+  profit_percentage : DECIMAL(5,2)
+  total_cost : DECIMAL(12,2)
+  status : VARCHAR(20)
+}
+
+entity EstimateLineItem {
+  * id : INTEGER
+  --
+  * estimate_id : INTEGER FK
+  * description : VARCHAR(500)
+  category : VARCHAR(100)
+  quantity : DECIMAL(10,2)
+  unit_cost : DECIMAL(10,2)
+  total_cost : DECIMAL(12,2)
+}
+
+entity EmailNotification {
+  * id : INTEGER
+  --
+  * user_id : INTEGER FK
+  * recipient_email : VARCHAR(120)
+  * subject : VARCHAR(200)
+  body : TEXT
+  notification_type : VARCHAR(50)
+  related_id : INTEGER
+  status : VARCHAR(20)
+  sent_date : DATETIME
+}
+
+entity JobLocation {
+  * id : INTEGER
+  --
+  * job_id : INTEGER FK
+  * name : VARCHAR(100)
+  description : TEXT
+  square_footage : DECIMAL(10,2)
+  order_index : INTEGER
+}
+
+entity Task {
+  * id : INTEGER
+  --
+  * job_id : INTEGER FK
+  location_id : INTEGER FK
+  * task_name : VARCHAR(200)
+  task_description : TEXT
+  cost : DECIMAL(12,2)
+  status : VARCHAR(20)
+  priority : INTEGER
+  is_critical_path : BOOLEAN
+  scheduled_start_date : DATE
+  scheduled_end_date : DATE
+}
+
+entity Contract {
+  * id : INTEGER
+  --
+  * job_id : INTEGER FK
+  * contract_number : VARCHAR(50)
+  * title : VARCHAR(200)
+  total_contract_value : DECIMAL(12,2)
+  status : VARCHAR(20)
+}
+
+' Relationships
+User ||--o{ Lead : "manages"
+User ||--o{ Job : "owns"
+User ||--o{ Estimate : "creates"
+User ||--o{ EmailNotification : "sends"
+
+Job ||--o{ ProgressPhoto : "has photos"
+Job ||--o{ JobLocation : "contains"
+Job ||--o{ Task : "includes"
+Job ||--o{ Contract : "generates"
+
+JobLocation ||--o{ Task : "contains"
+
+Estimate ||--o{ EstimateLineItem : "contains"
+
+Lead ||--o| Job : "converts to"
+Estimate ||--o| Job : "becomes"
+
+note right of ProgressPhoto
+  **Automation Trigger:**
+  When is_milestone = TRUE
+  → Auto-send email to client
+  → Log in EmailNotification
+end note
+
+note right of Estimate
+  **Auto Calculations:**
+  total_cost = (labor + material) 
+  + overhead% + profit%
+end note
+
+note bottom
+  **Key Automation Points:**
+  1. Photo upload → Milestone email
+  2. Estimate creation → Professional delivery
+  3. Lead conversion → Job setup
+  4. Task scheduling → Calendar integration
+end note
+
+@enduml

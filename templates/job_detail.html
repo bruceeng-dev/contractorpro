@@ -1,0 +1,432 @@
+{% extends "base.html" %}
+{% block content %}
+
+<div class="container">
+  <!-- Job Header -->
+  <div class="job-header">
+    <div class="job-title">
+      <h1>{{ job.project_type }}</h1>
+      <p class="client-info">{{ job.client_name }} • {{ job.address }}</p>
+    </div>
+    <div class="job-actions">
+      <span class="badge badge--{{ job.status }}">{{ job.status.title() }}</span>
+      <a href="{{ url_for('contract_generator', job_id=job.id) }}" class="btn btn--primary">📋 Contract Generator</a>
+      <a href="{{ url_for('jobs_list') }}" class="btn btn--sm">← Back to Jobs</a>
+    </div>
+  </div>
+
+  <!-- Job Details Grid -->
+  <div class="job-details-grid">
+    <!-- Basic Info -->
+    <div class="info-card">
+      <h3>Project Information</h3>
+      <div class="info-grid">
+        <div class="info-item">
+          <span class="info-label">Start Date</span>
+          <span class="info-value">{{ job.start_date.strftime('%B %d, %Y') if job.start_date else 'Not set' }}</span>
+        </div>
+        <div class="info-item">
+          <span class="info-label">Budget</span>
+          <span class="info-value">${{ "{:,.2f}".format(job.budget) if job.budget else 'Not set' }}</span>
+        </div>
+        <div class="info-item">
+          <span class="info-label">Status</span>
+          <span class="info-value">{{ job.status.title() }}</span>
+        </div>
+        <div class="info-item">
+          <span class="info-label">Priority</span>
+          <span class="info-value">{{ '★' * job.priority }}</span>
+        </div>
+      </div>
+      {% if job.description %}
+      <div class="description">
+        <h4>Description</h4>
+        <p>{{ job.description }}</p>
+      </div>
+      {% endif %}
+    </div>
+
+    <!-- Client Info -->
+    <div class="info-card">
+      <h3>Client Contact</h3>
+      <div class="contact-info">
+        <p><strong>{{ job.client_name }}</strong></p>
+        {% if job.client_email %}
+        <p>📧 <a href="mailto:{{ job.client_email }}">{{ job.client_email }}</a></p>
+        {% endif %}
+        {% if job.client_phone %}
+        <p>📞 <a href="tel:{{ job.client_phone }}">{{ job.client_phone }}</a></p>
+        {% endif %}
+        <p>📍 {{ job.address }}</p>
+      </div>
+    </div>
+  </div>
+
+  <!-- Progress Photos Section -->
+  <div class="section-card">
+    <div class="section-header">
+      <h3>📷 Progress Photos</h3>
+      <button class="btn btn--sm" onclick="togglePhotoUpload()">+ Add Photo</button>
+    </div>
+
+    <!-- Photo Upload Form -->
+    <div id="photo-upload-form" class="photo-upload-form" style="display: none;">
+      <form action="{{ url_for('upload_progress_photo', job_id=job.id) }}" method="POST" enctype="multipart/form-data">
+        <div class="upload-grid">
+          <div class="upload-field">
+            <label for="photo">Photo</label>
+            <input type="file" id="photo" name="photo" accept="image/*" required>
+          </div>
+          <div class="upload-field">
+            <label for="photo_type">Type</label>
+            <select id="photo_type" name="photo_type">
+              <option value="progress">Progress</option>
+              <option value="before">Before</option>
+              <option value="after">After</option>
+              <option value="issue">Issue/Problem</option>
+            </select>
+          </div>
+          <div class="upload-field">
+            <label for="location">Location</label>
+            <input type="text" id="location" name="location" placeholder="e.g., Kitchen, Bathroom, Exterior">
+          </div>
+          <div class="upload-field">
+            <label for="taken_date">Date Taken</label>
+            <input type="date" id="taken_date" name="taken_date" value="{{ date.today().strftime('%Y-%m-%d') }}">
+          </div>
+        </div>
+        <div class="upload-field">
+          <label for="caption">Caption/Notes</label>
+          <textarea id="caption" name="caption" rows="2" placeholder="Describe what's shown in this photo..."></textarea>
+        </div>
+        <div class="milestone-section">
+          <label class="checkbox-label">
+            <input type="checkbox" id="is_milestone" name="is_milestone" onchange="toggleMilestone()">
+            This is a project milestone
+          </label>
+          <div id="milestone-fields" style="display: none;">
+            <label for="milestone_percentage">Completion Percentage</label>
+            <input type="number" id="milestone_percentage" name="milestone_percentage" min="0" max="100" placeholder="e.g., 25">
+          </div>
+        </div>
+        <div class="upload-actions">
+          <button type="submit" class="btn">Upload Photo</button>
+          <button type="button" class="btn btn--sm" onclick="togglePhotoUpload()">Cancel</button>
+        </div>
+      </form>
+    </div>
+
+    <!-- Progress Photos Grid -->
+    <div class="photos-grid">
+      {% for photo in progress_photos %}
+      <div class="photo-card">
+        <div class="photo-image">
+          <img src="{{ url_for('static', filename='uploads/photos/' + photo.filename) }}" alt="{{ photo.caption }}">
+          {% if photo.is_milestone %}
+          <div class="milestone-badge">{{ photo.milestone_percentage }}% Complete</div>
+          {% endif %}
+        </div>
+        <div class="photo-info">
+          <div class="photo-meta">
+            <span class="photo-type badge badge--{{ photo.photo_type }}">{{ photo.photo_type.title() }}</span>
+            <span class="photo-date">{{ photo.taken_date.strftime('%m/%d/%Y') if photo.taken_date else photo.uploaded_date.strftime('%m/%d/%Y') }}</span>
+          </div>
+          {% if photo.location %}
+          <p class="photo-location">📍 {{ photo.location }}</p>
+          {% endif %}
+          {% if photo.caption %}
+          <p class="photo-caption">{{ photo.caption }}</p>
+          {% endif %}
+        </div>
+      </div>
+      {% else %}
+      <div class="empty-state">
+        <p class="muted">No progress photos yet. Upload your first photo to track project progress.</p>
+      </div>
+      {% endfor %}
+    </div>
+  </div>
+
+  <!-- Documents Section -->
+  <div class="section-card">
+    <div class="section-header">
+      <h3>📄 Documents</h3>
+      <button class="btn btn--sm">+ Add Document</button>
+    </div>
+    <div class="documents-list">
+      {% for doc in documents %}
+      <div class="document-item">
+        <div class="doc-icon">📄</div>
+        <div class="doc-info">
+          <h4>{{ doc.original_filename }}</h4>
+          <p class="muted sm">{{ doc.document_type.title() }} • Uploaded {{ doc.uploaded_date.strftime('%m/%d/%Y') }}</p>
+        </div>
+        <a href="#" class="btn btn--sm">Download</a>
+      </div>
+      {% else %}
+      <div class="empty-state">
+        <p class="muted">No documents uploaded yet.</p>
+      </div>
+      {% endfor %}
+    </div>
+  </div>
+</div>
+
+{% endblock %}
+
+{% block scripts %}
+<script>
+function togglePhotoUpload() {
+  const form = document.getElementById('photo-upload-form');
+  form.style.display = form.style.display === 'none' ? 'block' : 'none';
+}
+
+function toggleMilestone() {
+  const checkbox = document.getElementById('is_milestone');
+  const fields = document.getElementById('milestone-fields');
+  fields.style.display = checkbox.checked ? 'block' : 'none';
+}
+
+// Auto-set today's date
+document.getElementById('taken_date').value = new Date().toISOString().split('T')[0];
+</script>
+
+<style>
+.job-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 30px;
+  padding-bottom: 20px;
+  border-bottom: 1px solid var(--border);
+}
+
+.job-title h1 {
+  margin: 0 0 5px;
+  font-size: 24px;
+}
+
+.client-info {
+  color: var(--muted);
+  margin: 0;
+}
+
+.job-actions {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.job-details-grid {
+  display: grid;
+  grid-template-columns: 2fr 1fr;
+  gap: 20px;
+  margin-bottom: 30px;
+}
+
+.info-card, .section-card {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  padding: 20px;
+}
+
+.info-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 15px;
+  margin-bottom: 15px;
+}
+
+.info-item {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.info-label {
+  font-size: 12px;
+  color: var(--muted);
+  font-weight: 600;
+  text-transform: uppercase;
+}
+
+.info-value {
+  font-weight: 600;
+  color: var(--text);
+}
+
+.contact-info p {
+  margin: 8px 0;
+}
+
+.section-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 20px;
+}
+
+.photo-upload-form {
+  background: #f8fafc;
+  border: 1px solid var(--border);
+  border-radius: var(--radius-sm);
+  padding: 20px;
+  margin-bottom: 20px;
+}
+
+.upload-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr 1fr 1fr;
+  gap: 15px;
+  margin-bottom: 15px;
+}
+
+.upload-field {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.upload-field label {
+  font-weight: 600;
+  font-size: 14px;
+}
+
+.milestone-section {
+  margin: 15px 0;
+  padding: 15px;
+  background: white;
+  border-radius: var(--radius-sm);
+}
+
+.checkbox-label {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-weight: 600;
+}
+
+.upload-actions {
+  display: flex;
+  gap: 10px;
+}
+
+.photos-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+  gap: 20px;
+}
+
+.photo-card {
+  background: white;
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  overflow: hidden;
+}
+
+.photo-image {
+  position: relative;
+  height: 200px;
+  background: #f0f0f0;
+}
+
+.photo-image img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.milestone-badge {
+  position: absolute;
+  top: 10px;
+  right: 10px;
+  background: var(--accent);
+  color: white;
+  padding: 4px 8px;
+  border-radius: 12px;
+  font-size: 12px;
+  font-weight: 600;
+}
+
+.photo-info {
+  padding: 15px;
+}
+
+.photo-meta {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 8px;
+}
+
+.photo-date {
+  font-size: 12px;
+  color: var(--muted);
+}
+
+.photo-location, .photo-caption {
+  margin: 4px 0;
+  font-size: 14px;
+}
+
+.photo-location {
+  color: var(--muted);
+}
+
+.documents-list {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.document-item {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 12px;
+  background: white;
+  border: 1px solid var(--border);
+  border-radius: var(--radius-sm);
+}
+
+.doc-icon {
+  font-size: 24px;
+}
+
+.doc-info {
+  flex: 1;
+}
+
+.doc-info h4 {
+  margin: 0 0 4px;
+  font-size: 14px;
+}
+
+.empty-state {
+  text-align: center;
+  padding: 40px 20px;
+  color: var(--muted);
+}
+
+@media (max-width: 768px) {
+  .job-header {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 15px;
+  }
+  
+  .job-details-grid {
+    grid-template-columns: 1fr;
+  }
+  
+  .upload-grid {
+    grid-template-columns: 1fr 1fr;
+  }
+  
+  .photos-grid {
+    grid-template-columns: 1fr;
+  }
+}
+</style>
+{% endblock %}

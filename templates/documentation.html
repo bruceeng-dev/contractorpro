@@ -1,0 +1,106 @@
+{% extends "base.html" %}
+{% block content %}
+
+<div class="container">
+  <div class="page-header">
+    <h1>Project Documentation</h1>
+    <button class="btn">Upload Document</button>
+  </div>
+
+  <div class="doc-sections">
+    <div class="doc-section">
+      <h2>📋 Project Plans & Permits</h2>
+      <div class="doc-grid">
+        <div class="doc-item">
+          <span class="doc-icon">📄</span>
+          <div class="doc-info">
+            <h4>Building Permit - Johnson Kitchen</h4>
+            <p class="muted sm">Uploaded 2 days ago • PDF</p>
+          </div>
+          <a href="#" class="btn btn--sm">View</a>
+        </div>
+        <div class="doc-item">
+          <span class="doc-icon">🏗️</span>
+          <div class="doc-info">
+            <h4>Construction Plans - Office Buildout</h4>
+            <p class="muted sm">Uploaded 1 week ago • DWG</p>
+          </div>
+          <a href="#" class="btn btn--sm">View</a>
+        </div>
+      </div>
+    </div>
+
+    <div class="doc-section">
+      <h2>📑 Contracts & Agreements</h2>
+      <div class="doc-grid">
+        <div class="doc-item">
+          <span class="doc-icon">📝</span>
+          <div class="doc-info">
+            <h4>Master Service Agreement - Miller Residence</h4>
+            <p class="muted sm">Signed 3 days ago • PDF</p>
+          </div>
+          <a href="#" class="btn btn--sm">View</a>
+        </div>
+        <div class="doc-item">
+          <span class="doc-icon">✍️</span>
+          <div class="doc-info">
+            <h4>Change Order #3 - Downtown Commercial</h4>
+            <p class="muted sm">Pending signature • PDF</p>
+          </div>
+          <a href="#" class="btn btn--sm">View</a>
+        </div>
+      </div>
+    </div>
+
+    <div class="doc-section">
+      <h2>📷 Progress Photos</h2>
+      <div class="photo-grid">
+        <div class="photo-item">
+          <img src="{{ url_for('static', filename='images/progress-1.jpg') }}" alt="Kitchen demolition">
+          <div class="photo-overlay">
+            <h4>Kitchen Demolition</h4>
+            <p>Day 1 - Johnson Project</p>
+          </div>
+        </div>
+        <div class="photo-item">
+          <img src="{{ url_for('static', filename='images/progress-2.jpg') }}" alt="Framing complete">
+          <div class="photo-overlay">
+            <h4>Framing Complete</h4>
+            <p>Week 2 - Office Addition</p>
+          </div>
+        </div>
+        <div class="photo-item">
+          <img src="{{ url_for('static', filename='images/progress-3.jpg') }}" alt="Final inspection">
+          <div class="photo-overlay">
+            <h4>Final Inspection</h4>
+            <p>Completion - Bathroom Reno</p>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="doc-section">
+      <h2>🧾 Invoices & Billing</h2>
+      <div class="invoice-list">
+        <div class="invoice-item">
+          <div class="invoice-info">
+            <h4>Invoice #2024-156</h4>
+            <p>Johnson Kitchen Renovation • Due: Jan 15, 2025</p>
+          </div>
+          <div class="invoice-amount">$12,500</div>
+          <span class="status-badge status-pending">Pending</span>
+        </div>
+        <div class="invoice-item">
+          <div class="invoice-info">
+            <h4>Invoice #2024-155</h4>
+            <p>Office Buildout Progress Payment • Due: Jan 10, 2025</p>
+          </div>
+          <div class="invoice-amount">$8,750</div>
+          <span class="status-badge status-paid">Paid</span>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+{% endblock %}

@@ -1,0 +1,57 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <title>{{ title or "ContractorPro — Manage Your Construction Business" }}</title>
+  <link rel="stylesheet" href="{{ url_for('static', filename='css/styles.css') }}">
+  {% block head %}{% endblock %}
+</head>
+<body>
+  <header class="site-header">
+    <div class="container header-inner">
+      <a href="{{ url_for('dashboard') }}" class="brand">ContractorPro</a>
+      <nav class="nav">
+        <a href="{{ url_for('jobs_list') }}">Jobs</a>
+        <a href="{{ url_for('task_list') }}">Tasks</a>
+        <a href="{{ url_for('calendar_view') }}">Calendar</a>
+        <a href="{{ url_for('leads_list') }}">Leads</a>
+        <a href="{{ url_for('estimates_list') }}">Estimates</a>
+        <div class="nav-dropdown">
+          <a href="#" class="nav-dropdown-toggle">Tools ▼</a>
+          <div class="nav-dropdown-menu">
+            <a href="{{ url_for('task_templates') }}">Task Templates</a>
+            <a href="{{ url_for('gantt_chart') }}">Gantt Chart</a>
+            <a href="{{ url_for('documentation') }}">Documents</a>
+            <a href="{{ url_for('reports') }}">Analytics</a>
+          </div>
+        </div>
+        <a href="{{ url_for('reports') }}">Reports</a>
+        {% if current_user.is_authenticated %}
+          <a href="{{ url_for('logout') }}" class="btn btn--sm">Logout</a>
+        {% endif %}
+      </nav>
+    </div>
+  </header>
+
+  <main>
+    {% with messages = get_flashed_messages(with_categories=true) %}
+      {% if messages %}
+        <div class="flash-messages">
+          {% for category, message in messages %}
+            <div class="flash flash--{{ category }}">{{ message }}</div>
+          {% endfor %}
+        </div>
+      {% endif %}
+    {% endwith %}
+    
+    {% block content %}{% endblock %}
+  </main>
+
+  <footer class="site-footer">
+    <div class="container">© {{ 2025 }} ContractorPro • Streamline Your Construction Business</div>
+  </footer>
+
+  {% block scripts %}{% endblock %}
+</body>
+</html>

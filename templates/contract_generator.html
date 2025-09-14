@@ -1,0 +1,456 @@
+{% extends "base.html" %}
+{% block content %}
+
+<div class="container">
+  <div class="page-header">
+    <h1>Contract Generator - {{ job.client_name }}</h1>
+    <div>
+      <a href="{{ url_for('job_detail', job_id=job.id) }}" class="btn btn--sm">Back to Job</a>
+      <a href="{{ url_for('task_templates') }}" class="btn btn--sm">Manage Templates</a>
+    </div>
+  </div>
+
+  <!-- Job Overview -->
+  <div class="contract-info">
+    <div class="info-row">
+      <div class="info-col">
+        <strong>Project:</strong> {{ job.project_type }}
+      </div>
+      <div class="info-col">
+        <strong>Build Type:</strong> {{ job.build_type.title().replace('_', ' ') }}
+      </div>
+      <div class="info-col">
+        <strong>Contract #:</strong> {{ contract.contract_number }}
+      </div>
+    </div>
+    {% if job.total_square_footage %}
+    <div class="info-row">
+      <div class="info-col">
+        <strong>Square Footage:</strong> {{ job.total_square_footage }} sq ft
+      </div>
+      <div class="info-col">
+        <strong>Bedrooms:</strong> {{ job.bedrooms or 'N/A' }}
+      </div>
+      <div class="info-col">
+        <strong>Bathrooms:</strong> {{ job.bathrooms or 'N/A' }}
+      </div>
+    </div>
+    {% endif %}
+  </div>
+
+  <div class="contract-sections">
+    <!-- Location Management -->
+    <div class="section">
+      <div class="section-header">
+        <h2>📍 Job Locations (H1 Headings)</h2>
+        <button class="btn btn--sm" onclick="toggleForm('location-form')">+ Add Location</button>
+      </div>
+
+      <!-- Add Location Form -->
+      <div id="location-form" class="form-container" style="display: none;">
+        <form action="{{ url_for('add_job_location', job_id=job.id) }}" method="POST" class="form">
+          <div class="form-row">
+            <div class="form-col">
+              <label for="location_name">Location Name</label>
+              <input id="location_name" name="location_name" type="text" placeholder="e.g., Kitchen, Bathroom, Roof" required>
+            </div>
+            <div class="form-col">
+              <label for="square_footage">Square Footage</label>
+              <input id="square_footage" name="square_footage" type="number" step="0.01" placeholder="Optional">
+            </div>
+          </div>
+          <label for="description">Description</label>
+          <textarea id="description" name="description" rows="2" placeholder="Location details..."></textarea>
+          <button type="submit" class="btn">Add Location</button>
+        </form>
+      </div>
+
+      <!-- Existing Locations -->
+      <div class="locations-list">
+        {% for location in locations %}
+        <div class="location-card">
+          <div class="location-header">
+            <h3>{{ location.name }}</h3>
+            {% if location.square_footage %}
+            <span class="badge">{{ location.square_footage }} sq ft</span>
+            {% endif %}
+          </div>
+          {% if location.description %}
+          <p>{{ location.description }}</p>
+          {% endif %}
+          
+          <!-- Tasks for this location -->
+          <div class="tasks-list">
+            {% for task in tasks if task.location_id == location.id %}
+            <div class="task-item">
+              <div class="task-content">
+                <strong>{{ task.task_name }}</strong>
+                {% if task.cost %} - ${{ "{:,.2f}".format(task.cost) }}{% endif %}
+                {% if task.estimated_days %} ({{ task.estimated_days }} days){% endif %}
+                {% if task.is_critical_path %}<span class="critical-badge">CRITICAL</span>{% endif %}
+              </div>
+              <div class="task-description">{{ task.task_description or '' }}</div>
+            </div>
+            {% endfor %}
+          </div>
+          
+          <button class="btn btn--sm" onclick="showAddTask({{ location.id }}, '{{ location.name }}')">+ Add Task</button>
+        </div>
+        {% endfor %}
+        
+        {% if not locations %}
+        <div class="empty-state">
+          <p>No locations added yet. Start by adding the main areas of work (Kitchen, Bathroom, Roof, etc.)</p>
+        </div>
+        {% endif %}
+      </div>
+    </div>
+
+    <!-- General Tasks (No Location) -->
+    <div class="section">
+      <div class="section-header">
+        <h2>📋 General Tasks</h2>
+        <button class="btn btn--sm" onclick="showAddTask(null, 'General')">+ Add Task</button>
+      </div>
+      
+      <div class="tasks-list">
+        {% for task in tasks if not task.location_id %}
+        <div class="task-item">
+          <div class="task-content">
+            <strong>{{ task.task_name }}</strong>
+            {% if task.cost %} - ${{ "{:,.2f}".format(task.cost) }}{% endif %}
+            {% if task.estimated_days %} ({{ task.estimated_days }} days){% endif %}
+            {% if task.is_critical_path %}<span class="critical-badge">CRITICAL</span>{% endif %}
+          </div>
+          <div class="task-description">{{ task.task_description or '' }}</div>
+        </div>
+        {% endfor %}
+      </div>
+    </div>
+  </div>
+
+  <!-- Contract Summary -->
+  <div class="contract-summary">
+    <h2>💰 Contract Summary</h2>
+    <div class="summary-row">
+      <span>Total Contract Value:</span>
+      <strong>${{ "{:,.2f}".format(contract.total_contract_value or 0) }}</strong>
+    </div>
+    <div class="summary-actions">
+      <button class="btn" onclick="calculateTotal()">Recalculate Total</button>
+      <button class="btn btn--primary">Generate Contract Document</button>
+    </div>
+  </div>
+</div>
+
+<!-- Add Task Modal -->
+<div id="task-modal" class="modal" style="display: none;">
+  <div class="modal-content">
+    <div class="modal-header">
+      <h3>Add Task to <span id="location-title"></span></h3>
+      <button onclick="hideAddTask()" class="close">&times;</button>
+    </div>
+    
+    <form id="task-form" action="{{ url_for('add_job_task', job_id=job.id) }}" method="POST" class="form">
+      <input type="hidden" id="location_id" name="location_id">
+      
+      <div class="form-row">
+        <div class="form-col">
+          <label for="task_name">Task Name</label>
+          <input id="task_name" name="task_name" type="text" required>
+        </div>
+        <div class="form-col">
+          <label for="cost">Cost ($)</label>
+          <input id="cost" name="cost" type="number" step="0.01">
+        </div>
+      </div>
+      
+      <label for="task_description">Task Description</label>
+      <textarea id="task_description" name="task_description" rows="4" placeholder="Detailed task description with specifications..."></textarea>
+      
+      <div class="form-row">
+        <div class="form-col">
+          <label for="estimated_days">Estimated Days</label>
+          <input id="estimated_days" name="estimated_days" type="number" min="1">
+        </div>
+        <div class="form-col">
+          <label for="priority">Priority (1-5)</label>
+          <select id="priority" name="priority">
+            <option value="1">1 - Low</option>
+            <option value="2">2 - Medium</option>
+            <option value="3" selected>3 - Normal</option>
+            <option value="4">4 - High</option>
+            <option value="5">5 - Critical</option>
+          </select>
+        </div>
+      </div>
+      
+      <div class="form-row">
+        <div class="form-col">
+          <label>
+            <input type="checkbox" name="is_critical_path" id="is_critical_path">
+            Critical Path Item
+          </label>
+        </div>
+        <div class="form-col">
+          <label>
+            <input type="checkbox" name="included_in_contract" id="included_in_contract" checked>
+            Include in Contract
+          </label>
+        </div>
+      </div>
+      
+      <div class="form-actions">
+        <button type="button" onclick="hideAddTask()" class="btn btn--secondary">Cancel</button>
+        <button type="submit" class="btn">Add Task</button>
+      </div>
+    </form>
+  </div>
+</div>
+
+<style>
+.contract-info {
+  background: #f8f9fa;
+  padding: 1.5rem;
+  border-radius: 8px;
+  margin-bottom: 2rem;
+}
+
+.info-row {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 2rem;
+  margin-bottom: 1rem;
+}
+
+.info-row:last-child {
+  margin-bottom: 0;
+}
+
+.contract-sections {
+  display: flex;
+  flex-direction: column;
+  gap: 2rem;
+}
+
+.section {
+  background: white;
+  border: 1px solid #e2e8f0;
+  border-radius: 8px;
+  padding: 1.5rem;
+}
+
+.section-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 1.5rem;
+  padding-bottom: 0.5rem;
+  border-bottom: 2px solid #e2e8f0;
+}
+
+.section-header h2 {
+  margin: 0;
+  color: #2d3748;
+}
+
+.form-container {
+  background: #f7fafc;
+  padding: 1.5rem;
+  border-radius: 6px;
+  margin-bottom: 1.5rem;
+  border: 2px dashed #cbd5e0;
+}
+
+.locations-list {
+  display: flex;
+  flex-direction: column;
+  gap: 1.5rem;
+}
+
+.location-card {
+  background: #fefefe;
+  border: 1px solid #e2e8f0;
+  border-radius: 6px;
+  padding: 1.5rem;
+  border-left: 4px solid #3182ce;
+}
+
+.location-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 1rem;
+}
+
+.location-header h3 {
+  margin: 0;
+  color: #2d3748;
+  font-size: 1.25rem;
+}
+
+.badge {
+  background: #edf2f7;
+  color: #4a5568;
+  padding: 0.25rem 0.75rem;
+  border-radius: 12px;
+  font-size: 0.875rem;
+  font-weight: 500;
+}
+
+.tasks-list {
+  margin: 1rem 0;
+}
+
+.task-item {
+  background: #f7fafc;
+  border: 1px solid #e2e8f0;
+  border-radius: 4px;
+  padding: 1rem;
+  margin-bottom: 0.75rem;
+}
+
+.task-content {
+  font-size: 1rem;
+  margin-bottom: 0.5rem;
+}
+
+.task-description {
+  font-size: 0.9rem;
+  color: #4a5568;
+  line-height: 1.5;
+}
+
+.critical-badge {
+  background: #fed7d7;
+  color: #c53030;
+  padding: 0.125rem 0.5rem;
+  border-radius: 4px;
+  font-size: 0.75rem;
+  font-weight: bold;
+  margin-left: 0.5rem;
+}
+
+.contract-summary {
+  background: #edf2f7;
+  border: 2px solid #cbd5e0;
+  border-radius: 8px;
+  padding: 2rem;
+  margin-top: 2rem;
+  text-align: center;
+}
+
+.summary-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  font-size: 1.25rem;
+  margin-bottom: 1.5rem;
+}
+
+.summary-actions {
+  display: flex;
+  gap: 1rem;
+  justify-content: center;
+}
+
+.empty-state {
+  text-align: center;
+  color: #718096;
+  font-style: italic;
+  padding: 2rem;
+}
+
+/* Modal Styles */
+.modal {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: rgba(0, 0, 0, 0.5);
+  z-index: 1000;
+}
+
+.modal-content {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  background: white;
+  border-radius: 8px;
+  padding: 0;
+  max-width: 600px;
+  width: 90%;
+  max-height: 90vh;
+  overflow-y: auto;
+}
+
+.modal-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 1.5rem;
+  border-bottom: 1px solid #e2e8f0;
+}
+
+.modal-header h3 {
+  margin: 0;
+}
+
+.close {
+  background: none;
+  border: none;
+  font-size: 1.5rem;
+  cursor: pointer;
+  padding: 0;
+  width: 30px;
+  height: 30px;
+}
+
+.modal .form {
+  padding: 1.5rem;
+}
+
+.form-actions {
+  display: flex;
+  gap: 1rem;
+  justify-content: flex-end;
+  margin-top: 1.5rem;
+  padding-top: 1rem;
+  border-top: 1px solid #e2e8f0;
+}
+</style>
+
+<script>
+function toggleForm(formId) {
+  const form = document.getElementById(formId);
+  form.style.display = form.style.display === 'none' ? 'block' : 'none';
+}
+
+function showAddTask(locationId, locationName) {
+  document.getElementById('location_id').value = locationId || '';
+  document.getElementById('location-title').textContent = locationName;
+  document.getElementById('task-modal').style.display = 'block';
+}
+
+function hideAddTask() {
+  document.getElementById('task-modal').style.display = 'none';
+  document.getElementById('task-form').reset();
+}
+
+function calculateTotal() {
+  // This would make an AJAX call to recalculate the contract total
+  // For now, just refresh the page
+  location.reload();
+}
+
+// Close modal when clicking outside
+document.getElementById('task-modal').addEventListener('click', function(e) {
+  if (e.target === this) {
+    hideAddTask();
+  }
+});
+</script>
+
+{% endblock %}

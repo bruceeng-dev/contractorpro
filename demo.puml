@@ -1,0 +1,40 @@
+@startuml ContractorPro Demo Flow
+!theme plain
+skinparam backgroundColor transparent
+
+title **ContractorPro - Automation Demo**
+
+actor Contractor
+actor Client
+database System
+
+== Quote Phase ==
+Contractor -> System : Create Job (with client email)
+Contractor -> System : Create Estimate
+System -> Client : **AUTO: Professional Quote Email**
+Client -> Contractor : Approve Project
+
+== Construction Phase ==
+note over System : **Photo → Email Automation**
+
+Contractor -> System : Upload Photo + 25% Milestone
+System -> Client : **AUTO: "25% Complete - Demo Done"**
+
+Contractor -> System : Upload Photo + 50% Milestone  
+System -> Client : **AUTO: "50% Complete - Framing"**
+
+Contractor -> System : Upload Photo + 75% Milestone
+System -> Client : **AUTO: "75% Complete - Finishing"**
+
+Contractor -> System : Upload Photo + 100% Milestone
+System -> Client : **AUTO: "Project Complete!"**
+
+note right of System
+**Key Automation:**
+• Photo upload triggers email
+• Professional messaging
+• Client stays informed
+• No manual updates needed
+end note
+
+@enduml

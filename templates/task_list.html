@@ -1,0 +1,651 @@
+{% extends "base.html" %}
+{% block content %}
+
+<div class="container">
+  <div class="page-header">
+    <h1>Task Management</h1>
+    <div>
+      <a href="{{ url_for('dashboard') }}" class="btn btn--sm">← Dashboard</a>
+    </div>
+  </div>
+
+  <!-- Task Statistics -->
+  <div class="stats-grid">
+    <div class="stat-card">
+      <div class="stat-number">{{ total_tasks }}</div>
+      <div class="stat-label">Total Tasks</div>
+    </div>
+    <div class="stat-card">
+      <div class="stat-number">{{ completed_tasks }}</div>
+      <div class="stat-label">Completed</div>
+    </div>
+    <div class="stat-card stat-card--warning">
+      <div class="stat-number">{{ critical_path_tasks }}</div>
+      <div class="stat-label">Critical Path</div>
+    </div>
+    <div class="stat-card stat-card--danger">
+      <div class="stat-number">{{ overdue_tasks }}</div>
+      <div class="stat-label">Overdue</div>
+    </div>
+  </div>
+
+  <!-- Filter Controls -->
+  <div class="filter-controls">
+    <div class="filter-group">
+      <label for="filter-status">Filter by Status:</label>
+      <select id="filter-status" onchange="filterTasks()">
+        <option value="">All Tasks</option>
+        <option value="not_started">Not Started</option>
+        <option value="in_progress">In Progress</option>
+        <option value="completed">Completed</option>
+        <option value="on_hold">On Hold</option>
+      </select>
+    </div>
+    <div class="filter-group">
+      <label for="filter-priority">Filter by Priority:</label>
+      <select id="filter-priority" onchange="filterTasks()">
+        <option value="">All Priorities</option>
+        <option value="5">5 - Critical</option>
+        <option value="4">4 - High</option>
+        <option value="3">3 - Normal</option>
+        <option value="2">2 - Medium</option>
+        <option value="1">1 - Low</option>
+      </select>
+    </div>
+    <div class="filter-group">
+      <label>
+        <input type="checkbox" id="filter-critical" onchange="filterTasks()">
+        Critical Path Only
+      </label>
+    </div>
+  </div>
+
+  <!-- Jobs with Tasks -->
+  <div class="jobs-container">
+    {% for job in jobs_with_tasks %}
+    <div class="job-section">
+      <div class="job-header">
+        <div class="job-title">
+          <h2>{{ job.project_type }} - {{ job.client_name }}</h2>
+          <span class="job-meta">{{ job.address }}</span>
+        </div>
+        <div class="job-actions">
+          <a href="{{ url_for('job_detail', job_id=job.id) }}" class="btn btn--sm">View Job</a>
+          <a href="{{ url_for('contract_generator', job_id=job.id) }}" class="btn btn--sm">Contract</a>
+        </div>
+      </div>
+
+      <!-- Tasks for this job -->
+      <div class="tasks-grid">
+        {% for task in job.tasks %}
+        <div class="task-card" 
+             data-status="{{ task.status }}" 
+             data-priority="{{ task.priority }}"
+             data-critical="{{ task.is_critical_path | lower }}"
+             data-task-id="{{ task.id }}">
+          
+          <div class="task-header">
+            <div class="task-title">
+              <h3>{{ task.task_name }}</h3>
+              {% if task.location %}
+              <span class="location-badge">{{ task.location.name }}</span>
+              {% endif %}
+            </div>
+            <div class="task-meta">
+              {% if task.cost %}
+              <span class="cost-badge">${{ "{:,.0f}".format(task.cost) }}</span>
+              {% endif %}
+              <div class="priority-stars">
+                {% for i in range(1, 6) %}
+                <span class="star {{ 'active' if i <= task.priority else '' }}">★</span>
+                {% endfor %}
+              </div>
+            </div>
+          </div>
+
+          <div class="task-status">
+            <select class="status-select" onchange="updateTaskStatus({{ task.id }}, this.value)">
+              <option value="not_started" {{ 'selected' if task.status == 'not_started' else '' }}>Not Started</option>
+              <option value="in_progress" {{ 'selected' if task.status == 'in_progress' else '' }}>In Progress</option>
+              <option value="completed" {{ 'selected' if task.status == 'completed' else '' }}>Completed</option>
+              <option value="on_hold" {{ 'selected' if task.status == 'on_hold' else '' }}>On Hold</option>
+            </select>
+          </div>
+
+          <!-- Timeline Information -->
+          <div class="task-timeline">
+            <div class="timeline-item">
+              <strong>Scheduled:</strong> 
+              {% if task.scheduled_start_date and task.scheduled_end_date %}
+              {{ task.scheduled_start_date.strftime('%m/%d') }} - {{ task.scheduled_end_date.strftime('%m/%d') }}
+              {% else %}
+              Not scheduled
+              {% endif %}
+            </div>
+            {% if task.actual_start_date or task.actual_end_date %}
+            <div class="timeline-item">
+              <strong>Actual:</strong>
+              {% if task.actual_start_date %}{{ task.actual_start_date.strftime('%m/%d') }}{% endif %}
+              {% if task.actual_end_date %} - {{ task.actual_end_date.strftime('%m/%d') }}{% endif %}
+            </div>
+            {% endif %}
+          </div>
+
+          <!-- Assignment and Duration -->
+          <div class="task-details">
+            {% if task.assigned_to %}
+            <div class="detail-item">
+              <strong>Assigned to:</strong> {{ task.assigned_to }}
+            </div>
+            {% endif %}
+            {% if task.estimated_days %}
+            <div class="detail-item">
+              <strong>Duration:</strong> {{ task.estimated_days }} day{{ 's' if task.estimated_days != 1 else '' }}
+            </div>
+            {% endif %}
+            {% if task.is_critical_path %}
+            <div class="critical-indicator">
+              🔥 CRITICAL PATH
+            </div>
+            {% endif %}
+          </div>
+
+          <!-- Task Description -->
+          {% if task.task_description %}
+          <div class="task-description">
+            {{ task.task_description | truncate(150) }}
+          </div>
+          {% endif %}
+
+          <!-- Quick Actions -->
+          <div class="task-actions">
+            <button class="btn btn--sm" onclick="editTask({{ task.id }})">✏️ Edit</button>
+            {% if task.scheduled_end_date and task.scheduled_end_date < today() and task.status != 'completed' %}
+            <span class="overdue-indicator">⚠️ OVERDUE</span>
+            {% endif %}
+          </div>
+        </div>
+        {% endfor %}
+      </div>
+    </div>
+    {% endfor %}
+
+    {% if not jobs_with_tasks %}
+    <div class="empty-state">
+      <h2>No Tasks Yet</h2>
+      <p>Tasks are created when you build contracts with locations and activities.</p>
+      <p>Start by creating a job and using the Contract Generator to add locations and tasks.</p>
+      <a href="{{ url_for('new_job') }}" class="btn btn--primary">Create Your First Job</a>
+    </div>
+    {% endif %}
+  </div>
+</div>
+
+<!-- Edit Task Modal -->
+<div id="edit-task-modal" class="modal" style="display: none;">
+  <div class="modal-content">
+    <div class="modal-header">
+      <h3>Edit Task</h3>
+      <button onclick="hideEditTask()" class="close">&times;</button>
+    </div>
+    
+    <form id="edit-task-form" method="POST" class="form">
+      <input type="hidden" id="edit-task-id" name="task_id">
+      
+      <div class="form-row">
+        <div class="form-col">
+          <label for="edit-assigned_to">Assigned To</label>
+          <input id="edit-assigned_to" name="assigned_to" type="text" placeholder="Worker or contractor name">
+        </div>
+        <div class="form-col">
+          <label for="edit-priority">Priority</label>
+          <select id="edit-priority" name="priority">
+            <option value="1">1 - Low</option>
+            <option value="2">2 - Medium</option>
+            <option value="3">3 - Normal</option>
+            <option value="4">4 - High</option>
+            <option value="5">5 - Critical</option>
+          </select>
+        </div>
+      </div>
+      
+      <div class="form-row">
+        <div class="form-col">
+          <label for="edit-scheduled_start_date">Scheduled Start</label>
+          <input id="edit-scheduled_start_date" name="scheduled_start_date" type="date">
+        </div>
+        <div class="form-col">
+          <label for="edit-scheduled_end_date">Scheduled End</label>
+          <input id="edit-scheduled_end_date" name="scheduled_end_date" type="date">
+        </div>
+      </div>
+      
+      <div class="form-row">
+        <div class="form-col">
+          <label for="edit-status">Status</label>
+          <select id="edit-status" name="status">
+            <option value="not_started">Not Started</option>
+            <option value="in_progress">In Progress</option>
+            <option value="completed">Completed</option>
+            <option value="on_hold">On Hold</option>
+          </select>
+        </div>
+      </div>
+      
+      <div class="form-actions">
+        <button type="button" onclick="hideEditTask()" class="btn btn--secondary">Cancel</button>
+        <button type="submit" class="btn">Save Changes</button>
+      </div>
+    </form>
+  </div>
+</div>
+
+<style>
+.stats-grid {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 1rem;
+  margin-bottom: 2rem;
+}
+
+.stat-card {
+  background: white;
+  border: 1px solid #e2e8f0;
+  border-radius: 8px;
+  padding: 1.5rem;
+  text-align: center;
+  transition: all 0.2s;
+}
+
+.stat-card--warning {
+  border-left: 4px solid #f6ad55;
+}
+
+.stat-card--danger {
+  border-left: 4px solid #fc8181;
+}
+
+.stat-number {
+  font-size: 2rem;
+  font-weight: bold;
+  color: #2d3748;
+  margin-bottom: 0.5rem;
+}
+
+.stat-label {
+  color: #718096;
+  font-size: 0.9rem;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+}
+
+.filter-controls {
+  background: #f7fafc;
+  border: 1px solid #e2e8f0;
+  border-radius: 8px;
+  padding: 1rem;
+  margin-bottom: 2rem;
+  display: flex;
+  gap: 2rem;
+  align-items: end;
+}
+
+.filter-group {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+}
+
+.filter-group label {
+  font-size: 0.9rem;
+  font-weight: 500;
+  color: #4a5568;
+}
+
+.jobs-container {
+  display: flex;
+  flex-direction: column;
+  gap: 2rem;
+}
+
+.job-section {
+  background: white;
+  border: 1px solid #e2e8f0;
+  border-radius: 8px;
+  overflow: hidden;
+}
+
+.job-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 1.5rem;
+  background: #f8f9fa;
+  border-bottom: 1px solid #e2e8f0;
+}
+
+.job-title h2 {
+  margin: 0 0 0.25rem 0;
+  color: #2d3748;
+}
+
+.job-meta {
+  color: #718096;
+  font-size: 0.9rem;
+}
+
+.job-actions {
+  display: flex;
+  gap: 0.5rem;
+}
+
+.tasks-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(350px, 1fr));
+  gap: 1rem;
+  padding: 1.5rem;
+}
+
+.task-card {
+  background: #fefefe;
+  border: 1px solid #e2e8f0;
+  border-radius: 6px;
+  padding: 1rem;
+  transition: all 0.2s;
+}
+
+.task-card[data-status="completed"] {
+  background: #f0fff4;
+  border-color: #9ae6b4;
+}
+
+.task-card[data-status="in_progress"] {
+  background: #fffbf0;
+  border-color: #f6ad55;
+}
+
+.task-card[data-status="on_hold"] {
+  background: #fef5e7;
+  border-color: #f6ad55;
+}
+
+.task-card[data-critical="true"] {
+  border-left: 4px solid #e53e3e;
+}
+
+.task-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  margin-bottom: 1rem;
+}
+
+.task-title h3 {
+  margin: 0 0 0.25rem 0;
+  color: #2d3748;
+  font-size: 1rem;
+}
+
+.location-badge {
+  background: #edf2f7;
+  color: #4a5568;
+  padding: 0.125rem 0.5rem;
+  border-radius: 12px;
+  font-size: 0.75rem;
+  font-weight: 500;
+}
+
+.task-meta {
+  display: flex;
+  flex-direction: column;
+  align-items: end;
+  gap: 0.25rem;
+}
+
+.cost-badge {
+  background: #c6f6d5;
+  color: #22543d;
+  padding: 0.25rem 0.5rem;
+  border-radius: 4px;
+  font-size: 0.875rem;
+  font-weight: 600;
+}
+
+.priority-stars {
+  display: flex;
+  gap: 0.125rem;
+}
+
+.star {
+  color: #cbd5e0;
+  font-size: 0.875rem;
+}
+
+.star.active {
+  color: #f6ad55;
+}
+
+.status-select {
+  width: 100%;
+  padding: 0.5rem;
+  border: 1px solid #cbd5e0;
+  border-radius: 4px;
+  margin-bottom: 1rem;
+  font-size: 0.9rem;
+}
+
+.task-timeline {
+  margin: 0.75rem 0;
+  font-size: 0.85rem;
+  color: #4a5568;
+}
+
+.timeline-item {
+  margin-bottom: 0.25rem;
+}
+
+.task-details {
+  margin: 0.75rem 0;
+  font-size: 0.85rem;
+}
+
+.detail-item {
+  margin-bottom: 0.25rem;
+  color: #4a5568;
+}
+
+.critical-indicator {
+  background: #fed7d7;
+  color: #c53030;
+  padding: 0.25rem 0.5rem;
+  border-radius: 4px;
+  font-size: 0.75rem;
+  font-weight: bold;
+  text-align: center;
+  margin-top: 0.5rem;
+}
+
+.task-description {
+  background: #f7fafc;
+  border: 1px solid #e2e8f0;
+  border-radius: 4px;
+  padding: 0.75rem;
+  margin: 0.75rem 0;
+  font-size: 0.9rem;
+  color: #4a5568;
+  line-height: 1.4;
+}
+
+.task-actions {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-top: 1rem;
+  padding-top: 0.75rem;
+  border-top: 1px solid #e2e8f0;
+}
+
+.overdue-indicator {
+  background: #fed7d7;
+  color: #c53030;
+  padding: 0.25rem 0.5rem;
+  border-radius: 4px;
+  font-size: 0.75rem;
+  font-weight: bold;
+}
+
+.empty-state {
+  text-align: center;
+  padding: 4rem 2rem;
+  color: #718096;
+}
+
+.empty-state h2 {
+  color: #2d3748;
+  margin-bottom: 1rem;
+}
+
+.empty-state p {
+  margin-bottom: 1rem;
+  max-width: 500px;
+  margin-left: auto;
+  margin-right: auto;
+}
+
+/* Modal styles (reuse from contract generator) */
+.modal {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: rgba(0, 0, 0, 0.5);
+  z-index: 1000;
+}
+
+.modal-content {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  background: white;
+  border-radius: 8px;
+  padding: 0;
+  max-width: 500px;
+  width: 90%;
+  max-height: 90vh;
+  overflow-y: auto;
+}
+
+.modal-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 1.5rem;
+  border-bottom: 1px solid #e2e8f0;
+}
+
+.modal-header h3 {
+  margin: 0;
+}
+
+.close {
+  background: none;
+  border: none;
+  font-size: 1.5rem;
+  cursor: pointer;
+  padding: 0;
+  width: 30px;
+  height: 30px;
+}
+
+.modal .form {
+  padding: 1.5rem;
+}
+
+.form-actions {
+  display: flex;
+  gap: 1rem;
+  justify-content: flex-end;
+  margin-top: 1.5rem;
+  padding-top: 1rem;
+  border-top: 1px solid #e2e8f0;
+}
+</style>
+
+<script>
+function filterTasks() {
+  const statusFilter = document.getElementById('filter-status').value;
+  const priorityFilter = document.getElementById('filter-priority').value;
+  const criticalOnly = document.getElementById('filter-critical').checked;
+  
+  const taskCards = document.querySelectorAll('.task-card');
+  
+  taskCards.forEach(card => {
+    let show = true;
+    
+    if (statusFilter && card.dataset.status !== statusFilter) {
+      show = false;
+    }
+    
+    if (priorityFilter && card.dataset.priority !== priorityFilter) {
+      show = false;
+    }
+    
+    if (criticalOnly && card.dataset.critical !== 'true') {
+      show = false;
+    }
+    
+    card.style.display = show ? 'block' : 'none';
+  });
+}
+
+function updateTaskStatus(taskId, newStatus) {
+  fetch(`/api/tasks/${taskId}/status`, {
+    method: 'POST',
+    headers: {
+      'Content-Type': 'application/json',
+    },
+    body: JSON.stringify({ status: newStatus })
+  })
+  .then(response => response.json())
+  .then(data => {
+    if (data.success) {
+      const taskCard = document.querySelector(`[data-task-id="${taskId}"]`);
+      taskCard.dataset.status = newStatus;
+      
+      // Refresh page to update statistics
+      setTimeout(() => location.reload(), 500);
+    } else {
+      alert('Failed to update task status');
+    }
+  });
+}
+
+function editTask(taskId) {
+  // For now, create a simple form submission to edit route
+  // In a more advanced version, this could populate a modal with current values
+  document.getElementById('edit-task-id').value = taskId;
+  document.getElementById('edit-task-form').action = `/tasks/${taskId}/update`;
+  document.getElementById('edit-task-modal').style.display = 'block';
+}
+
+function hideEditTask() {
+  document.getElementById('edit-task-modal').style.display = 'none';
+  document.getElementById('edit-task-form').reset();
+}
+
+// Close modal when clicking outside
+document.getElementById('edit-task-modal').addEventListener('click', function(e) {
+  if (e.target === this) {
+    hideEditTask();
+  }
+});
+
+// Helper function for overdue detection
+function today() {
+  return new Date().toISOString().split('T')[0];
+}
+</script>
+
+{% endblock %}

@@ -1,0 +1,48 @@
+@startuml Contract Generator Flow
+!theme plain
+skinparam backgroundColor transparent
+
+title **ContractorPro - Contract Generator Workflow**
+
+actor Contractor
+database System
+participant "Job Setup" as JOB
+participant "Location Builder" as LOC
+participant "Task Templates" as TEMP
+participant "Contract Engine" as CONTRACT
+
+== Initial Job Creation ==
+Contractor -> JOB : Create Job\n(Client details, project type, scope)
+JOB -> System : Store project info
+
+== Location Breakdown ==
+Contractor -> LOC : Add Locations\n(Kitchen, Bathroom, Bedroom, etc.)
+LOC -> System : Store room-by-room breakdown
+note right of LOC : Each location has:\n• Name & description\n• Square footage\n• Order for contract
+
+== Task Assignment ==
+loop For Each Location
+  Contractor -> TEMP : Select Task Templates\n(Demolition, Installation, Finishing)
+  TEMP -> LOC : Apply pre-written tasks\nwith estimated costs
+end
+note right of TEMP : Templates include:\n• Task descriptions\n• Default costs\n• Time estimates
+
+== Contract Generation ==
+Contractor -> CONTRACT : Generate Contract
+CONTRACT -> JOB : Pull client details
+CONTRACT -> LOC : Pull all locations
+CONTRACT -> TEMP : Pull all assigned tasks
+CONTRACT -> CONTRACT : Calculate total value\nfrom included tasks
+
+CONTRACT -> Contractor : **Professional Contract Document**\n• Auto-generated contract number\n• Client information pre-filled\n• Location-by-location breakdown\n• Task details with costs\n• Terms & conditions\n• Total project value
+
+note right of CONTRACT
+**Auto-Generated Contract:**
+• CON-20250103-A1B2C3
+• "Kitchen Remodel - John Smith"
+• Room-by-room scope
+• Professional formatting
+• Ready for client signature
+end note
+
+@enduml

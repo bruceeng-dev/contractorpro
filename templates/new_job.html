@@ -1,0 +1,172 @@
+{% extends "base.html" %}
+{% block content %}
+
+<div class="container">
+  <div class="page-header">
+    <h1>Create New Job</h1>
+    <a href="{{ url_for('jobs_list') }}" class="btn btn--sm">Back to Jobs</a>
+  </div>
+
+  <form action="{{ url_for('new_job') }}" method="POST" class="form form--wide">
+    <!-- Client Information -->
+    <div class="section-header">
+      <h3>Client Information</h3>
+    </div>
+    
+    <div class="form-row">
+      <div class="form-col">
+        <label for="client_name">Client Name</label>
+        <input id="client_name" name="client_name" type="text" required>
+      </div>
+      <div class="form-col">
+        <label for="client_email">Client Email</label>
+        <input id="client_email" name="client_email" type="email" placeholder="For automated notifications">
+      </div>
+    </div>
+    
+    <div class="form-row">
+      <div class="form-col">
+        <label for="client_phone">Client Phone</label>
+        <input id="client_phone" name="client_phone" type="tel">
+      </div>
+    </div>
+
+    <!-- Project Details -->
+    <div class="section-header">
+      <h3>Project Details</h3>
+    </div>
+    
+    <div class="form-row">
+      <div class="form-col">
+        <label for="build_type">Build Type</label>
+        <select id="build_type" name="build_type" required>
+          <option value="remodel">Remodel/Renovation</option>
+          <option value="new_build">New Construction</option>
+        </select>
+      </div>
+      <div class="form-col">
+        <label for="project_type">Project Type</label>
+        <select id="project_type" name="project_type" required>
+          <option value="">Select project type</option>
+          <option value="Kitchen Remodel">Kitchen Remodel</option>
+          <option value="Bathroom Renovation">Bathroom Renovation</option>
+          <option value="Home Addition">Home Addition</option>
+          <option value="Commercial Build-out">Commercial Build-out</option>
+          <option value="Roofing">Roofing</option>
+          <option value="New Construction">New Construction</option>
+          <option value="Other">Other</option>
+        </select>
+      </div>
+    </div>
+
+    <label for="address">Project Address</label>
+    <input id="address" name="address" type="text" required>
+    
+    <label for="description">Project Description</label>
+    <textarea id="description" name="description" rows="3" placeholder="Detailed project scope..."></textarea>
+
+    <!-- Dimensional Information -->
+    <div class="section-header">
+      <h3>Dimensional Information</h3>
+    </div>
+    
+    <div class="form-row">
+      <div class="form-col">
+        <label for="total_square_footage">Total Square Footage</label>
+        <input id="total_square_footage" name="total_square_footage" type="number" step="0.01" placeholder="Building sq ft">
+      </div>
+      <div class="form-col">
+        <label for="lot_square_footage">Lot Square Footage</label>
+        <input id="lot_square_footage" name="lot_square_footage" type="number" step="0.01" placeholder="Property sq ft">
+      </div>
+    </div>
+    
+    <div class="form-row">
+      <div class="form-col">
+        <label for="linear_footage">Linear Footage</label>
+        <input id="linear_footage" name="linear_footage" type="number" step="0.01" placeholder="Linear measurements">
+      </div>
+      <div class="form-col">
+        <label for="stories">Number of Stories</label>
+        <input id="stories" name="stories" type="number" min="1" value="1">
+      </div>
+    </div>
+    
+    <div class="form-row">
+      <div class="form-col">
+        <label for="bedrooms">Bedrooms</label>
+        <input id="bedrooms" name="bedrooms" type="number" min="0">
+      </div>
+      <div class="form-col">
+        <label for="bathrooms">Bathrooms</label>
+        <input id="bathrooms" name="bathrooms" type="number" step="0.5" min="0" placeholder="e.g., 2.5">
+      </div>
+    </div>
+
+    <!-- Timeline & Budget -->
+    <div class="section-header">
+      <h3>Timeline & Budget</h3>
+    </div>
+    
+    <div class="form-row">
+      <div class="form-col">
+        <label for="start_date">Start Date</label>
+        <input id="start_date" name="start_date" type="date" required>
+      </div>
+      <div class="form-col">
+        <label for="budget">Budget ($)</label>
+        <input id="budget" name="budget" type="number" step="100" required>
+      </div>
+    </div>
+
+    <!-- Permits -->
+    <div class="section-header">
+      <h3>Permits & Compliance</h3>
+    </div>
+    
+    <div class="form-row">
+      <div class="form-col">
+        <label>
+          <input type="checkbox" name="permit_required" id="permit_required">
+          Permit Required for this Project
+        </label>
+      </div>
+    </div>
+
+    <button type="submit" class="btn">Create Job</button>
+  </form>
+  
+  <style>
+  .section-header {
+    margin: 2rem 0 1rem 0;
+    padding-bottom: 0.5rem;
+    border-bottom: 2px solid #e2e8f0;
+  }
+  
+  .section-header h3 {
+    margin: 0;
+    color: #2d3748;
+    font-size: 1.25rem;
+    font-weight: 600;
+  }
+  
+  .form-row {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 1rem;
+    margin-bottom: 1rem;
+  }
+  
+  .form-col {
+    display: flex;
+    flex-direction: column;
+  }
+  
+  textarea {
+    min-height: 80px;
+    resize: vertical;
+  }
+  </style>
+</div>
+
+{% endblock %}

@@ -1,0 +1,225 @@
+{% extends "base.html" %}
+{% block content %}
+
+<div class="container">
+  <div class="page-header">
+    <h1>Task Templates</h1>
+    <div>
+      <a href="{{ url_for('new_task_template') }}" class="btn btn--primary">+ New Template</a>
+      <a href="{{ url_for('dashboard') }}" class="btn btn--sm">← Dashboard</a>
+    </div>
+  </div>
+
+  <div class="templates-grid">
+    {% set locations = templates | groupby('location_type') %}
+    {% for location_type, location_templates in locations %}
+    <div class="location-section">
+      <div class="location-header">
+        <h2>{{ location_type }}</h2>
+        <span class="template-count">{{ location_templates | list | length }} templates</span>
+      </div>
+      
+      <div class="templates-list">
+        {% for template in location_templates %}
+        <div class="template-card">
+          <div class="template-header">
+            <h3>{{ template.task_name }}</h3>
+            <div class="template-meta">
+              {% if template.default_cost %}
+              <span class="cost-badge">${{ "{:,.0f}".format(template.default_cost) }}</span>
+              {% endif %}
+              {% if template.estimated_days %}
+              <span class="days-badge">{{ template.estimated_days }} days</span>
+              {% endif %}
+            </div>
+          </div>
+          
+          <div class="template-description">
+            {{ template.task_description }}
+          </div>
+          
+          <div class="template-actions">
+            <button class="btn btn--sm" onclick="editTemplate({{ template.id }})">Edit</button>
+            <button class="btn btn--sm btn--danger" onclick="deleteTemplate({{ template.id }})">Delete</button>
+          </div>
+        </div>
+        {% endfor %}
+      </div>
+    </div>
+    {% endfor %}
+    
+    {% if not templates %}
+    <div class="empty-state">
+      <h2>No Task Templates Yet</h2>
+      <p>Create reusable task templates to speed up contract generation.</p>
+      <p>Templates include pre-written descriptions and default costs for common tasks.</p>
+      <a href="{{ url_for('new_task_template') }}" class="btn btn--primary">Create Your First Template</a>
+    </div>
+    {% endif %}
+  </div>
+</div>
+
+<style>
+.templates-grid {
+  display: flex;
+  flex-direction: column;
+  gap: 2rem;
+}
+
+.location-section {
+  background: white;
+  border: 1px solid #e2e8f0;
+  border-radius: 8px;
+  padding: 1.5rem;
+}
+
+.location-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 1.5rem;
+  padding-bottom: 0.5rem;
+  border-bottom: 2px solid #e2e8f0;
+}
+
+.location-header h2 {
+  margin: 0;
+  color: #2d3748;
+  text-transform: capitalize;
+}
+
+.template-count {
+  background: #edf2f7;
+  color: #4a5568;
+  padding: 0.25rem 0.75rem;
+  border-radius: 12px;
+  font-size: 0.875rem;
+  font-weight: 500;
+}
+
+.templates-list {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(350px, 1fr));
+  gap: 1.5rem;
+}
+
+.template-card {
+  background: #fefefe;
+  border: 1px solid #e2e8f0;
+  border-radius: 6px;
+  padding: 1.5rem;
+  transition: all 0.2s;
+}
+
+.template-card:hover {
+  border-color: #cbd5e0;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+.template-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  margin-bottom: 1rem;
+}
+
+.template-header h3 {
+  margin: 0;
+  color: #2d3748;
+  font-size: 1.125rem;
+  flex: 1;
+}
+
+.template-meta {
+  display: flex;
+  gap: 0.5rem;
+  margin-left: 1rem;
+}
+
+.cost-badge {
+  background: #c6f6d5;
+  color: #22543d;
+  padding: 0.25rem 0.5rem;
+  border-radius: 4px;
+  font-size: 0.875rem;
+  font-weight: 600;
+}
+
+.days-badge {
+  background: #bee3f8;
+  color: #2c5282;
+  padding: 0.25rem 0.5rem;
+  border-radius: 4px;
+  font-size: 0.875rem;
+  font-weight: 600;
+}
+
+.template-description {
+  color: #4a5568;
+  line-height: 1.6;
+  margin-bottom: 1rem;
+  font-size: 0.95rem;
+}
+
+.template-actions {
+  display: flex;
+  gap: 0.5rem;
+}
+
+.empty-state {
+  text-align: center;
+  padding: 4rem 2rem;
+  color: #718096;
+}
+
+.empty-state h2 {
+  color: #2d3748;
+  margin-bottom: 1rem;
+}
+
+.empty-state p {
+  margin-bottom: 1rem;
+  max-width: 500px;
+  margin-left: auto;
+  margin-right: auto;
+}
+
+.btn--danger {
+  background-color: #fed7d7;
+  color: #c53030;
+  border-color: #feb2b2;
+}
+
+.btn--danger:hover {
+  background-color: #feb2b2;
+  border-color: #fc8181;
+}
+</style>
+
+<script>
+function editTemplate(templateId) {
+  // For now, redirect to edit page
+  // Later can be replaced with modal editing
+  window.location.href = `/task-templates/${templateId}/edit`;
+}
+
+function deleteTemplate(templateId) {
+  if (confirm('Are you sure you want to delete this template?')) {
+    fetch(`/task-templates/${templateId}`, {
+      method: 'DELETE',
+      headers: {
+        'Content-Type': 'application/json',
+      }
+    })
+    .then(response => {
+      if (response.ok) {
+        location.reload();
+      } else {
+        alert('Failed to delete template');
+      }
+    });
+  }
+}
+</script>
+
+{% endblock %}

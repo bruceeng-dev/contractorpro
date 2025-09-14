@@ -1,0 +1,164 @@
+{% extends "base.html" %}
+{% block content %}
+
+<div class="container">
+  <div class="page-header">
+    <h1>Reports & Analytics</h1>
+    <select class="period-selector">
+      <option>Last 30 Days</option>
+      <option>Last 3 Months</option>
+      <option>Last Year</option>
+    </select>
+  </div>
+
+  <div class="reports-grid">
+    <!-- Revenue Chart -->
+    <div class="report-card">
+      <h3>Monthly Revenue</h3>
+      <div class="chart-placeholder">
+        <div class="bar-chart">
+          <div class="bar" style="height: 60%"><span>$45K</span></div>
+          <div class="bar" style="height: 80%"><span>$65K</span></div>
+          <div class="bar" style="height: 40%"><span>$32K</span></div>
+          <div class="bar" style="height: 90%"><span>$78K</span></div>
+        </div>
+        <div class="chart-labels">
+          <span>Oct</span><span>Nov</span><span>Dec</span><span>Jan</span>
+        </div>
+      </div>
+    </div>
+
+    <!-- Project Status -->
+    <div class="report-card">
+      <h3>Project Status</h3>
+      <div class="status-stats">
+        <div class="stat-item">
+          <span class="stat-number">8</span>
+          <span class="stat-label">Active</span>
+        </div>
+        <div class="stat-item">
+          <span class="stat-number">3</span>
+          <span class="stat-label">Pending</span>
+        </div>
+        <div class="stat-item">
+          <span class="stat-number">12</span>
+          <span class="stat-label">Completed</span>
+        </div>
+      </div>
+    </div>
+
+    <!-- Lead Conversion -->
+    <div class="report-card">
+      <h3>Lead Conversion</h3>
+      <div class="conversion-funnel">
+        <div class="funnel-stage">
+          <span class="funnel-number">45</span>
+          <span class="funnel-label">Total Leads</span>
+        </div>
+        <div class="funnel-arrow">↓</div>
+        <div class="funnel-stage">
+          <span class="funnel-number">28</span>
+          <span class="funnel-label">Contacted</span>
+        </div>
+        <div class="funnel-arrow">↓</div>
+        <div class="funnel-stage">
+          <span class="funnel-number">15</span>
+          <span class="funnel-label">Quoted</span>
+        </div>
+        <div class="funnel-arrow">↓</div>
+        <div class="funnel-stage">
+          <span class="funnel-number">9</span>
+          <span class="funnel-label">Won</span>
+        </div>
+      </div>
+      <p class="muted sm">Conversion Rate: 20%</p>
+    </div>
+
+    <!-- Performance Metrics -->
+    <div class="report-card">
+      <h3>Performance Metrics</h3>
+      <div class="metrics-list">
+        <div class="metric-row">
+          <span class="metric-label">Avg Project Duration</span>
+          <span class="metric-value">6.2 weeks</span>
+        </div>
+        <div class="metric-row">
+          <span class="metric-label">On-time Completion</span>
+          <span class="metric-value">85%</span>
+        </div>
+        <div class="metric-row">
+          <span class="metric-label">Customer Satisfaction</span>
+          <span class="metric-value">4.8/5.0</span>
+        </div>
+        <div class="metric-row">
+          <span class="metric-label">Repeat Customers</span>
+          <span class="metric-value">35%</span>
+        </div>
+      </div>
+    </div>
+
+    <!-- Top Services -->
+    <div class="report-card">
+      <h3>Most Popular Services</h3>
+      <div class="service-list">
+        <div class="service-item">
+          <span class="service-name">Kitchen Remodeling</span>
+          <div class="service-bar">
+            <div class="service-progress" style="width: 80%"></div>
+          </div>
+          <span class="service-count">24 projects</span>
+        </div>
+        <div class="service-item">
+          <span class="service-name">Bathroom Renovation</span>
+          <div class="service-bar">
+            <div class="service-progress" style="width: 60%"></div>
+          </div>
+          <span class="service-count">18 projects</span>
+        </div>
+        <div class="service-item">
+          <span class="service-name">Home Addition</span>
+          <div class="service-bar">
+            <div class="service-progress" style="width: 40%"></div>
+          </div>
+          <span class="service-count">12 projects</span>
+        </div>
+        <div class="service-item">
+          <span class="service-name">Commercial Build-out</span>
+          <div class="service-bar">
+            <div class="service-progress" style="width: 25%"></div>
+          </div>
+          <span class="service-count">7 projects</span>
+        </div>
+      </div>
+    </div>
+
+    <!-- Financial Summary -->
+    <div class="report-card report-card--wide">
+      <h3>Financial Summary</h3>
+      <div class="financial-grid">
+        <div class="financial-item">
+          <h4>Total Revenue (YTD)</h4>
+          <span class="financial-amount">$485,250</span>
+          <span class="financial-change positive">+12% vs last year</span>
+        </div>
+        <div class="financial-item">
+          <h4>Outstanding Invoices</h4>
+          <span class="financial-amount">$23,750</span>
+          <span class="financial-change">5 overdue</span>
+        </div>
+        <div class="financial-item">
+          <h4>Average Project Value</h4>
+          <span class="financial-amount">$18,500</span>
+          <span class="financial-change positive">+8% vs last quarter</span>
+        </div>
+        <div class="financial-item">
+          <h4>Profit Margin</h4>
+          <span class="financial-amount">28%</span>
+          <span class="financial-change positive">+3% improvement</span>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+{% endblock %}

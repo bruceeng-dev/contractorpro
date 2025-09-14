@@ -1,0 +1,443 @@
+{% extends "base.html" %}
+{% block content %}
+
+<div class="container">
+  <!-- Estimate Header -->
+  <div class="estimate-header">
+    <div class="estimate-title">
+      <h1>{{ estimate.estimate_number }}</h1>
+      <p class="client-info">{{ estimate.client_name }} • {{ estimate.project_description }}</p>
+    </div>
+    <div class="estimate-actions">
+      <span class="badge badge--{{ estimate.status }}">{{ estimate.status.title() }}</span>
+      {% if estimate.status == 'draft' %}
+      <form action="{{ url_for('send_estimate', estimate_id=estimate.id) }}" method="POST" style="display: inline;">
+        <button type="submit" class="btn">📧 Send to Client</button>
+      </form>
+      {% endif %}
+      <a href="{{ url_for('edit_estimate', estimate_id=estimate.id) }}" class="btn btn--sm">✏️ Edit</a>
+      <a href="{{ url_for('estimates_list') }}" class="btn btn--sm">← Back to Estimates</a>
+    </div>
+  </div>
+
+  <div class="estimate-content">
+    <!-- Cost Breakdown -->
+    <div class="breakdown-section">
+      <h3>Cost Breakdown</h3>
+      <div class="breakdown-grid">
+        <div class="breakdown-item">
+          <div class="breakdown-icon">👷</div>
+          <div class="breakdown-info">
+            <h4>Labor</h4>
+            <div class="breakdown-amount">${{ "{:,.2f}".format(estimate.labor_cost) }}</div>
+          </div>
+        </div>
+        
+        <div class="breakdown-item">
+          <div class="breakdown-icon">🧱</div>
+          <div class="breakdown-info">
+            <h4>Materials</h4>
+            <div class="breakdown-amount">${{ "{:,.2f}".format(estimate.material_cost) }}</div>
+          </div>
+        </div>
+        
+        <div class="breakdown-item">
+          <div class="breakdown-icon">🔨</div>
+          <div class="breakdown-info">
+            <h4>Equipment</h4>
+            <div class="breakdown-amount">${{ "{:,.2f}".format(estimate.equipment_cost) }}</div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Calculations -->
+      <div class="calculations">
+        <div class="calc-row">
+          <span>Subtotal</span>
+          <span>${{ "{:,.2f}".format(estimate.labor_cost + estimate.material_cost + estimate.equipment_cost) }}</span>
+        </div>
+        <div class="calc-row">
+          <span>Overhead ({{ estimate.overhead_percentage }}%)</span>
+          <span>${{ "{:,.2f}".format((estimate.labor_cost + estimate.material_cost + estimate.equipment_cost) * estimate.overhead_percentage / 100) }}</span>
+        </div>
+        <div class="calc-row">
+          <span>Profit ({{ estimate.profit_percentage }}%)</span>
+          <span>${{ "{:,.2f}".format(((estimate.labor_cost + estimate.material_cost + estimate.equipment_cost) * (1 + estimate.overhead_percentage / 100)) * estimate.profit_percentage / 100) }}</span>
+        </div>
+        <div class="calc-row total-row">
+          <span>Total</span>
+          <span>${{ "{:,.2f}".format(estimate.total_cost) }}</span>
+        </div>
+      </div>
+    </div>
+
+    <!-- Line Items -->
+    <div class="line-items-section">
+      <div class="section-header">
+        <h3>📋 Line Items</h3>
+        <button class="btn btn--sm" onclick="toggleLineItemForm()">+ Add Line Item</button>
+      </div>
+
+      <!-- Add Line Item Form -->
+      <div id="line-item-form" class="line-item-form" style="display: none;">
+        <form action="{{ url_for('add_line_item', estimate_id=estimate.id) }}" method="POST">
+          <div class="form-row">
+            <div class="form-col">
+              <label for="description">Description</label>
+              <input type="text" id="description" name="description" required placeholder="e.g., Kitchen cabinet installation">
+            </div>
+            <div class="form-col">
+              <label for="category">Category</label>
+              <select id="category" name="category">
+                <option value="labor">Labor</option>
+                <option value="material">Material</option>
+                <option value="equipment">Equipment</option>
+                <option value="other">Other</option>
+              </select>
+            </div>
+          </div>
+          <div class="form-row">
+            <div class="form-col">
+              <label for="quantity">Quantity</label>
+              <input type="number" id="quantity" name="quantity" step="0.01" min="0" value="1" required>
+            </div>
+            <div class="form-col">
+              <label for="unit">Unit</label>
+              <select id="unit" name="unit">
+                <option value="each">Each</option>
+                <option value="sqft">Sq Ft</option>
+                <option value="hour">Hour</option>
+                <option value="day">Day</option>
+                <option value="lft">Linear Ft</option>
+                <option value="ton">Ton</option>
+              </select>
+            </div>
+            <div class="form-col">
+              <label for="unit_cost">Unit Cost</label>
+              <input type="number" id="unit_cost" name="unit_cost" step="0.01" min="0" required>
+            </div>
+          </div>
+          <div class="form-field">
+            <label for="notes">Notes (Optional)</label>
+            <textarea id="notes" name="notes" rows="2" placeholder="Additional details or specifications..."></textarea>
+          </div>
+          <div class="form-actions">
+            <button type="submit" class="btn">Add Line Item</button>
+            <button type="button" class="btn btn--sm" onclick="toggleLineItemForm()">Cancel</button>
+          </div>
+        </form>
+      </div>
+
+      <!-- Line Items Table -->
+      {% if line_items %}
+      <div class="line-items-table">
+        <table>
+          <thead>
+            <tr>
+              <th>Description</th>
+              <th>Category</th>
+              <th>Qty</th>
+              <th>Unit</th>
+              <th>Unit Cost</th>
+              <th>Total</th>
+            </tr>
+          </thead>
+          <tbody>
+            {% for item in line_items %}
+            <tr>
+              <td>
+                <div class="item-description">{{ item.description }}</div>
+                {% if item.notes %}
+                <div class="item-notes">{{ item.notes }}</div>
+                {% endif %}
+              </td>
+              <td><span class="category-badge category-{{ item.category }}">{{ item.category.title() }}</span></td>
+              <td>{{ item.quantity }}</td>
+              <td>{{ item.unit }}</td>
+              <td>${{ "{:,.2f}".format(item.unit_cost) }}</td>
+              <td class="total-cell">${{ "{:,.2f}".format(item.total_cost) }}</td>
+            </tr>
+            {% endfor %}
+          </tbody>
+        </table>
+      </div>
+      {% else %}
+      <div class="empty-line-items">
+        <p class="muted">No line items yet. Add detailed line items to provide a comprehensive estimate.</p>
+      </div>
+      {% endif %}
+    </div>
+
+    <!-- Estimate Info -->
+    <div class="estimate-info">
+      <div class="info-grid">
+        <div class="info-item">
+          <span class="info-label">Created</span>
+          <span class="info-value">{{ estimate.created_date.strftime('%B %d, %Y') }}</span>
+        </div>
+        <div class="info-item">
+          <span class="info-label">Last Updated</span>
+          <span class="info-value">{{ estimate.updated_date.strftime('%B %d, %Y') }}</span>
+        </div>
+        {% if estimate.valid_until %}
+        <div class="info-item">
+          <span class="info-label">Valid Until</span>
+          <span class="info-value">{{ estimate.valid_until.strftime('%B %d, %Y') }}</span>
+        </div>
+        {% endif %}
+        {% if estimate.job %}
+        <div class="info-item">
+          <span class="info-label">Related Job</span>
+          <span class="info-value">
+            <a href="{{ url_for('job_detail', job_id=estimate.job.id) }}">{{ estimate.job.project_type }}</a>
+          </span>
+        </div>
+        {% endif %}
+      </div>
+    </div>
+  </div>
+</div>
+
+<script>
+function toggleLineItemForm() {
+  const form = document.getElementById('line-item-form');
+  form.style.display = form.style.display === 'none' ? 'block' : 'none';
+}
+</script>
+
+<style>
+.estimate-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 30px;
+  padding-bottom: 20px;
+  border-bottom: 1px solid var(--border);
+}
+
+.estimate-title h1 {
+  margin: 0 0 5px;
+  font-size: 24px;
+  font-family: 'Courier New', monospace;
+  color: var(--accent);
+}
+
+.client-info {
+  color: var(--muted);
+  margin: 0;
+}
+
+.estimate-actions {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.estimate-content {
+  display: grid;
+  gap: 30px;
+}
+
+.breakdown-section, .line-items-section, .estimate-info {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  padding: 24px;
+}
+
+.breakdown-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+  gap: 20px;
+  margin-bottom: 30px;
+}
+
+.breakdown-item {
+  background: #f8fafc;
+  border-radius: var(--radius);
+  padding: 20px;
+  display: flex;
+  align-items: center;
+  gap: 15px;
+}
+
+.breakdown-icon {
+  font-size: 24px;
+}
+
+.breakdown-info h4 {
+  margin: 0 0 5px;
+  font-size: 14px;
+  color: var(--muted);
+}
+
+.breakdown-amount {
+  font-size: 18px;
+  font-weight: 700;
+  color: var(--text);
+}
+
+.calculations {
+  background: white;
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  padding: 20px;
+}
+
+.calc-row {
+  display: flex;
+  justify-content: space-between;
+  padding: 8px 0;
+  border-bottom: 1px solid #f1f5f9;
+}
+
+.calc-row:last-child {
+  border-bottom: none;
+}
+
+.total-row {
+  border-top: 2px solid var(--border);
+  margin-top: 10px;
+  padding-top: 15px;
+  font-size: 18px;
+  font-weight: 700;
+  color: var(--accent);
+}
+
+.section-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 20px;
+}
+
+.line-item-form {
+  background: #f8fafc;
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  padding: 20px;
+  margin-bottom: 20px;
+}
+
+.line-items-table {
+  overflow-x: auto;
+}
+
+.line-items-table table {
+  width: 100%;
+  border-collapse: collapse;
+  background: white;
+  border-radius: var(--radius);
+  overflow: hidden;
+}
+
+.line-items-table th,
+.line-items-table td {
+  padding: 12px;
+  text-align: left;
+  border-bottom: 1px solid var(--border);
+}
+
+.line-items-table th {
+  background: #f8fafc;
+  font-weight: 600;
+  font-size: 12px;
+  text-transform: uppercase;
+  color: var(--muted);
+}
+
+.item-description {
+  font-weight: 600;
+  margin-bottom: 2px;
+}
+
+.item-notes {
+  font-size: 12px;
+  color: var(--muted);
+  font-style: italic;
+}
+
+.category-badge {
+  padding: 4px 8px;
+  border-radius: 12px;
+  font-size: 11px;
+  font-weight: 600;
+  text-transform: uppercase;
+}
+
+.category-labor {
+  background: #dbeafe;
+  color: #1d4ed8;
+}
+
+.category-material {
+  background: #dcfce7;
+  color: #166534;
+}
+
+.category-equipment {
+  background: #fef3c7;
+  color: #92400e;
+}
+
+.category-other {
+  background: #f3f4f6;
+  color: #374151;
+}
+
+.total-cell {
+  font-weight: 600;
+  text-align: right;
+}
+
+.empty-line-items {
+  text-align: center;
+  padding: 40px 20px;
+}
+
+.info-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+  gap: 20px;
+}
+
+.info-item {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.info-label {
+  font-size: 12px;
+  color: var(--muted);
+  font-weight: 600;
+  text-transform: uppercase;
+}
+
+.info-value {
+  font-weight: 600;
+  color: var(--text);
+}
+
+@media (max-width: 768px) {
+  .estimate-header {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 15px;
+  }
+  
+  .breakdown-grid {
+    grid-template-columns: 1fr;
+  }
+  
+  .line-items-table {
+    font-size: 14px;
+  }
+  
+  .info-grid {
+    grid-template-columns: 1fr;
+  }
+}
+</style>
+
+{% endblock %}

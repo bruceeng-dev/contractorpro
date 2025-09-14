@@ -1,0 +1,100 @@
+@startuml ContractorPro System Flow
+!theme cerulean-outline
+skinparam backgroundColor transparent
+skinparam defaultFontName Arial
+
+title **ContractorPro - Intelligent Construction Business Automation**
+
+actor Contractor as C
+actor Client as CL
+database Database as DB
+component "Email System" as EMAIL
+component "File Storage" as FS
+
+package "Core Workflows" {
+    rectangle "Lead Management" as LEAD {
+        (New Lead Entry) as NewLead
+        (Follow-up Tracking) as FollowUp
+        (Lead Conversion) as Convert
+    }
+    
+    rectangle "Estimate System" as EST {
+        (Template Selection) as Template
+        (Cost Calculation) as Calc
+        (Professional Email) as EstEmail
+    }
+    
+    rectangle "Job Management" as JOB {
+        (Job Creation) as NewJob
+        (Progress Tracking) as Progress
+        (Contract Generation) as Contract
+    }
+    
+    rectangle "Photo Automation" as PHOTO {
+        (Photo Upload) as Upload
+        (Milestone Detection) as Milestone
+        (Auto Notification) as Notify
+    }
+}
+
+' Lead Management Flow
+C --> NewLead : Manual entry\n(name, email, project type)
+NewLead --> DB : Store lead data
+NewLead --> FollowUp : Set reminder dates
+FollowUp --> Convert : When ready
+Convert --> NewJob : Create project
+
+' Estimate Flow
+C --> Template : Select project type\n(Kitchen, Bathroom, etc.)
+Template --> Calc : Auto-populate costs\n+ overhead + profit
+Calc --> EstEmail : Send professional quote
+EstEmail --> EMAIL : Automated delivery
+EstEmail --> CL : Receive estimate
+CL --> Convert : If accepted
+
+' Job Management Flow
+NewJob --> DB : Store project details
+NewJob --> Contract : Generate agreement
+Contract --> Progress : Track milestones
+
+' Photo Automation Flow
+C --> Upload : Upload progress photo\n+ milestone %
+Upload --> FS : Store image file
+Upload --> Milestone : Check if milestone
+Milestone --> Notify : Auto-generate email
+Notify --> EMAIL : Send to client
+EMAIL --> CL : Receive update
+
+' Database interactions
+LEAD --> DB
+EST --> DB
+JOB --> DB
+PHOTO --> DB
+
+note right of EMAIL
+  **Automated Emails:**
+  • Milestone notifications
+  • Estimate delivery
+  • Status updates
+  • Professional templates
+end note
+
+note right of DB
+  **Core Data Models:**
+  • Users (Contractors)
+  • Leads (Prospects)
+  • Jobs (Projects)
+  • Estimates + Line Items
+  • Progress Photos
+  • Email Notifications
+end note
+
+note bottom of PHOTO
+  **Key Automation:**
+  50% time reduction in estimates
+  Automated client communication
+  Visual progress tracking
+  Professional presentations
+end note
+
+@enduml

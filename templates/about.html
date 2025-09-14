@@ -1,0 +1,51 @@
+{% extends "base.html" %}
+{% block content %}
+
+{% block head %}
+<link rel="stylesheet" href="{{ url_for('static', filename='css/target_variable_test.css') }}">
+{% endblock %}
+
+
+<h1>About</h1>
+<p>This is the about page.</p>
+<p>This is community for billiards professionals.</p>
+<p id="targetvariable">Enter at your own risk.</p>
+
+<form action="/submit" method="POST">
+    <!-- Text input -->
+    <label for="username">Username:</label>
+    <input type="text" id="username" name="username" required>
+
+    <br><br>
+
+    <!-- Email input -->
+    <label for="email">Email:</label>
+    <input type="email" id="email" name="email" required>
+
+    <br><br>
+
+    <!-- Dropdown select -->
+    <label for="role">Role:</label>
+    <select id="role" name="role">
+        <option value="admin">Admin</option>
+        <option value="editor">Editor</option>
+        <option value="viewer">Viewer</option>
+    </select>
+
+    <br><br>
+
+    <!-- Checkbox -->
+    <label>
+        <input type="checkbox" name="subscribe" value="yes">
+        Subscribe to newsletter
+    </label>
+
+    <br><br>
+
+    <!-- Submit button -->
+    <button type="submit">Submit</button>
+</form>
+
+
+
+{% endblock %}

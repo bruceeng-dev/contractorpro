@@ -1,0 +1,59 @@
+{% extends "base.html" %}
+{% block content %}
+
+<div class="container">
+  <div class="page-header">
+    <h1>Add New Lead</h1>
+    <a href="{{ url_for('leads_list') }}" class="btn btn--sm">Back to Leads</a>
+  </div>
+
+  <form action="{{ url_for('new_lead') }}" method="POST" class="form form--wide">
+    <div class="form-row">
+      <div class="form-col">
+        <label for="name">Full Name</label>
+        <input id="name" name="name" type="text" required>
+      </div>
+      <div class="form-col">
+        <label for="email">Email</label>
+        <input id="email" name="email" type="email" required>
+      </div>
+    </div>
+
+    <div class="form-row">
+      <div class="form-col">
+        <label for="phone">Phone Number</label>
+        <input id="phone" name="phone" type="tel">
+      </div>
+      <div class="form-col">
+        <label for="project_type">Interested In</label>
+        <select id="project_type" name="project_type">
+          <option value="">Select project type</option>
+          <option value="Kitchen Remodel">Kitchen Remodel</option>
+          <option value="Bathroom Renovation">Bathroom Renovation</option>
+          <option value="Home Addition">Home Addition</option>
+          <option value="Commercial">Commercial Project</option>
+          <option value="Roofing/Siding">Roofing/Siding</option>
+          <option value="New Construction">New Construction</option>
+          <option value="Other">Other</option>
+        </select>
+      </div>
+    </div>
+
+    <label for="budget_range">Budget Range</label>
+    <select id="budget_range" name="budget_range">
+      <option value="">Select budget range</option>
+      <option value="Under $10k">Under $10,000</option>
+      <option value="$10k-$25k">$10,000 - $25,000</option>
+      <option value="$25k-$50k">$25,000 - $50,000</option>
+      <option value="$50k-$100k">$50,000 - $100,000</option>
+      <option value="Over $100k">Over $100,000</option>
+    </select>
+
+    <label for="notes">Notes</label>
+    <textarea id="notes" name="notes" rows="4" placeholder="Additional information about the lead, timeline, special requirements, etc."></textarea>
+
+    <button type="submit" class="btn">Add Lead</button>
+  </form>
+</div>
+
+{% endblock %}

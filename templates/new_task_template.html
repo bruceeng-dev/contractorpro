@@ -1,0 +1,387 @@
+{% extends "base.html" %}
+{% block content %}
+
+<div class="container">
+  <div class="page-header">
+    <h1>Create Task Template</h1>
+    <a href="{{ url_for('task_templates') }}" class="btn btn--sm">← Back to Templates</a>
+  </div>
+
+  <div class="template-form-container">
+    <form action="{{ url_for('new_task_template') }}" method="POST" class="form form--wide">
+      <!-- Template Basic Info -->
+      <div class="section-header">
+        <h3>Template Information</h3>
+      </div>
+      
+      <div class="form-row">
+        <div class="form-col">
+          <label for="location_type">Location Type</label>
+          <select id="location_type" name="location_type" required>
+            <option value="">Select location type</option>
+            <option value="Kitchen">Kitchen</option>
+            <option value="Bathroom">Bathroom</option>
+            <option value="Living Room">Living Room</option>
+            <option value="Bedroom">Bedroom</option>
+            <option value="Basement">Basement</option>
+            <option value="Attic">Attic</option>
+            <option value="Roof">Roof</option>
+            <option value="Exterior">Exterior</option>
+            <option value="Flooring">Flooring</option>
+            <option value="Electrical">Electrical</option>
+            <option value="Plumbing">Plumbing</option>
+            <option value="HVAC">HVAC</option>
+            <option value="Windows">Windows</option>
+            <option value="Doors">Doors</option>
+            <option value="Garage">Garage</option>
+            <option value="Landscaping">Landscaping</option>
+            <option value="General">General</option>
+            <option value="Custom">Custom (Enter Below)</option>
+          </select>
+        </div>
+        <div class="form-col">
+          <label for="custom_location">Custom Location Type</label>
+          <input id="custom_location" name="custom_location" type="text" placeholder="Enter custom location type">
+        </div>
+      </div>
+      
+      <div class="form-row">
+        <div class="form-col">
+          <label for="task_name">Task Name</label>
+          <input id="task_name" name="task_name" type="text" placeholder="e.g., Replace Shingled Roof" required>
+        </div>
+        <div class="form-col">
+          <label for="category">Category</label>
+          <select id="category" name="category">
+            <option value="">Select category</option>
+            <option value="demolition">Demolition</option>
+            <option value="preparation">Preparation</option>
+            <option value="installation">Installation</option>
+            <option value="finishing">Finishing</option>
+            <option value="electrical">Electrical</option>
+            <option value="plumbing">Plumbing</option>
+            <option value="insulation">Insulation</option>
+            <option value="drywall">Drywall</option>
+            <option value="flooring">Flooring</option>
+            <option value="painting">Painting</option>
+            <option value="cleanup">Cleanup</option>
+            <option value="inspection">Inspection</option>
+          </select>
+        </div>
+      </div>
+
+      <!-- Pre-written Description -->
+      <div class="section-header">
+        <h3>Task Description Template</h3>
+        <p class="section-subtitle">This is the detailed description that will appear in contracts</p>
+      </div>
+      
+      <label for="task_description">Detailed Task Description</label>
+      <textarea id="task_description" name="task_description" rows="8" placeholder="Enter detailed task description with bullet points..." required></textarea>
+      
+      <div class="description-help">
+        <strong>Example Format:</strong>
+        <div class="example-text">
+          - Remove existing weathered shingles<br>
+          - Assess roof decking for water damage, replace roof decking where needed<br>
+          - Apply ice and watershield from edge of roof 3' and at valleys and roof terminations<br>
+          - Install new roof shingles and ridge cap/ridge vent where applicable
+        </div>
+      </div>
+
+      <!-- Pricing & Timeline -->
+      <div class="section-header">
+        <h3>Default Pricing & Timeline</h3>
+      </div>
+      
+      <div class="form-row">
+        <div class="form-col">
+          <label for="default_cost">Default Cost ($)</label>
+          <input id="default_cost" name="default_cost" type="number" step="0.01" placeholder="e.g., 10000.00">
+        </div>
+        <div class="form-col">
+          <label for="estimated_days">Estimated Days</label>
+          <input id="estimated_days" name="estimated_days" type="number" min="1" placeholder="e.g., 3">
+        </div>
+      </div>
+
+      <button type="submit" class="btn btn--primary">Create Template</button>
+    </form>
+  </div>
+  
+  <!-- Common Templates Quick Start -->
+  <div class="quick-templates">
+    <div class="section-header">
+      <h3>Quick Start Templates</h3>
+      <p class="section-subtitle">Click to pre-fill common task templates</p>
+    </div>
+    
+    <div class="template-buttons">
+      <button type="button" class="template-btn" onclick="loadQuickTemplate('roof_shingles')">
+        🏠 Replace Shingled Roof
+      </button>
+      <button type="button" class="template-btn" onclick="loadQuickTemplate('kitchen_cabinets')">
+        🏠 Install Kitchen Cabinets
+      </button>
+      <button type="button" class="template-btn" onclick="loadQuickTemplate('bathroom_tile')">
+        🛁 Install Bathroom Tile
+      </button>
+      <button type="button" class="template-btn" onclick="loadQuickTemplate('hardwood_floors')">
+        🪵 Install Hardwood Flooring
+      </button>
+      <button type="button" class="template-btn" onclick="loadQuickTemplate('exterior_paint')">
+        🎨 Exterior House Painting
+      </button>
+      <button type="button" class="template-btn" onclick="loadQuickTemplate('electrical_panel')">
+        ⚡ Electrical Panel Upgrade
+      </button>
+    </div>
+  </div>
+</div>
+
+<style>
+.template-form-container {
+  background: white;
+  border: 1px solid #e2e8f0;
+  border-radius: 8px;
+  padding: 2rem;
+  margin-bottom: 2rem;
+}
+
+.section-header {
+  margin: 2rem 0 1rem 0;
+  padding-bottom: 0.5rem;
+  border-bottom: 2px solid #e2e8f0;
+}
+
+.section-header:first-child {
+  margin-top: 0;
+}
+
+.section-header h3 {
+  margin: 0;
+  color: #2d3748;
+  font-size: 1.25rem;
+  font-weight: 600;
+}
+
+.section-subtitle {
+  margin: 0.5rem 0 0 0;
+  color: #718096;
+  font-size: 0.9rem;
+}
+
+.form-row {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 1rem;
+  margin-bottom: 1rem;
+}
+
+.form-col {
+  display: flex;
+  flex-direction: column;
+}
+
+.description-help {
+  background: #f7fafc;
+  border: 1px solid #e2e8f0;
+  border-radius: 4px;
+  padding: 1rem;
+  margin-top: 0.5rem;
+  font-size: 0.9rem;
+}
+
+.example-text {
+  background: white;
+  border: 1px solid #cbd5e0;
+  border-radius: 4px;
+  padding: 0.75rem;
+  margin-top: 0.5rem;
+  font-family: monospace;
+  font-size: 0.85rem;
+  line-height: 1.5;
+  color: #4a5568;
+}
+
+.quick-templates {
+  background: #f8f9fa;
+  border: 1px solid #e2e8f0;
+  border-radius: 8px;
+  padding: 2rem;
+}
+
+.template-buttons {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+  gap: 1rem;
+}
+
+.template-btn {
+  background: white;
+  border: 2px solid #e2e8f0;
+  border-radius: 6px;
+  padding: 1rem;
+  text-align: left;
+  cursor: pointer;
+  transition: all 0.2s;
+  font-size: 0.95rem;
+}
+
+.template-btn:hover {
+  border-color: #3182ce;
+  background: #ebf8ff;
+}
+
+textarea {
+  min-height: 150px;
+  resize: vertical;
+  font-family: inherit;
+  line-height: 1.5;
+}
+
+#custom_location {
+  display: none;
+}
+</style>
+
+<script>
+// Show custom location input when "Custom" is selected
+document.getElementById('location_type').addEventListener('change', function() {
+  const customInput = document.getElementById('custom_location');
+  if (this.value === 'Custom') {
+    customInput.style.display = 'block';
+    customInput.required = true;
+  } else {
+    customInput.style.display = 'none';
+    customInput.required = false;
+    customInput.value = '';
+  }
+});
+
+// Quick template loader
+function loadQuickTemplate(templateType) {
+  const templates = {
+    roof_shingles: {
+      location_type: 'Roof',
+      task_name: 'Replace Shingled Roof',
+      category: 'installation',
+      task_description: `- Remove existing weathered shingles and dispose of materials properly
+- Assess roof decking for water damage, replace damaged decking where needed
+- Apply ice and watershield from edge of roof 3' minimum and at all valleys and roof terminations
+- Install new architectural shingles according to manufacturer specifications
+- Install new ridge cap and ridge vent where applicable
+- Clean up all debris and perform final inspection`,
+      default_cost: '12000.00',
+      estimated_days: '3'
+    },
+    kitchen_cabinets: {
+      location_type: 'Kitchen',
+      task_name: 'Install Kitchen Cabinets',
+      category: 'installation',
+      task_description: `- Remove existing cabinets and dispose of materials
+- Prepare walls and ensure they are level and plumb
+- Install upper cabinets first, securing to wall studs
+- Install base cabinets, ensuring proper alignment and levelness
+- Install cabinet hardware, handles, and pulls
+- Install and adjust cabinet doors and drawers for proper operation
+- Apply touch-up paint or stain as needed`,
+      default_cost: '8500.00',
+      estimated_days: '4'
+    },
+    bathroom_tile: {
+      location_type: 'Bathroom',
+      task_name: 'Install Bathroom Tile',
+      category: 'finishing',
+      task_description: `- Remove existing flooring and wall covering materials
+- Prepare substrate ensuring proper waterproofing and levelness
+- Install tile backer board where required
+- Apply waterproof membrane in wet areas
+- Install floor tile with proper spacing and levelness
+- Install wall tile with consistent spacing and pattern
+- Apply grout and clean excess material
+- Apply tile sealer and caulk all joints`,
+      default_cost: '4200.00',
+      estimated_days: '5'
+    },
+    hardwood_floors: {
+      location_type: 'Flooring',
+      task_name: 'Install Hardwood Flooring',
+      category: 'installation',
+      task_description: `- Remove existing flooring materials and prepare subfloor
+- Check subfloor for levelness and structural integrity
+- Install moisture barrier and underlayment as required
+- Acclimate hardwood flooring materials for 48+ hours
+- Install hardwood flooring with proper expansion gaps
+- Install baseboards and quarter round molding
+- Sand, stain, and apply protective finish coats
+- Perform final cleanup and inspection`,
+      default_cost: '6800.00',
+      estimated_days: '6'
+    },
+    exterior_paint: {
+      location_type: 'Exterior',
+      task_name: 'Exterior House Painting',
+      category: 'painting',
+      task_description: `- Power wash entire exterior surface and allow to dry completely
+- Scrape loose and peeling paint, sand rough areas
+- Caulk all gaps, joints, and nail holes with exterior caulk
+- Prime all bare wood and metal surfaces with appropriate primer
+- Apply first coat of high-quality exterior paint
+- Apply second finish coat ensuring complete coverage
+- Clean up all equipment and dispose of materials properly
+- Touch up as needed and perform final walkthrough`,
+      default_cost: '5200.00',
+      estimated_days: '4'
+    },
+    electrical_panel: {
+      location_type: 'Electrical',
+      task_name: 'Electrical Panel Upgrade',
+      category: 'electrical',
+      task_description: `- Coordinate with utility company for service disconnection
+- Remove existing electrical panel and associated wiring
+- Install new electrical panel meeting current code requirements
+- Rewire and connect all existing circuits to new panel
+- Install GFCI and AFCI breakers where required by code
+- Label all circuits clearly and provide circuit directory
+- Coordinate electrical inspection and obtain approval
+- Restore power and test all circuits for proper operation`,
+      default_cost: '2800.00',
+      estimated_days: '2'
+    }
+  };
+
+  const template = templates[templateType];
+  if (template) {
+    document.getElementById('location_type').value = template.location_type;
+    document.getElementById('task_name').value = template.task_name;
+    document.getElementById('category').value = template.category;
+    document.getElementById('task_description').value = template.task_description;
+    document.getElementById('default_cost').value = template.default_cost;
+    document.getElementById('estimated_days').value = template.estimated_days;
+    
+    // Scroll to top of form
+    document.querySelector('.template-form-container').scrollIntoView({ behavior: 'smooth' });
+  }
+}
+
+// Handle form submission to use custom location if provided
+document.querySelector('form').addEventListener('submit', function(e) {
+  const locationSelect = document.getElementById('location_type');
+  const customLocation = document.getElementById('custom_location');
+  
+  if (locationSelect.value === 'Custom' && customLocation.value.trim()) {
+    // Create a hidden input with the custom location value
+    const hiddenInput = document.createElement('input');
+    hiddenInput.type = 'hidden';
+    hiddenInput.name = 'location_type';
+    hiddenInput.value = customLocation.value.trim();
+    this.appendChild(hiddenInput);
+    
+    // Remove the original select so it doesn't conflict
+    locationSelect.name = '';
+  }
+});
+</script>
+
+{% endblock %}

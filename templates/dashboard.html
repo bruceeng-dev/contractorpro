@@ -1,0 +1,102 @@
+{% extends "base.html" %}
+{% block content %}
+
+<!-- DASHBOARD HEADER -->
+<section class="dashboard-header">
+  <div class="container">
+    <h1>Contractor Dashboard</h1>
+    <p class="muted">Manage your jobs, track leads, and streamline documentation</p>
+  </div>
+</section>
+
+<!-- METRICS -->
+<section class="metrics-section">
+  <div class="container">
+    <div class="metrics-grid">
+      <div class="metric-card">
+        <span class="metric-number">{{ total_jobs }}</span>
+        <span class="metric-label">Total Jobs</span>
+        <a href="{{ url_for('jobs_list') }}" class="metric-link">View All</a>
+      </div>
+      <div class="metric-card">
+        <span class="metric-number">{{ active_jobs }}</span>
+        <span class="metric-label">Active Jobs</span>
+        <a href="{{ url_for('jobs_list') }}" class="metric-link">Manage</a>
+      </div>
+      <div class="metric-card">
+        <span class="metric-number">{{ total_leads }}</span>
+        <span class="metric-label">New Leads</span>
+        <a href="{{ url_for('leads_list') }}" class="metric-link">View All</a>
+      </div>
+      <div class="metric-card">
+        <span class="metric-number">85%</span>
+        <span class="metric-label">On-time Rate</span>
+        <a href="{{ url_for('reports') }}" class="metric-link">Reports</a>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- QUICK ACTIONS -->
+<section class="quick-actions">
+  <div class="container">
+    <h2>Quick Actions</h2>
+    <div class="action-grid">
+      <a href="{{ url_for('new_job') }}" class="action-card">
+        <h3>New Job</h3>
+        <p>Create a new construction project</p>
+        <span class="btn btn--sm">Add Job</span>
+      </a>
+      <a href="{{ url_for('new_lead') }}" class="action-card">
+        <h3>Add Lead</h3>
+        <p>Track potential customers</p>
+        <span class="btn btn--sm">Add Lead</span>
+      </a>
+      <a href="{{ url_for('documentation') }}" class="action-card">
+        <h3>Documentation</h3>
+        <p>Manage project documents</p>
+        <span class="btn btn--sm">View Docs</span>
+      </a>
+      <a href="{{ url_for('reports') }}" class="action-card">
+        <h3>Reports</h3>
+        <p>View business analytics</p>
+        <span class="btn btn--sm">View Reports</span>
+      </a>
+    </div>
+  </div>
+</section>
+
+<!-- RECENT ACTIVITY -->
+<section class="recent-activity">
+  <div class="container">
+    <h2>Recent Activity</h2>
+    <div class="activity-feed">
+      <div class="activity-item">
+        <span class="activity-icon">📋</span>
+        <div class="activity-content">
+          <h4>Kitchen Renovation - Johnson Residence</h4>
+          <p class="muted sm">Started 3 days ago • Budget: $45,000</p>
+        </div>
+        <span class="activity-status status-active">Active</span>
+      </div>
+      <div class="activity-item">
+        <span class="activity-icon">👤</span>
+        <div class="activity-content">
+          <h4>New lead: Bathroom remodel inquiry</h4>
+          <p class="muted sm">Contact: Sarah Miller • 2 hours ago</p>
+        </div>
+        <span class="activity-status status-new">New</span>
+      </div>
+      <div class="activity-item">
+        <span class="activity-icon">📄</span>
+        <div class="activity-content">
+          <h4>Permit approved - Office buildout</h4>
+          <p class="muted sm">Downtown Commercial Project • Yesterday</p>
+        </div>
+        <span class="activity-status status-completed">Approved</span>
+      </div>
+    </div>
+  </div>
+</section>
+
+{% endblock %}

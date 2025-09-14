@@ -1,0 +1,526 @@
+{% extends "base.html" %}
+{% block content %}
+
+<div class="container">
+  <div class="page-header">
+    <h1>Project Gantt Chart</h1>
+    <div class="header-actions">
+      <a href="{{ url_for('calendar_view') }}" class="btn btn--primary">📅 Calendar View</a>
+      <a href="{{ url_for('task_list') }}" class="btn btn--sm">← Task List</a>
+    </div>
+  </div>
+
+  <!-- Gantt Chart Container -->
+  <div class="gantt-container">
+    {% for project in project_data %}
+    <div class="project-section">
+      <div class="project-header">
+        <h2>{{ project.job.project_type }} - {{ project.job.client_name }}</h2>
+        <div class="project-meta">
+          {% if project.project_start and project.project_end %}
+          <span class="date-range">
+            {{ project.project_start.strftime('%m/%d/%Y') }} - {{ project.project_end.strftime('%m/%d/%Y') }}
+          </span>
+          <span class="duration">{{ project.duration }} days</span>
+          {% else %}
+          <span class="unscheduled">Not fully scheduled</span>
+          {% endif %}
+        </div>
+      </div>
+
+      <!-- Timeline Header -->
+      {% if project.project_start and project.project_end %}
+      <div class="timeline-container">
+        <div class="timeline-header">
+          {% set timeline_days = (project.project_end - project.project_start).days + 1 %}
+          {% for day_offset in range(timeline_days) %}
+          {% set current_date = project.project_start + timedelta(days=day_offset) %}
+          <div class="timeline-day">
+            <div class="day-number">{{ current_date.strftime('%d') }}</div>
+            <div class="day-month">{{ current_date.strftime('%b') }}</div>
+          </div>
+          {% endfor %}
+        </div>
+
+        <!-- Task Rows -->
+        <div class="tasks-timeline">
+          {% for task in project.tasks %}
+          {% if task.scheduled_start_date and task.scheduled_end_date %}
+          <div class="task-row">
+            <div class="task-info">
+              <div class="task-name">
+                {{ task.task_name }}
+                {% if task.is_critical_path %}
+                <span class="critical-indicator">🔥</span>
+                {% endif %}
+              </div>
+              <div class="task-details">
+                {% if task.location %}{{ task.location.name }} • {% endif %}
+                {{ task.estimated_days or 1 }} day{{ 's' if (task.estimated_days or 1) != 1 else '' }}
+                {% if task.assigned_to %} • {{ task.assigned_to }}{% endif %}
+              </div>
+            </div>
+            
+            <div class="task-timeline">
+              {% set task_start_offset = (task.scheduled_start_date - project.project_start).days %}
+              {% set task_duration = (task.scheduled_end_date - task.scheduled_start_date).days + 1 %}
+              
+              <!-- Empty space before task starts -->
+              {% for i in range(task_start_offset) %}
+              <div class="timeline-cell empty"></div>
+              {% endfor %}
+              
+              <!-- Task duration cells -->
+              {% for i in range(task_duration) %}
+              <div class="timeline-cell task-cell {{ 'critical' if task.is_critical_path else '' }} {{ task.status }}">
+                {% if i == 0 %}
+                <span class="task-start">{{ task.task_name[:10] }}{% if task.task_name|length > 10 %}...{% endif %}</span>
+                {% endif %}
+              </div>
+              {% endfor %}
+              
+              <!-- Empty space after task ends -->
+              {% set remaining_days = timeline_days - task_start_offset - task_duration %}
+              {% for i in range(remaining_days) %}
+              <div class="timeline-cell empty"></div>
+              {% endfor %}
+            </div>
+          </div>
+          {% endif %}
+          {% endfor %}
+          
+          <!-- Unscheduled tasks -->
+          {% set unscheduled = project.tasks | rejectattr('scheduled_start_date') | list %}
+          {% if unscheduled %}
+          <div class="unscheduled-section">
+            <h4>⚠️ Unscheduled Tasks</h4>
+            {% for task in unscheduled %}
+            <div class="unscheduled-task">
+              <span class="task-name">{{ task.task_name }}</span>
+              <span class="task-duration">{{ task.estimated_days or 1 }} day{{ 's' if (task.estimated_days or 1) != 1 else '' }}</span>
+              {% if task.is_critical_path %}
+              <span class="critical-badge">CRITICAL</span>
+              {% endif %}
+            </div>
+            {% endfor %}
+          </div>
+          {% endif %}
+        </div>
+      </div>
+      {% else %}
+      <div class="no-timeline">
+        <p>Project timeline cannot be displayed - tasks need to be scheduled.</p>
+        <a href="{{ url_for('calendar_view') }}" class="btn btn--sm">Schedule Tasks</a>
+      </div>
+      {% endif %}
+    </div>
+    {% endfor %}
+
+    {% if not project_data %}
+    <div class="empty-state">
+      <h2>No Projects with Tasks</h2>
+      <p>Create jobs and add tasks using the Contract Generator to see Gantt charts.</p>
+      <div class="empty-actions">
+        <a href="{{ url_for('new_job') }}" class="btn btn--primary">Create New Job</a>
+        <a href="{{ url_for('task_templates') }}" class="btn btn--sm">Manage Templates</a>
+      </div>
+    </div>
+    {% endif %}
+  </div>
+
+  <!-- Legend -->
+  <div class="gantt-legend">
+    <h3>Legend</h3>
+    <div class="legend-items">
+      <div class="legend-item">
+        <div class="legend-color not_started"></div>
+        <span>Not Started</span>
+      </div>
+      <div class="legend-item">
+        <div class="legend-color in_progress"></div>
+        <span>In Progress</span>
+      </div>
+      <div class="legend-item">
+        <div class="legend-color completed"></div>
+        <span>Completed</span>
+      </div>
+      <div class="legend-item">
+        <div class="legend-color critical"></div>
+        <span>Critical Path</span>
+      </div>
+    </div>
+  </div>
+</div>
+
+<style>
+.gantt-container {
+  display: flex;
+  flex-direction: column;
+  gap: 3rem;
+  margin: 2rem 0;
+}
+
+.project-section {
+  background: white;
+  border: 1px solid #e2e8f0;
+  border-radius: 8px;
+  padding: 1.5rem;
+}
+
+.project-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 2rem;
+  padding-bottom: 1rem;
+  border-bottom: 2px solid #e2e8f0;
+}
+
+.project-header h2 {
+  margin: 0;
+  color: #2d3748;
+}
+
+.project-meta {
+  display: flex;
+  gap: 1rem;
+  align-items: center;
+  color: #718096;
+  font-size: 0.9rem;
+}
+
+.date-range {
+  background: #edf2f7;
+  padding: 0.25rem 0.75rem;
+  border-radius: 12px;
+  font-weight: 500;
+}
+
+.duration {
+  background: #bee3f8;
+  color: #2c5282;
+  padding: 0.25rem 0.75rem;
+  border-radius: 12px;
+  font-weight: 500;
+}
+
+.unscheduled {
+  background: #fed7d7;
+  color: #c53030;
+  padding: 0.25rem 0.75rem;
+  border-radius: 12px;
+  font-weight: 500;
+}
+
+.timeline-container {
+  overflow-x: auto;
+}
+
+.timeline-header {
+  display: flex;
+  background: #2d3748;
+  color: white;
+  border-radius: 4px 4px 0 0;
+  position: sticky;
+  top: 0;
+  z-index: 10;
+}
+
+.timeline-day {
+  min-width: 40px;
+  padding: 0.5rem;
+  text-align: center;
+  border-right: 1px solid #4a5568;
+  font-size: 0.75rem;
+}
+
+.timeline-day:last-child {
+  border-right: none;
+}
+
+.day-number {
+  font-weight: 600;
+  margin-bottom: 0.125rem;
+}
+
+.day-month {
+  font-size: 0.7rem;
+  opacity: 0.8;
+}
+
+.tasks-timeline {
+  background: #f7fafc;
+  border: 1px solid #e2e8f0;
+  border-top: none;
+  border-radius: 0 0 4px 4px;
+}
+
+.task-row {
+  display: flex;
+  align-items: center;
+  border-bottom: 1px solid #e2e8f0;
+  min-height: 60px;
+}
+
+.task-row:last-child {
+  border-bottom: none;
+}
+
+.task-info {
+  min-width: 250px;
+  padding: 1rem;
+  background: white;
+  border-right: 1px solid #e2e8f0;
+}
+
+.task-name {
+  font-weight: 600;
+  color: #2d3748;
+  margin-bottom: 0.25rem;
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.task-details {
+  font-size: 0.8rem;
+  color: #718096;
+}
+
+.critical-indicator {
+  font-size: 0.8rem;
+}
+
+.task-timeline {
+  display: flex;
+  flex: 1;
+  min-height: 60px;
+}
+
+.timeline-cell {
+  min-width: 40px;
+  border-right: 1px solid #e2e8f0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  position: relative;
+}
+
+.timeline-cell:last-child {
+  border-right: none;
+}
+
+.timeline-cell.empty {
+  background: transparent;
+}
+
+.timeline-cell.task-cell {
+  background: #cbd5e0;
+  color: white;
+  font-size: 0.7rem;
+}
+
+.timeline-cell.task-cell.not_started {
+  background: #a0aec0;
+}
+
+.timeline-cell.task-cell.in_progress {
+  background: #f6ad55;
+}
+
+.timeline-cell.task-cell.completed {
+  background: #68d391;
+}
+
+.timeline-cell.task-cell.critical {
+  background: #fc8181;
+  font-weight: bold;
+}
+
+.task-start {
+  font-size: 0.6rem;
+  font-weight: 600;
+  text-shadow: 1px 1px 1px rgba(0, 0, 0, 0.3);
+}
+
+.unscheduled-section {
+  padding: 1rem;
+  background: #fef5e7;
+  border-top: 1px solid #e2e8f0;
+  border-radius: 0 0 4px 4px;
+}
+
+.unscheduled-section h4 {
+  margin: 0 0 1rem 0;
+  color: #c53030;
+  font-size: 0.9rem;
+}
+
+.unscheduled-task {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  padding: 0.5rem;
+  background: white;
+  border: 1px solid #e2e8f0;
+  border-radius: 4px;
+  margin-bottom: 0.5rem;
+}
+
+.unscheduled-task:last-child {
+  margin-bottom: 0;
+}
+
+.unscheduled-task .task-name {
+  flex: 1;
+  font-weight: 500;
+  color: #2d3748;
+}
+
+.unscheduled-task .task-duration {
+  font-size: 0.8rem;
+  color: #718096;
+}
+
+.critical-badge {
+  background: #fed7d7;
+  color: #c53030;
+  padding: 0.125rem 0.5rem;
+  border-radius: 4px;
+  font-size: 0.7rem;
+  font-weight: bold;
+}
+
+.no-timeline {
+  text-align: center;
+  padding: 3rem;
+  color: #718096;
+}
+
+.no-timeline p {
+  margin-bottom: 1rem;
+}
+
+.gantt-legend {
+  background: white;
+  border: 1px solid #e2e8f0;
+  border-radius: 8px;
+  padding: 1.5rem;
+  margin-top: 2rem;
+}
+
+.gantt-legend h3 {
+  margin: 0 0 1rem 0;
+  color: #2d3748;
+  font-size: 1rem;
+}
+
+.legend-items {
+  display: flex;
+  gap: 2rem;
+  flex-wrap: wrap;
+}
+
+.legend-item {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.legend-color {
+  width: 20px;
+  height: 20px;
+  border-radius: 4px;
+  border: 1px solid #e2e8f0;
+}
+
+.legend-color.not_started {
+  background: #a0aec0;
+}
+
+.legend-color.in_progress {
+  background: #f6ad55;
+}
+
+.legend-color.completed {
+  background: #68d391;
+}
+
+.legend-color.critical {
+  background: #fc8181;
+}
+
+.empty-state {
+  text-align: center;
+  padding: 4rem 2rem;
+  color: #718096;
+}
+
+.empty-state h2 {
+  color: #2d3748;
+  margin-bottom: 1rem;
+}
+
+.empty-state p {
+  margin-bottom: 2rem;
+  max-width: 500px;
+  margin-left: auto;
+  margin-right: auto;
+}
+
+.empty-actions {
+  display: flex;
+  gap: 1rem;
+  justify-content: center;
+}
+
+.header-actions {
+  display: flex;
+  gap: 0.5rem;
+}
+
+/* Responsive design */
+@media (max-width: 768px) {
+  .project-header {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 1rem;
+  }
+  
+  .task-info {
+    min-width: 200px;
+  }
+  
+  .legend-items {
+    flex-direction: column;
+    gap: 0.5rem;
+  }
+}
+</style>
+
+<script>
+// Add hover effects for task cells
+document.querySelectorAll('.task-cell').forEach(cell => {
+  cell.addEventListener('mouseenter', function() {
+    const taskRow = this.closest('.task-row');
+    taskRow.style.backgroundColor = '#f1f5f9';
+  });
+  
+  cell.addEventListener('mouseleave', function() {
+    const taskRow = this.closest('.task-row');
+    taskRow.style.backgroundColor = '';
+  });
+});
+
+// Add click handler for task cells to show details
+document.querySelectorAll('.task-cell').forEach(cell => {
+  cell.addEventListener('click', function() {
+    const taskRow = this.closest('.task-row');
+    const taskName = taskRow.querySelector('.task-name').textContent.trim();
+    // Could open a modal with task details
+    console.log('Task clicked:', taskName);
+  });
+});
+</script>
+
+{% endblock %}
