@@ -1,0 +1,806 @@
+{% extends "base.html" %}
+{% block content %}
+
+<div class="container">
+  <div class="page-header no-print" style="margin-bottom: 2rem;">
+    <h1>Contract Document</h1>
+    <div style="display: flex; gap: 0.5rem; flex-wrap: wrap;">
+      <a href="{{ url_for('contract_generator', job_id=job.id) }}" class="btn btn--sm">← Back to Editor</a>
+      <button id="toggleEditMode" class="btn btn--primary" onclick="toggleEditMode()">
+        <span id="editModeText">✏️ Enable Edit Mode</span>
+      </button>
+      <button id="saveButton" class="btn btn--success" onclick="saveContract()" style="display: none;">
+        💾 Save Changes
+      </button>
+      <a href="{{ url_for('task_list') }}" class="btn btn--sm">📋 View Tasks</a>
+      <a href="{{ url_for('calendar_view') }}" class="btn btn--sm">📅 Schedule</a>
+      <a href="{{ url_for('contract_document_templates', job_id=job.id) }}" class="btn btn--primary">📄 Room Specifications (POS)</a>
+      <button onclick="window.print()" class="btn">🖨️ Print Contract</button>
+    </div>
+  </div>
+
+  <div class="contract-document" id="contractDocument">
+    <!-- Contract Header -->
+    <div class="contract-header">
+      <h1 style="text-align: center; margin-bottom: 1.5rem; text-transform: uppercase; letter-spacing: 2px; font-size: 2rem;"
+          data-field="contract_title">
+        GENERAL CONTRACTOR AGREEMENT
+      </h1>
+      <p style="text-align: center; margin-bottom: 2rem; font-size: 1.1rem;">
+        This Agreement is made on <strong data-field="contract_date" data-editable="date">{{ date.today().strftime('%B %d, %Y') }}</strong>, between:
+      </p>
+    </div>
+
+    <!-- Parties -->
+    <div style="margin-bottom: 2rem;">
+      <div style="margin-bottom: 1.5rem;">
+        <p style="font-weight: bold; margin-bottom: 0.5rem;">Owner:</p>
+        <div style="margin-left: 1rem; line-height: 1.8;" data-field="owner_info" data-editable="text">
+          {{ job.client_name }}<br>
+          {{ job.address }}<br>
+          {% if job.client_email %}{{ job.client_email }}<br>{% endif %}
+          {% if job.client_phone %}{{ job.client_phone }}{% endif %}
+        </div>
+      </div>
+
+      <div style="margin-bottom: 1.5rem;">
+        <p style="font-weight: bold; margin-bottom: 0.5rem;">Contractor:</p>
+        <div style="margin-left: 1rem; line-height: 1.8;" data-field="contractor_info" data-editable="text">
+          {{ current_user.company_name or current_user.username }}<br>
+          {% if contract.contractor_license_number %}License No: {{ contract.contractor_license_number }}<br>{% endif %}
+          {% if contract.contractor_address %}{{ contract.contractor_address }}<br>{% endif %}
+          {{ current_user.email }}
+        </div>
+      </div>
+    </div>
+
+    <!-- Section 1: Project Description -->
+    <div class="contract-section">
+      <h2>1. Project Description</h2>
+      <div class="contract-paragraph editable-section" data-field="project_description" data-editable="text">
+        {% if contract.project_description %}
+          {{ contract.project_description }}
+        {% else %}
+          The Contractor agrees to furnish all labor, materials, equipment, and supervision necessary to complete
+          the {{ job.project_type }} located at {{ job.address }}, per the attached scope of work and drawings.
+        {% endif %}
+      </div>
+      {% if job.total_square_footage or job.bedrooms or job.bathrooms %}
+      <p class="contract-paragraph" style="margin-top: 1rem;">
+        <strong>Project Details:</strong>
+        {% if job.total_square_footage %} {{ job.total_square_footage }} sq ft{% endif %}{% if job.bedrooms %}, {{ job.bedrooms }} bedroom(s){% endif %}{% if job.bathrooms %}, {{ job.bathrooms }} bathroom(s){% endif %}
+      </p>
+      {% endif %}
+    </div>
+
+    <!-- Section 1.5: Job Specifications (if from POS multilayer) -->
+    {% if job_specifications %}
+    <div class="contract-section">
+      <h2>1.5. Selected Job Specifications</h2>
+      <p class="contract-paragraph">
+        The scope of this project includes the following job specifications:
+      </p>
+      <ul style="margin-left: 2rem; line-height: 1.8;">
+        {% for spec in job_specifications %}
+        <li><strong>{{ spec }}</strong></li>
+        {% endfor %}
+      </ul>
+    </div>
+    {% endif %}
+
+    <!-- Section 2: Scope of Work -->
+    <div class="contract-section">
+      <h2>2. Scope of Work</h2>
+
+      {% if contract_sections %}
+      <!-- Display Comprehensive Contract with Individual Editable Sections -->
+      <div class="comprehensive-contract-controls no-print" style="margin-bottom: 1rem; display: flex; gap: 0.5rem;">
+        <button onclick="toggleAllSectionsEdit()" class="btn btn--sm" id="editAllBtn">✏️ Edit All Sections</button>
+        <button onclick="saveAllSections()" class="btn btn--success" id="saveAllBtn" style="display: none;">💾 Save All Changes</button>
+        <button onclick="cancelAllSectionsEdit()" class="btn btn--sm" id="cancelAllBtn" style="display: none;">❌ Cancel</button>
+      </div>
+
+      <!-- Individual Sections -->
+      {% for section in contract_sections %}
+      <div class="contract-section-item" id="section-container-{{ section.id }}" style="margin-bottom: 2rem; padding: 1rem; background: #f8f9fa; border-radius: 4px; border: 1px solid #dee2e6;">
+        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 0.5rem;">
+          <h3 style="color: #2d3748; font-size: 1.1rem; margin: 0;">{{ section.title }}</h3>
+          <button onclick="toggleSectionEdit('{{ section.id }}')" class="btn btn--xs no-print" id="editBtn-{{ section.id }}">Edit</button>
+        </div>
+
+        <!-- View mode -->
+        <div id="view-{{ section.id }}" class="section-view" style="white-space: pre-wrap; line-height: 1.6; padding: 0.5rem;">
+          {{ section.content }}
+        </div>
+
+        <!-- Edit mode -->
+        <div id="edit-{{ section.id }}" style="display: none;">
+          <textarea id="textarea-{{ section.id }}" class="section-textarea" style="width: 100%; min-height: 150px; padding: 0.5rem; border: 2px solid #4299e1; border-radius: 4px; resize: vertical; font-family: monospace; line-height: 1.6;">{{ section.content }}</textarea>
+          <div style="margin-top: 0.5rem; display: flex; gap: 0.5rem;">
+            <button onclick="saveSectionContent('{{ section.id }}')" class="btn btn--success btn--xs">💾 Save</button>
+            <button onclick="cancelSectionEdit('{{ section.id }}')" class="btn btn--xs">❌ Cancel</button>
+          </div>
+        </div>
+      </div>
+      {% endfor %}
+      {% else %}
+      <!-- Fallback to standard contract -->
+      <div class="editable-section" data-field="scope_of_work" data-editable="text">
+        {% if contract.scope_of_work %}
+          <p class="contract-paragraph">{{ contract.scope_of_work }}</p>
+        {% endif %}
+
+        {% if job.description %}
+          <p class="contract-paragraph" style="margin-bottom: 1rem;"><strong>Project Overview:</strong> {{ job.description }}</p>
+        {% endif %}
+
+        {% for location in locations %}
+        <div style="margin-bottom: 1.5rem;">
+          <h3 style="color: #2d3748; font-size: 1.1rem; margin-bottom: 0.5rem;">
+            {{ location.name }}{% if location.square_footage %} ({{ location.square_footage }} sq ft){% endif %}
+          </h3>
+          {% if location.description %}
+          <p style="margin-left: 1rem; margin-bottom: 0.5rem;">{{ location.description }}</p>
+          {% endif %}
+
+          <ul style="margin-left: 2rem; line-height: 1.8;">
+            {% for task in tasks if task.location_id == location.id %}
+            <li>{{ task.task_name }}{% if task.task_description %}: {{ task.task_description }}{% endif %}</li>
+            {% endfor %}
+          </ul>
+        </div>
+        {% endfor %}
+
+        <!-- General Tasks -->
+        {% set general_tasks = tasks|selectattr('location_id', 'none')|list %}
+        {% if general_tasks %}
+        <div style="margin-bottom: 1rem;">
+          <h3 style="color: #2d3748; font-size: 1.1rem; margin-bottom: 0.5rem;">General Work Items</h3>
+          <ul style="margin-left: 2rem; line-height: 1.8;">
+            {% for task in general_tasks %}
+            <li>{{ task.task_name }}{% if task.task_description %}: {{ task.task_description }}{% endif %}</li>
+            {% endfor %}
+          </ul>
+        </div>
+        {% endif %}
+
+        <!-- POS Line Items (from Quote Builder) -->
+        {% if pos_line_items_by_category %}
+        <div style="margin-top: 2rem; padding: 1rem; background: #f0f9ff; border-left: 4px solid #3b82f6; border-radius: 4px;">
+          <h3 style="color: #1e40af; font-size: 1.2rem; margin-bottom: 1rem;">
+            📋 Detailed Scope from Quote Builder
+          </h3>
+          <p style="margin-bottom: 1rem; color: #64748b; font-size: 0.9rem;">
+            The following items were selected through our comprehensive quote system and are included in the scope:
+          </p>
+
+          {% for category, items in pos_line_items_by_category.items() %}
+          <div style="margin-bottom: 1.5rem;">
+            <h4 style="color: #2d3748; font-size: 1.05rem; margin-bottom: 0.5rem; font-weight: 600;">
+              {{ category }}
+            </h4>
+            <table style="width: 100%; border-collapse: collapse; margin-left: 1rem;">
+              <thead>
+                <tr style="background: #e5e7eb; font-size: 0.85rem; text-align: left;">
+                  <th style="padding: 0.5rem; border: 1px solid #d1d5db;">Item</th>
+                  <th style="padding: 0.5rem; border: 1px solid #d1d5db; width: 80px; text-align: center;">Qty</th>
+                  <th style="padding: 0.5rem; border: 1px solid #d1d5db; width: 100px; text-align: right;">Unit Price</th>
+                  <th style="padding: 0.5rem; border: 1px solid #d1d5db; width: 100px; text-align: right;">Total</th>
+                </tr>
+              </thead>
+              <tbody>
+                {% for item in items %}
+                <tr style="font-size: 0.9rem;">
+                  <td style="padding: 0.5rem; border: 1px solid #d1d5db;">
+                    <strong>{{ item.activity_name }}</strong>
+                    {% if item.description %}
+                    <br><span style="color: #64748b; font-size: 0.85rem;">{{ item.description }}</span>
+                    {% endif %}
+                  </td>
+                  <td style="padding: 0.5rem; border: 1px solid #d1d5db; text-align: center;">{{ item.quantity }}</td>
+                  <td style="padding: 0.5rem; border: 1px solid #d1d5db; text-align: right;">${{ "{:,.2f}".format(item.unit_price) }}</td>
+                  <td style="padding: 0.5rem; border: 1px solid #d1d5db; text-align: right; font-weight: 600;">${{ "{:,.2f}".format(item.total) }}</td>
+                </tr>
+                {% endfor %}
+              </tbody>
+            </table>
+          </div>
+          {% endfor %}
+
+          <div style="margin-top: 1rem; padding: 1rem; background: white; border-radius: 4px; text-align: right;">
+            <strong style="font-size: 1.1rem; color: #1e40af;">
+              Total Quote Builder Items: ${{ "{:,.2f}".format(total_pos_amount) }}
+            </strong>
+          </div>
+
+          <p style="margin-top: 1rem; font-size: 0.85rem; color: #64748b; font-style: italic;">
+            * Line items sourced from POS Quote(s):
+            {% for quote in pos_quotes %}
+              {% if quote.status in ['draft', 'accepted'] %}
+                {{ quote.quote_number }}{% if not loop.last %}, {% endif %}
+              {% endif %}
+            {% endfor %}
+          </p>
+        </div>
+        {% endif %}
+      </div>
+      {% endif %}
+    </div>
+
+    <!-- Section 3: Contract Price -->
+    <div class="contract-section">
+      <h2>3. Contract Price</h2>
+      <div class="editable-section" data-field="contract_price" data-editable="text">
+        <p class="contract-paragraph">
+          The Owner agrees to pay the Contractor <strong>${{ "{:,.2f}".format(contract.total_contract_value or 0) }}</strong>
+          for the full completion of work as defined in this Agreement.
+        </p>
+
+        <p class="contract-paragraph" style="margin-top: 1rem;"><strong>Payment Schedule:</strong></p>
+        <ul style="margin-left: 2rem; line-height: 1.8;">
+          {% set deposit_pct = contract.deposit_percentage or 30 %}
+          {% set progress_pct = contract.progress_payment_percentage or 40 %}
+          {% set final_pct = contract.final_payment_percentage or 30 %}
+          {% set total_value = contract.total_contract_value or 0 %}
+
+          <li>{{ deposit_pct }}% (${{ "{:,.2f}".format((total_value * deposit_pct / 100) if total_value else 0) }}) upon signing.</li>
+          <li>{{ progress_pct }}% (${{ "{:,.2f}".format((total_value * progress_pct / 100) if total_value else 0) }}) upon completion of rough-in work.</li>
+          <li>{{ final_pct }}% (${{ "{:,.2f}".format((total_value * final_pct / 100) if total_value else 0) }}) upon final inspection and acceptance.</li>
+        </ul>
+
+        {% if contract.payment_schedule_notes %}
+        <p class="contract-paragraph" style="margin-top: 1rem;">{{ contract.payment_schedule_notes }}</p>
+        {% endif %}
+
+        <!-- Cost Breakdown by Room/Location -->
+        <div style="margin-top: 2rem;">
+          <p class="contract-paragraph"><strong>Cost Breakdown by Location:</strong></p>
+          <table style="width: 100%; border-collapse: collapse; margin-top: 1rem;">
+            <thead>
+              <tr style="background: #f7fafc; border-bottom: 2px solid #e2e8f0;">
+                <th style="padding: 0.75rem; text-align: left; font-weight: bold;">Location</th>
+                <th style="padding: 0.75rem; text-align: right; font-weight: bold;">Cost</th>
+              </tr>
+            </thead>
+            <tbody>
+              {% for location in locations %}
+                {% set location_tasks = tasks|selectattr('location_id', 'equalto', location.id)|list %}
+                {% if location_tasks %}
+                  {% set location_total = location_tasks|map(attribute='cost')|select|sum %}
+                  <tr style="border-bottom: 1px solid #e2e8f0;">
+                    <td style="padding: 0.75rem;">{{ location.name }}</td>
+                    <td style="padding: 0.75rem; text-align: right;">${{ "{:,.2f}".format(location_total) }}</td>
+                  </tr>
+                {% endif %}
+              {% endfor %}
+
+              <!-- General Tasks -->
+              {% set general_tasks = tasks|selectattr('location_id', 'none')|list %}
+              {% if general_tasks %}
+                {% set general_total = general_tasks|map(attribute='cost')|select|sum %}
+                <tr style="border-bottom: 1px solid #e2e8f0;">
+                  <td style="padding: 0.75rem;">General Work Items</td>
+                  <td style="padding: 0.75rem; text-align: right;">${{ "{:,.2f}".format(general_total) }}</td>
+                </tr>
+              {% endif %}
+
+              <!-- Total -->
+              <tr style="background: #f7fafc; border-top: 2px solid #2d3748;">
+                <td style="padding: 0.75rem; font-weight: bold;">TOTAL CONTRACT PRICE</td>
+                <td style="padding: 0.75rem; text-align: right; font-weight: bold; font-size: 1.1rem;">${{ "{:,.2f}".format(contract.total_contract_value or 0) }}</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+
+    <!-- Section 4: Time of Completion -->
+    <div class="contract-section">
+      <h2>4. Time of Completion</h2>
+      <div class="contract-paragraph editable-section" data-field="time_of_completion" data-editable="text">
+        Work shall commence on
+        {% if contract.work_start_date %}
+          <strong>{{ contract.work_start_date.strftime('%B %d, %Y') }}</strong>
+        {% elif job.start_date %}
+          <strong>{{ job.start_date.strftime('%B %d, %Y') }}</strong>
+        {% else %}
+          <strong>_______________</strong>
+        {% endif %},
+        and be substantially complete by
+        {% if contract.work_completion_date %}
+          <strong>{{ contract.work_completion_date.strftime('%B %d, %Y') }}</strong>
+        {% elif job.expected_end_date %}
+          <strong>{{ job.expected_end_date.strftime('%B %d, %Y') }}</strong>
+        {% else %}
+          <strong>_______________</strong>
+        {% endif %},
+        barring unforeseen delays such as weather conditions, acts of God, or delays caused by the Owner.
+      </div>
+    </div>
+
+    <!-- Section 5: Permits and Licenses -->
+    <div class="contract-section">
+      <h2>5. Permits and Licenses</h2>
+      <div class="contract-paragraph editable-section" data-field="permits_clause" data-editable="text">
+        {% if contract.permits_clause %}
+          {{ contract.permits_clause }}
+        {% else %}
+          The Contractor shall obtain and pay for all necessary permits, licenses, and inspections required by law
+          for the completion of the project. All work shall be performed in compliance with applicable building
+          codes and regulations.
+        {% endif %}
+      </div>
+    </div>
+
+    <!-- Section 6: Insurance -->
+    <div class="contract-section">
+      <h2>6. Insurance</h2>
+      <div class="contract-paragraph editable-section" data-field="insurance_clause" data-editable="text">
+        {% if contract.insurance_clause %}
+          {{ contract.insurance_clause }}
+        {% else %}
+          The Contractor shall maintain general liability insurance and workers' compensation coverage during the
+          course of work. Proof of insurance shall be provided to the Owner before work begins.
+        {% endif %}
+      </div>
+    </div>
+
+    <!-- Section 7: Change Orders -->
+    <div class="contract-section">
+      <h2>7. Change Orders</h2>
+      <div class="contract-paragraph editable-section" data-field="change_orders_clause" data-editable="text">
+        {% if contract.change_orders_clause %}
+          {{ contract.change_orders_clause }}
+        {% else %}
+          Any changes to the scope of work or contract price shall be agreed upon in writing and signed by both
+          parties before such work is performed. Change orders may affect the project timeline and total cost.
+        {% endif %}
+      </div>
+    </div>
+
+    <!-- Section 8: Warranty -->
+    <div class="contract-section">
+      <h2>8. Warranty</h2>
+      <div class="contract-paragraph editable-section" data-field="warranty_clause" data-editable="text">
+        {% if contract.warranty_clause %}
+          {{ contract.warranty_clause }}
+        {% else %}
+          The Contractor warrants that all workmanship shall be free from defects for a period of
+          {{ contract.warranty_period_months or 12 }} months from the date of substantial completion.
+          This warranty does not cover damage from misuse, normal wear and tear, or improper maintenance.
+        {% endif %}
+      </div>
+    </div>
+
+    <!-- Section 9: Termination -->
+    <div class="contract-section">
+      <h2>9. Termination</h2>
+      <div class="contract-paragraph editable-section" data-field="termination_clause" data-editable="text">
+        {% if contract.termination_clause %}
+          {{ contract.termination_clause }}
+        {% else %}
+          Either party may terminate this Agreement upon written notice if the other party fails to perform
+          material obligations under the contract, after providing ten (10) days' opportunity to cure such failure.
+          Upon termination, Owner shall pay for all work completed to date.
+        {% endif %}
+      </div>
+    </div>
+
+    <!-- Section 10: Entire Agreement -->
+    <div class="contract-section">
+      <h2>10. Entire Agreement</h2>
+      <div class="contract-paragraph editable-section" data-field="entire_agreement_clause" data-editable="text">
+        {% if contract.entire_agreement_clause %}
+          {{ contract.entire_agreement_clause }}
+        {% else %}
+          This document constitutes the entire agreement between the Owner and Contractor. No oral statements or
+          prior agreements shall have any force or effect. Any modifications must be made in writing and signed
+          by both parties.
+        {% endif %}
+      </div>
+    </div>
+
+    {% if contract.additional_terms %}
+    <!-- Additional Terms -->
+    <div class="contract-section">
+      <h2>11. Additional Terms</h2>
+      <div class="contract-paragraph editable-section" data-field="additional_terms" data-editable="text">
+        {{ contract.additional_terms }}
+      </div>
+    </div>
+    {% endif %}
+
+    <!-- Signatures -->
+    <div class="signature-section">
+      <div style="margin-top: 3rem; display: grid; grid-template-columns: 1fr 1fr; gap: 3rem;">
+        <div>
+          <p style="margin-bottom: 3rem;"><strong>Owner Signature:</strong> ___________________________</p>
+          <p style="margin-bottom: 0.5rem;">{{ job.client_name }}</p>
+          <p><strong>Date:</strong> ___________</p>
+        </div>
+        <div>
+          <p style="margin-bottom: 3rem;"><strong>Contractor Signature:</strong> ___________________________</p>
+          <p style="margin-bottom: 0.5rem;">{{ current_user.company_name or current_user.username }}</p>
+          <p><strong>Date:</strong> ___________</p>
+        </div>
+      </div>
+    </div>
+
+    <div style="margin-top: 2rem; padding-top: 2rem; border-top: 2px solid #e2e8f0; text-align: center; color: #718096; font-size: 0.9rem;">
+      <p>Contract Number: {{ contract.contract_number }}</p>
+      <p>Generated: {{ date.today().strftime('%B %d, %Y') }}</p>
+    </div>
+  </div>
+</div>
+
+<style>
+@media print {
+  .no-print, .site-header, .site-footer, .page-header, .nav {
+    display: none !important;
+  }
+
+  .container {
+    max-width: 100%;
+    padding: 0;
+  }
+
+  .contract-document {
+    padding: 1rem;
+    box-shadow: none;
+  }
+
+  .contract-section {
+    page-break-inside: avoid;
+  }
+
+  body {
+    font-size: 11pt;
+  }
+
+  .editable-section {
+    border: none !important;
+    padding: 0 !important;
+  }
+}
+
+@media screen {
+  .contract-document {
+    background: white;
+    padding: 3rem;
+    max-width: 900px;
+    margin: 0 auto;
+    box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+    border-radius: 8px;
+    font-size: 14px;
+  }
+}
+
+.contract-header {
+  border-bottom: 3px solid #2d3748;
+  padding-bottom: 1.5rem;
+  margin-bottom: 2rem;
+}
+
+.contract-section {
+  margin-bottom: 2rem;
+  padding-bottom: 1.5rem;
+  border-bottom: 1px solid #e2e8f0;
+}
+
+.contract-section:last-of-type {
+  border-bottom: none;
+}
+
+.contract-section h2 {
+  color: #2d3748;
+  font-size: 1.3rem;
+  font-weight: bold;
+  margin-bottom: 1rem;
+}
+
+.contract-paragraph {
+  line-height: 1.8;
+  margin-bottom: 1rem;
+  text-align: justify;
+}
+
+.signature-section {
+  margin-top: 3rem;
+  page-break-inside: avoid;
+}
+
+ul {
+  line-height: 1.8;
+}
+
+li {
+  margin-bottom: 0.5rem;
+}
+
+h3 {
+  font-weight: 600;
+}
+
+/* Edit Mode Styles */
+.editable-section {
+  transition: all 0.2s ease;
+}
+
+.edit-mode .editable-section {
+  border: 2px dashed #cbd5e0;
+  padding: 0.5rem;
+  border-radius: 4px;
+  cursor: text;
+  background: #f7fafc;
+}
+
+.edit-mode .editable-section:hover {
+  border-color: #3182ce;
+  background: #edf2f7;
+}
+
+.edit-mode .editable-section:focus {
+  outline: none;
+  border-color: #3182ce;
+  border-style: solid;
+  background: white;
+}
+
+.btn--success {
+  background: #48bb78;
+  color: white;
+  font-weight: 600;
+}
+
+.btn--success:hover {
+  background: #38a169;
+}
+</style>
+
+<script>
+let isEditMode = false;
+
+function toggleEditMode() {
+  isEditMode = !isEditMode;
+  const doc = document.getElementById('contractDocument');
+  const editBtn = document.getElementById('toggleEditMode');
+  const saveBtn = document.getElementById('saveButton');
+  const editModeText = document.getElementById('editModeText');
+
+  if (isEditMode) {
+    doc.classList.add('edit-mode');
+    editModeText.textContent = '👁️ View Mode';
+    saveBtn.style.display = 'inline-block';
+
+    // Make all editable sections contenteditable
+    document.querySelectorAll('.editable-section').forEach(section => {
+      section.contentEditable = true;
+    });
+  } else {
+    doc.classList.remove('edit-mode');
+    editModeText.textContent = '✏️ Enable Edit Mode';
+    saveBtn.style.display = 'none';
+
+    // Disable editing
+    document.querySelectorAll('.editable-section').forEach(section => {
+      section.contentEditable = false;
+    });
+  }
+}
+
+function saveContract() {
+  if (!confirm('Save all changes to the contract?')) {
+    return;
+  }
+
+  // Collect all edited content
+  const updates = {};
+  document.querySelectorAll('[data-field]').forEach(element => {
+    const field = element.getAttribute('data-field');
+    const content = element.innerHTML.trim();
+    updates[field] = content;
+  });
+
+  // Send to server
+  fetch('{{ url_for("save_contract_inline", job_id=job.id) }}', {
+    method: 'POST',
+    headers: {
+      'Content-Type': 'application/json',
+    },
+    body: JSON.stringify(updates)
+  })
+  .then(response => response.json())
+  .then(data => {
+    if (data.success) {
+      alert('Contract saved successfully!');
+      // Exit edit mode
+      toggleEditMode();
+    } else {
+      alert('Error saving contract: ' + (data.error || 'Unknown error'));
+    }
+  })
+  .catch(error => {
+    alert('Error saving contract: ' + error);
+    console.error('Error:', error);
+  });
+}
+
+// Individual Section Editing Functions
+let editedSections = {};
+
+function toggleSectionEdit(sectionId) {
+  const viewDiv = document.getElementById(`view-${sectionId}`);
+  const editDiv = document.getElementById(`edit-${sectionId}`);
+  const editBtn = document.getElementById(`editBtn-${sectionId}`);
+
+  if (viewDiv.style.display !== 'none') {
+    // Switch to edit mode
+    viewDiv.style.display = 'none';
+    editDiv.style.display = 'block';
+    editBtn.textContent = 'Cancel';
+  } else {
+    // Switch back to view mode
+    cancelSectionEdit(sectionId);
+  }
+}
+
+function cancelSectionEdit(sectionId) {
+  const viewDiv = document.getElementById(`view-${sectionId}`);
+  const editDiv = document.getElementById(`edit-${sectionId}`);
+  const editBtn = document.getElementById(`editBtn-${sectionId}`);
+  const textarea = document.getElementById(`textarea-${sectionId}`);
+
+  // Reset textarea to original content
+  textarea.value = viewDiv.textContent.trim();
+
+  // Switch back to view mode
+  editDiv.style.display = 'none';
+  viewDiv.style.display = 'block';
+  editBtn.textContent = 'Edit';
+
+  // Remove from edited sections
+  delete editedSections[sectionId];
+}
+
+function saveSectionContent(sectionId) {
+  const textarea = document.getElementById(`textarea-${sectionId}`);
+  const viewDiv = document.getElementById(`view-${sectionId}`);
+  const newContent = textarea.value;
+
+  // Store in memory for batch save
+  editedSections[sectionId] = {
+    id: sectionId,
+    title: document.querySelector(`#section-container-${sectionId} h3`).textContent,
+    content: newContent
+  };
+
+  // Update view immediately
+  viewDiv.textContent = newContent;
+
+  // Exit edit mode
+  const editDiv = document.getElementById(`edit-${sectionId}`);
+  const editBtn = document.getElementById(`editBtn-${sectionId}`);
+  editDiv.style.display = 'none';
+  viewDiv.style.display = 'block';
+  editBtn.textContent = 'Edit';
+
+  // Save immediately to server
+  saveToServer();
+}
+
+function saveToServer() {
+  // Collect all sections (both edited and unedited)
+  const allSections = {};
+  const sectionContainers = document.querySelectorAll('.contract-section-item');
+
+  sectionContainers.forEach(container => {
+    const sectionId = container.id.replace('section-container-', '');
+    const title = container.querySelector('h3').textContent;
+    const content = document.getElementById(`view-${sectionId}`).textContent.trim();
+
+    allSections[sectionId] = {
+      id: sectionId,
+      title: title,
+      content: content
+    };
+  });
+
+  // Save to server
+  fetch(window.location.pathname.replace('/view', '/save-comprehensive'), {
+    method: 'POST',
+    headers: {
+      'Content-Type': 'application/json',
+    },
+    body: JSON.stringify({
+      sections: allSections
+    })
+  })
+  .then(response => response.json())
+  .then(data => {
+    if (data.success) {
+      console.log('Contract sections saved successfully');
+    } else {
+      alert('Error saving contract: ' + (data.error || 'Unknown error'));
+    }
+  })
+  .catch(error => {
+    alert('Error saving contract: ' + error);
+    console.error('Error:', error);
+  });
+}
+
+function toggleAllSectionsEdit() {
+  const sectionContainers = document.querySelectorAll('.contract-section-item');
+  const editAllBtn = document.getElementById('editAllBtn');
+  const saveAllBtn = document.getElementById('saveAllBtn');
+  const cancelAllBtn = document.getElementById('cancelAllBtn');
+
+  // Toggle to edit mode
+  sectionContainers.forEach(container => {
+    const sectionId = container.id.replace('section-container-', '');
+    const viewDiv = document.getElementById(`view-${sectionId}`);
+    const editDiv = document.getElementById(`edit-${sectionId}`);
+    const editBtn = document.getElementById(`editBtn-${sectionId}`);
+
+    viewDiv.style.display = 'none';
+    editDiv.style.display = 'block';
+    editBtn.style.display = 'none';
+  });
+
+  editAllBtn.style.display = 'none';
+  saveAllBtn.style.display = 'inline-block';
+  cancelAllBtn.style.display = 'inline-block';
+}
+
+function cancelAllSectionsEdit() {
+  const sectionContainers = document.querySelectorAll('.contract-section-item');
+  const editAllBtn = document.getElementById('editAllBtn');
+  const saveAllBtn = document.getElementById('saveAllBtn');
+  const cancelAllBtn = document.getElementById('cancelAllBtn');
+
+  // Cancel all edits
+  sectionContainers.forEach(container => {
+    const sectionId = container.id.replace('section-container-', '');
+    cancelSectionEdit(sectionId);
+    document.getElementById(`editBtn-${sectionId}`).style.display = 'inline-block';
+  });
+
+  editAllBtn.style.display = 'inline-block';
+  saveAllBtn.style.display = 'none';
+  cancelAllBtn.style.display = 'none';
+
+  editedSections = {};
+}
+
+function saveAllSections() {
+  const sectionContainers = document.querySelectorAll('.contract-section-item');
+  const editAllBtn = document.getElementById('editAllBtn');
+  const saveAllBtn = document.getElementById('saveAllBtn');
+  const cancelAllBtn = document.getElementById('cancelAllBtn');
+
+  // Update all section views with textarea content
+  sectionContainers.forEach(container => {
+    const sectionId = container.id.replace('section-container-', '');
+    const textarea = document.getElementById(`textarea-${sectionId}`);
+    const viewDiv = document.getElementById(`view-${sectionId}`);
+    const editDiv = document.getElementById(`edit-${sectionId}`);
+    const editBtn = document.getElementById(`editBtn-${sectionId}`);
+
+    viewDiv.textContent = textarea.value;
+    editDiv.style.display = 'none';
+    viewDiv.style.display = 'block';
+    editBtn.style.display = 'inline-block';
+  });
+
+  editAllBtn.style.display = 'inline-block';
+  saveAllBtn.style.display = 'none';
+  cancelAllBtn.style.display = 'none';
+
+  // Save to server
+  saveToServer();
+  alert('All sections saved successfully!');
+}
+</script>
+
+{% endblock %}

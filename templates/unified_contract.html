@@ -1,0 +1,97 @@
+{% extends "base.html" %}
+{% block content %}
+
+<div class="container">
+  <!-- Contract Header with Mode Tabs -->
+  <div class="contract-header">
+    <div>
+      <h1>Contract - {{ job.client_name }}</h1>
+      <p class="muted">{{ job.project_type }} • {{ contract.contract_number }}</p>
+    </div>
+    <div class="header-actions">
+      <a href="{{ url_for('job_detail', job_id=job.id) }}" class="btn btn--sm">← Back to Job</a>
+    </div>
+  </div>
+
+  <!-- Mode Tabs -->
+  <div class="mode-tabs">
+    <a href="{{ url_for('unified_contract', job_id=job.id) }}?mode=view"
+       class="mode-tab {% if mode == 'view' %}active{% endif %}">
+      <span>👁️ View</span>
+    </a>
+    <a href="{{ url_for('unified_contract', job_id=job.id) }}?mode=edit"
+       class="mode-tab {% if mode == 'edit' %}active{% endif %}">
+      <span>✏️ Edit</span>
+    </a>
+    <a href="{{ url_for('unified_contract', job_id=job.id) }}?mode=ai"
+       class="mode-tab {% if mode == 'ai' %}active{% endif %}">
+      <span>🤖 Generate with AI</span>
+    </a>
+  </div>
+
+  <!-- Content based on mode -->
+  {% if mode == 'view' %}
+    {% include 'contract_view_mode.html' %}
+  {% elif mode == 'edit' %}
+    {% include 'contract_edit_mode.html' %}
+  {% elif mode == 'ai' %}
+    {% include 'contract_ai_mode.html' %}
+  {% endif %}
+</div>
+
+<style>
+.contract-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  margin-bottom: 2rem;
+}
+
+.contract-header h1 {
+  margin: 0 0 0.5rem;
+  font-size: 28px;
+  color: #2d3748;
+}
+
+.mode-tabs {
+  display: flex;
+  gap: 0;
+  background: #f7fafc;
+  border-radius: 8px;
+  padding: 4px;
+  margin-bottom: 2rem;
+  border: 1px solid #e2e8f0;
+}
+
+.mode-tab {
+  flex: 1;
+  text-align: center;
+  padding: 12px 24px;
+  border-radius: 6px;
+  text-decoration: none;
+  color: #4a5568;
+  font-weight: 500;
+  transition: all 0.2s;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+}
+
+.mode-tab:hover {
+  background: white;
+  color: #2d3748;
+}
+
+.mode-tab.active {
+  background: white;
+  color: #667eea;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+.mode-tab span {
+  font-size: 14px;
+}
+</style>
+
+{% endblock %}

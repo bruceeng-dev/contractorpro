@@ -264,27 +264,28 @@ class Contract(db.Model):
     job_id = db.Column(db.Integer, db.ForeignKey('job.id'), nullable=False)
     contract_number = db.Column(db.String(50), unique=True, nullable=False)
     title = db.Column(db.String(200), nullable=False)
-    
+
     # Contract Content
     introduction_text = db.Column(db.Text)
+    scope_of_work = db.Column(db.Text)
     terms_and_conditions = db.Column(db.Text)
     payment_terms = db.Column(db.Text)
     warranty_info = db.Column(db.Text)
-    
+
     # Financial Summary
     total_contract_value = db.Column(DECIMAL(12, 2))
-    
+
     # Status
     status = db.Column(db.String(20), default='draft')  # draft, sent, signed, executed
     created_date = db.Column(db.DateTime, default=datetime.utcnow)
     signed_date = db.Column(db.DateTime)
-    
+
     # Relationships
     job = db.relationship('Job', backref='contracts')
-    
+
     def __repr__(self):
         return f'<Contract {self.contract_number}>'
-    
+
     def calculate_total_value(self):
         """Calculate total from included tasks"""
         total = Decimal('0.00')
@@ -294,3 +295,134 @@ class Contract(db.Model):
                 total += task.cost
         self.total_contract_value = total
         return total
+
+# ============================================================================
+# POS (Point of Sale) Multi-Layer System Models
+# ============================================================================
+
+class JobSpecification(db.Model):
+    """28 standard construction job specifications for filtering POS categories"""
+    id = db.Column(db.Integer, primary_key=True)
+    name = db.Column(db.String(100), unique=True, nullable=False)
+    display_name = db.Column(db.String(150), nullable=False)
+    description = db.Column(db.Text)
+    order_index = db.Column(db.Integer, default=1)
+    is_active = db.Column(db.Boolean, default=True)
+    created_date = db.Column(db.DateTime, default=datetime.utcnow)
+
+    def __repr__(self):
+        return f'<JobSpecification {self.display_name}>'
+
+class POSCategory(db.Model):
+    """Categories for organizing POS activities (Kitchen, Bathroom, etc.)"""
+    id = db.Column(db.Integer, primary_key=True)
+    user_id = db.Column(db.Integer, db.ForeignKey('user.id'), nullable=False)
+    name = db.Column(db.String(100), nullable=False)
+    description = db.Column(db.Text)
+    icon = db.Column(db.String(50))  # Emoji or icon class
+    keywords = db.Column(db.Text)  # Comma-separated for search
+    is_active = db.Column(db.Boolean, default=True)
+    order_index = db.Column(db.Integer, default=1)
+    created_date = db.Column(db.DateTime, default=datetime.utcnow)
+
+    # Relationships
+    activities = db.relationship('POSActivity', backref='category', lazy=True, cascade='all, delete-orphan')
+    spec_mappings = db.relationship('POSCategorySpecMapping', backref='category', lazy=True, cascade='all, delete-orphan')
+
+    def __repr__(self):
+        return f'<POSCategory {self.name}>'
+
+class POSActivity(db.Model):
+    """Individual activities/line items within a category"""
+    id = db.Column(db.Integer, primary_key=True)
+    category_id = db.Column(db.Integer, db.ForeignKey('pos_category.id'), nullable=False)
+    name = db.Column(db.String(200), nullable=False)
+    description = db.Column(db.Text)
+    base_cost = db.Column(DECIMAL(12, 2), nullable=False)
+    unit = db.Column(db.String(20), default='each')  # each, sqft, lnft, hour, etc.
+    has_subitems = db.Column(db.Boolean, default=False)
+    is_active = db.Column(db.Boolean, default=True)
+    order_index = db.Column(db.Integer, default=1)
+    created_date = db.Column(db.DateTime, default=datetime.utcnow)
+
+    # Relationships
+    subitems = db.relationship('POSSubitem', backref='activity', lazy=True, cascade='all, delete-orphan')
+
+    def __repr__(self):
+        return f'<POSActivity {self.name}>'
+
+class POSSubitem(db.Model):
+    """Sub-options for activities (e.g., different cabinet styles)"""
+    id = db.Column(db.Integer, primary_key=True)
+    activity_id = db.Column(db.Integer, db.ForeignKey('pos_activity.id'), nullable=False)
+    name = db.Column(db.String(200), nullable=False)
+    description = db.Column(db.Text)
+    price_adjustment = db.Column(DECIMAL(12, 2), default=0)  # +/- from base cost
+    is_default = db.Column(db.Boolean, default=False)
+    order_index = db.Column(db.Integer, default=1)
+    created_date = db.Column(db.DateTime, default=datetime.utcnow)
+
+    def __repr__(self):
+        return f'<POSSubitem {self.name}>'
+
+class POSCategorySpecMapping(db.Model):
+    """Maps categories to job specifications for filtering"""
+    id = db.Column(db.Integer, primary_key=True)
+    category_id = db.Column(db.Integer, db.ForeignKey('pos_category.id'), nullable=False)
+    spec_id = db.Column(db.Integer, db.ForeignKey('job_specification.id'), nullable=False)
+    specific_activity_ids = db.Column(db.Text)  # JSON array (optional fine-grained filtering)
+    created_date = db.Column(db.DateTime, default=datetime.utcnow)
+
+    # Relationships
+    specification = db.relationship('JobSpecification', backref='category_mappings')
+
+    def __repr__(self):
+        return f'<POSCategorySpecMapping Cat:{self.category_id} Spec:{self.spec_id}>'
+
+class POSSession(db.Model):
+    """Tracks user's POS session and job spec selections"""
+    id = db.Column(db.Integer, primary_key=True)
+    user_id = db.Column(db.Integer, db.ForeignKey('user.id'), nullable=False)
+    job_id = db.Column(db.Integer, db.ForeignKey('job.id'))  # Optional link to job
+    session_token = db.Column(db.String(100), unique=True, nullable=False)
+    selected_spec_ids = db.Column(db.Text)  # JSON array of spec IDs
+    current_layer = db.Column(db.Integer, default=1)  # 1 = specs, 2 = categories/activities
+    current_category_id = db.Column(db.Integer, db.ForeignKey('pos_category.id'))
+    project_description = db.Column(db.Text)
+    cart_data = db.Column(db.Text)  # JSON array of cart items
+    created_date = db.Column(db.DateTime, default=datetime.utcnow)
+    updated_date = db.Column(db.DateTime, default=datetime.utcnow, onupdate=datetime.utcnow)
+    is_active = db.Column(db.Boolean, default=True)
+
+    # Relationships
+    user = db.relationship('User', backref='pos_sessions')
+    job = db.relationship('Job', backref='pos_sessions')
+    current_category = db.relationship('POSCategory', foreign_keys=[current_category_id])
+
+    def __repr__(self):
+        return f'<POSSession {self.session_token}>'
+
+class POSQuote(db.Model):
+    """Saved quotes from POS system"""
+    id = db.Column(db.Integer, primary_key=True)
+    user_id = db.Column(db.Integer, db.ForeignKey('user.id'), nullable=False)
+    job_id = db.Column(db.Integer, db.ForeignKey('job.id'))
+    quote_number = db.Column(db.String(50), unique=True, nullable=False)
+    client_name = db.Column(db.String(200), nullable=False)
+    project_description = db.Column(db.Text)
+    selected_spec_ids = db.Column(db.Text)  # JSON array of job spec IDs
+    line_items = db.Column(db.Text)  # JSON array of selected activities/quantities
+    subtotal = db.Column(DECIMAL(12, 2))
+    tax_rate = db.Column(DECIMAL(5, 2), default=0)
+    tax_amount = db.Column(DECIMAL(12, 2))
+    total_amount = db.Column(DECIMAL(12, 2))
+    status = db.Column(db.String(20), default='draft')  # draft, sent, accepted, rejected
+    created_date = db.Column(db.DateTime, default=datetime.utcnow)
+    updated_date = db.Column(db.DateTime, default=datetime.utcnow, onupdate=datetime.utcnow)
+
+    # Relationships
+    user = db.relationship('User', backref='pos_quotes')
+    job = db.relationship('Job', backref='pos_quotes')
+
+    def __repr__(self):
+        return f'<POSQuote {self.quote_number}>'

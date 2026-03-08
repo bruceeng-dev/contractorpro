@@ -1,0 +1,25 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(powershell:*)",
+      "Bash(timeout 180 python:*)",
+      "Bash(python app.py:*)",
+      "Bash(timeout:*)",
+      "Bash(findstr:*)",
+      "Bash(python setup_multilayer_pos.py:*)",
+      "Bash(python setup_pos_simple.py:*)",
+      "Bash(python seed_pos_comprehensive.py:*)",
+      "Bash(tasklist:*)",
+      "Bash(python -c:*)",
+      "Bash(python test_app_comprehensive.py:*)",
+      "Bash(python code_analysis.py:*)",
+      "Bash(dir /b *.txt)",
+      "Bash(python seed_demo_tasks.py:*)",
+      "Bash(python:*)",
+      "Bash(dir:*)",
+      "Bash(git add:*)"
+    ],
+    "deny": [],
+    "ask": []
+  }
+}

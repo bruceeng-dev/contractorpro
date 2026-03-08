@@ -1,0 +1,735 @@
+═══════════════════════════════════════════════════════════════
+RESIDENTIAL CONSTRUCTION AGREEMENT
+EXHIBIT A – SCOPE OF WORK & CONTRACT TERMS
+═══════════════════════════════════════════════════════════════
+
+Contract Number: [CONTRACT_NUMBER]
+Execution Date: [CONTRACT_DATE]
+Effective Date: [EFFECTIVE_DATE]
+
+═══════════════════════════════════════════════════════════════
+ARTICLE 1: PARTIES & PROJECT IDENTIFICATION
+═══════════════════════════════════════════════════════════════
+
+1.1 OWNER/CLIENT
+    Name:           [CLIENT_NAME]
+    Address:        [CLIENT_ADDRESS]
+    Phone:          [CLIENT_PHONE]
+    Email:          [CLIENT_EMAIL]
+
+1.2 CONTRACTOR
+    Company:        [CONTRACTOR_NAME]
+    Address:        [CONTRACTOR_ADDRESS]
+    License:        [CONTRACTOR_LICENSE]
+    Phone:          [CONTRACTOR_PHONE]
+    Email:          [CONTRACTOR_EMAIL]
+    Insurance:      General Liability [INSURANCE_AMOUNT]
+
+1.3 PROJECT SITE
+    Location:       [PROJECT_ADDRESS]
+    Parcel ID:      [PARCEL_ID]
+    County:         [COUNTY]
+    State:          [STATE]
+
+1.4 PROJECT DESCRIPTION
+    Project Type:   [PROJECT_TYPE]
+    Scope Summary:  [PROJECT_OBJECTIVES]
+
+═══════════════════════════════════════════════════════════════
+ARTICLE 2: SCOPE OF WORK
+═══════════════════════════════════════════════════════════════
+
+2.1 GENERAL SCOPE
+
+Contractor agrees to furnish all labor, materials, equipment, tools,
+transportation, and services necessary to complete the work described
+herein in a good and workmanlike manner, consistent with industry
+standards and applicable building codes.
+
+The Work includes but is not limited to:
+
+[DETAILED_SCOPE_OF_WORK]
+
+2.2 QUALITY STANDARDS
+
+All Work shall:
+• Comply with current editions of applicable building codes including
+  International Residential Code (IRC), National Electrical Code (NEC),
+  and Uniform Plumbing Code (UPC) or their local equivalents
+• Meet or exceed manufacturer specifications for all materials
+• Be performed in a professional manner consistent with industry best practices
+• Pass all required inspections without material defects
+
+2.3 PERFORMANCE SPECIFICATIONS
+
+Contractor warrants that all Work will be:
+• Structurally sound and code-compliant
+• Free from defects in materials and workmanship for warranty period
+• Suitable for its intended purpose
+• Completed with reasonable care to minimize disruption to Owner
+
+═══════════════════════════════════════════════════════════════
+ARTICLE 3: CONTRACT PRICE & PAYMENT TERMS
+═══════════════════════════════════════════════════════════════
+
+3.1 CONTRACT SUM
+
+Total Contract Price: [TOTAL_VALUE] (US Dollars)
+
+This is a LUMP SUM contract. The Contract Price is fixed and includes
+all labor, materials, equipment, permits, insurance, overhead, profit,
+and all costs necessary to complete the Work as specified.
+
+3.2 PAYMENT SCHEDULE
+
+Payments shall be made according to the following schedule:
+
+┌─────────────────────────────────────────────────────────────┐
+│ Milestone                    Amount         % of Total       │
+├─────────────────────────────────────────────────────────────┤
+│ [PAYMENT_MILESTONE_1]        [AMOUNT_1]     [PERCENTAGE_1]%  │
+│ [PAYMENT_MILESTONE_2]        [AMOUNT_2]     [PERCENTAGE_2]%  │
+│ [PAYMENT_MILESTONE_3]        [AMOUNT_3]     [PERCENTAGE_3]%  │
+│ [PAYMENT_MILESTONE_4]        [AMOUNT_4]     [PERCENTAGE_4]%  │
+├─────────────────────────────────────────────────────────────┤
+│ TOTAL CONTRACT PRICE:        [TOTAL_VALUE]  100.00%         │
+└─────────────────────────────────────────────────────────────┘
+
+3.3 PAYMENT TERMS & CONDITIONS
+
+a) Payment Due: Each progress payment is due within TEN (10) calendar
+   days of invoice submission.
+
+b) Late Payment: Overdue balances accrue interest at ONE AND ONE-HALF
+   PERCENT (1.5%) per month (EIGHTEEN PERCENT (18%) annual percentage
+   rate) or the maximum rate permitted by law, whichever is less.
+
+c) Payment Method: Owner shall pay by check, wire transfer, or ACH.
+   Credit card payments subject to 3% processing fee.
+
+d) Lien Waivers: Contractor shall provide conditional lien waivers with
+   each progress payment and unconditional final lien waiver upon receipt
+   of final payment.
+
+e) Work Stoppage: Contractor reserves the right to stop Work if payment
+   becomes more than FIFTEEN (15) days overdue, after providing FIVE (5)
+   days written notice to Owner.
+
+3.4 ALLOWANCES
+
+The following allowances are included in the Contract Price for MATERIALS
+ONLY (installation labor is included):
+
+[ALLOWANCES_LIST]
+
+Allowance Reconciliation:
+• Overages: Owner pays actual cost minus allowance, plus 15% markup
+• Underages: Owner receives credit for actual cost minus allowance
+• Selection Deadline: [SELECTION_DEADLINE]
+• Late selections may delay project completion
+
+═══════════════════════════════════════════════════════════════
+ARTICLE 4: PROJECT TIMELINE
+═══════════════════════════════════════════════════════════════
+
+4.1 COMMENCEMENT & COMPLETION
+
+Commencement Date:         [PROJECT_START_DATE]
+Substantial Completion:    [SUBSTANTIAL_COMPLETION_DATE]
+Final Completion:          [FINAL_COMPLETION_DATE]
+
+Estimated Duration:        [PROJECT_DURATION] calendar days
+
+4.2 TIME IS OF THE ESSENCE
+
+Time is of the essence in the performance of this Contract. However,
+the completion date is an estimate subject to adjustment for:
+
+a) Force Majeure events (weather, pandemic, natural disasters)
+b) Permitting delays beyond Contractor's control
+c) Material delivery delays due to market conditions
+d) Approved Change Orders extending scope of Work
+e) Owner-caused delays (late selections, denied access, etc.)
+f) Concealed conditions requiring additional work
+g) Inspection failures requiring correction and re-inspection
+
+4.3 WORKING HOURS
+
+Standard Hours: Monday through Friday, 7:30 AM to 5:00 PM
+Weekend Work: Available at premium rates (1.5x) with advance notice
+Holidays: No work on major holidays unless mutually agreed
+
+4.4 ACCESS TO PREMISES
+
+Owner shall provide Contractor with:
+• Unrestricted access to Work areas during working hours
+• Parking for contractor vehicles (on-site or public street)
+• Access to electrical power and water for construction use
+• Secured storage area for tools and materials
+• Minimum 24-hour notice required for access denial
+
+═══════════════════════════════════════════════════════════════
+ARTICLE 5: CHANGE ORDERS & MODIFICATIONS
+═══════════════════════════════════════════════════════════════
+
+5.1 CHANGE ORDER REQUIREMENT
+
+NO modifications to the Work, Contract Price, or completion date shall
+be valid unless documented in a written Change Order signed by both
+parties. Verbal agreements, text messages, or email discussions are NOT
+binding without a formal Change Order.
+
+5.2 CHANGE ORDER PRICING
+
+Additional Work shall be priced as follows:
+
+Labor Rates (includes overhead & profit):
+• Licensed Electrician:        $125/hour (2-hour minimum)
+• Licensed Plumber:             $135/hour (2-hour minimum)
+• Skilled Carpenter:            $85/hour (2-hour minimum)
+• General Laborer:              $45/hour
+• Project Management:           15% of subcontractor costs
+
+Materials & Equipment:
+• Materials:                    Actual cost + 15% markup
+• Equipment rental:             Actual cost + 10% markup
+• Delivery charges:             Pass-through at cost
+
+5.3 CHANGE ORDER PROCESS
+
+1. Owner or Contractor identifies proposed change
+2. Contractor prepares written Change Order with:
+   - Detailed description of modified work
+   - Cost impact (increase or decrease)
+   - Schedule impact (days added/subtracted)
+3. Owner reviews and approves, rejects, or negotiates
+4. Both parties sign Change Order
+5. Work proceeds only after signed approval
+6. Payment for change work included in next progress invoice
+
+5.4 CONCEALED CONDITIONS
+
+If concealed conditions are discovered that differ materially from those
+indicated in the Contract Documents or reasonably anticipated, Contractor
+shall:
+
+a) Stop Work in affected area immediately
+b) Notify Owner within 24 hours of discovery
+c) Propose Change Order for remediation if required
+d) Resume Work only after Owner approval
+
+Examples: Hidden rot, mold, asbestos, substandard wiring, plumbing leaks,
+structural deficiencies, incorrect as-built conditions.
+
+═══════════════════════════════════════════════════════════════
+ARTICLE 6: PERMITS, INSPECTIONS & CODE COMPLIANCE
+═══════════════════════════════════════════════════════════════
+
+6.1 PERMIT RESPONSIBILITY
+
+Contractor shall:
+• Obtain all building permits required for Work described in scope
+• Pay permit fees (included in Contract Price unless noted)
+• Post permits at job site throughout construction
+• Schedule all required inspections with jurisdiction
+• Provide copies of approved permits and inspections to Owner
+
+6.2 CODE COMPLIANCE
+
+All Work shall comply with:
+• International Residential Code (IRC) or local building code
+• National Electrical Code (NEC) current edition
+• Uniform Plumbing Code (UPC) or International Plumbing Code (IPC)
+• International Mechanical Code (IMC)
+• International Energy Conservation Code (IECC)
+• American with Disabilities Act (ADA) if applicable
+
+6.3 INSPECTION COORDINATION
+
+Contractor shall:
+• Notify Owner 24 hours before scheduled inspections
+• Accompany inspector during all inspections
+• Correct all inspection deficiencies at no cost to Owner
+• Obtain Certificate of Occupancy (CO) or final sign-off
+• Provide Owner with copies of all inspection reports
+
+6.4 PRE-EXISTING VIOLATIONS
+
+Work described in this Contract addresses only new construction and
+modifications explicitly included in scope. Pre-existing code violations
+discovered during Work are Owner's responsibility and not included in
+Contract Price. If inspector requires correction of pre-existing
+violations to approve new Work, such corrections shall be priced via
+Change Order.
+
+═══════════════════════════════════════════════════════════════
+ARTICLE 7: WARRANTY & DEFECTS LIABILITY
+═══════════════════════════════════════════════════════════════
+
+7.1 WORKMANSHIP WARRANTY
+
+Contractor warrants all labor and workmanship for a period of ONE (1)
+YEAR from the date of Substantial Completion. This warranty covers:
+
+• Defects in installation and workmanship
+• Proper performance of all systems (electrical, plumbing, HVAC)
+• Structural integrity of all framing and modifications
+• Proper function of all installed fixtures and equipment
+
+7.2 WARRANTY EXCLUSIONS
+
+This warranty does NOT cover:
+
+a) Normal wear and tear, settlement, or shrinkage of materials
+b) Damage caused by Owner abuse, misuse, or negligence
+c) Damage from failure to maintain (clogged gutters, deferred maintenance)
+d) Modifications or repairs performed by others
+e) Acts of God, fire, flood, earthquake, or force majeure events
+f) Owner-supplied materials or equipment
+g) Manufacturer defects (covered by manufacturer warranty)
+h) Cosmetic issues that do not affect function
+
+7.3 MANUFACTURER WARRANTIES
+
+All materials and equipment are covered by manufacturer warranties which
+pass through to Owner. Contractor will:
+• Provide all warranty documentation at project closeout
+• Assist with warranty claims but is not liable for manufacturer defects
+• Replace defective materials during construction at no cost
+
+7.4 WARRANTY SERVICE PROCEDURE
+
+To make a warranty claim, Owner shall:
+1. Notify Contractor in writing (email acceptable)
+2. Describe the defect with photos if possible
+3. Provide reasonable access for inspection
+
+Contractor shall:
+1. Respond within FIVE (5) business days
+2. Schedule repair at mutually convenient time
+3. Complete repair within TEN (10) business days
+4. Emergency repairs (leaks, electrical hazards) within 24 hours
+
+7.5 WARRANTY LIMITATIONS
+
+Contractor's maximum liability under this warranty is limited to the
+actual cost of repairing or replacing the defective work. Contractor
+is not liable for:
+• Consequential or indirect damages
+• Lost profits or business interruption
+• Temporary housing or relocation costs
+• Diminution in property value
+
+═══════════════════════════════════════════════════════════════
+ARTICLE 8: INSURANCE & LIABILITY
+═══════════════════════════════════════════════════════════════
+
+8.1 CONTRACTOR INSURANCE
+
+Contractor maintains the following insurance:
+
+• General Liability:        $[INSURANCE_AMOUNT] per occurrence
+• Workers' Compensation:    Statutory limits for all workers
+• Automobile Liability:     $1,000,000 combined single limit
+• Umbrella Policy:          $[UMBRELLA_AMOUNT] (if applicable)
+
+Certificates of Insurance available upon request.
+
+8.2 OWNER INSURANCE
+
+Owner is responsible for maintaining property/homeowner's insurance
+during construction. Owner should:
+• Notify insurer of renovation work
+• Ensure adequate coverage for increased property value
+• Consider Builder's Risk policy for projects exceeding $100,000
+• Maintain liability coverage for injury to visitors
+
+8.3 INDEMNIFICATION
+
+Contractor shall indemnify and hold harmless Owner from claims arising
+from Contractor's negligent performance of Work, subject to the following
+limitations:
+
+a) Indemnity limited to extent caused by Contractor's negligence
+b) Does not apply to claims caused by Owner or Owner's agents
+c) Indemnity obligation does not exceed insurance coverage limits
+d) Owner shall promptly notify Contractor of any claims
+
+8.4 LIABILITY LIMITATIONS
+
+Contractor's total liability under this Contract, whether in contract,
+tort, negligence, or otherwise, shall not exceed the total Contract
+Price. Contractor is not liable for:
+• Punitive or exemplary damages
+• Consequential or indirect damages
+• Damages to property not part of the Work
+• Pre-existing conditions or concealed defects
+
+═══════════════════════════════════════════════════════════════
+ARTICLE 9: INCLUSIONS & EXCLUSIONS
+═══════════════════════════════════════════════════════════════
+
+9.1 INCLUDED IN CONTRACT PRICE
+
+✓ All labor for demolition, construction, and finishing
+✓ All materials specified in scope unless marked "Owner-supplied"
+✓ Tools, equipment, scaffolding, and job site equipment
+✓ Building permits and standard inspection fees
+✓ Project management and on-site supervision
+✓ Protection (floor, wall, furniture coverings)
+✓ Daily cleanup and final broom-clean
+✓ Waste disposal (dumpster, hauling, dump fees)
+✓ Temporary utilities (construction power, lighting)
+✓ Testing (electrical, plumbing pressure tests, HVAC balancing)
+✓ Standard fasteners, adhesives, sealants, caulk
+✓ One-year workmanship warranty
+
+9.2 EXCLUDED FROM CONTRACT PRICE
+
+✗ Major appliances (Owner-supplied; Contractor installs if in scope)
+✗ Fixtures exceeding $500 per unit unless covered by allowance
+✗ Structural engineering drawings (Owner provides if required)
+✗ Hazardous material testing/abatement (asbestos, lead, mold)
+✗ Underground utility relocation (main water, sewer, gas lines)
+✗ Landscaping restoration beyond normal access paths
+✗ Window treatments, furniture, artwork, decor
+✗ Security system installation or modification
+✗ Advanced home automation (smart home integration)
+✗ Pest control or extermination services
+✗ Owner personal property storage or relocation
+✗ Premium rates for weekend/holiday work (available upon request)
+
+[ADDITIONAL_EXCLUSIONS]
+
+═══════════════════════════════════════════════════════════════
+ARTICLE 10: SITE CONDITIONS & PROTECTION
+═══════════════════════════════════════════════════════════════
+
+10.1 SITE PREPARATION
+
+Contractor shall:
+• Establish protected work zones with barriers
+• Install floor and wall protection in access paths
+• Provide secure storage for materials and tools
+• Maintain safe egress routes per OSHA standards
+
+10.2 ENVIRONMENTAL CONTROLS
+
+Contractor shall provide reasonable dust control measures including:
+• Plastic barriers with zipper access where feasible
+• HEPA filtration in active work areas
+• Sealing of HVAC registers to prevent dust migration
+• Daily cleanup of work debris
+
+IMPORTANT: Despite best efforts, construction generates dust and debris.
+Some dust migration to non-work areas is unavoidable. Owner should
+relocate sensitive items and plan for post-construction deep cleaning.
+
+10.3 UTILITY MANAGEMENT
+
+Contractor shall:
+• Identify and mark existing utilities before demolition
+• Coordinate utility shut-offs with 24-hour advance notice to Owner
+• Protect active utilities from damage
+• Cap and secure exposed utilities during construction
+
+10.4 PROPERTY PROTECTION
+
+Contractor shall exercise reasonable care to protect:
+• Existing structures and finishes to remain
+• Owner's personal property in work areas
+• Landscaping along access routes
+• Adjacent properties from construction activities
+
+Contractor is NOT responsible for:
+• Pre-existing damage or defects
+• Owner's failure to relocate valuables or personal property
+• Minor cosmetic damage (nail pops, hairline cracks) outside work area
+• Damage to underground utilities not marked by utility locator
+
+10.5 HAZARDOUS MATERIALS
+
+If suspect hazardous materials are discovered (asbestos, lead, mold):
+a) Work shall STOP immediately in affected area
+b) Owner shall be notified within 24 hours
+c) Owner shall contract for testing and abatement if required
+d) Contractor resumes after clearance by certified abatement contractor
+e) Delay costs due to hazmat discovery are Owner's responsibility
+
+═══════════════════════════════════════════════════════════════
+ARTICLE 11: DISPUTE RESOLUTION & GOVERNING LAW
+═══════════════════════════════════════════════════════════════
+
+11.1 GOOD FAITH NEGOTIATION
+
+Prior to formal dispute resolution, parties agree to meet in good faith
+to attempt resolution through direct negotiation. Either party may
+request a meeting within FIVE (5) business days of written request.
+
+11.2 MEDIATION
+
+If negotiation fails, parties agree to participate in non-binding
+mediation before pursuing arbitration or litigation. Mediator shall be
+selected by mutual agreement or through local dispute resolution center.
+Mediation costs split equally between parties.
+
+11.3 BINDING ARBITRATION
+
+Disputes exceeding FIVE THOUSAND DOLLARS ($5,000) that cannot be
+resolved through mediation shall be resolved through binding arbitration
+conducted under the Construction Industry Arbitration Rules of the
+American Arbitration Association (AAA).
+
+Arbitration Terms:
+• Venue: [COUNTY], [STATE]
+• One arbitrator selected per AAA procedures
+• Discovery permitted per arbitrator's discretion
+• Arbitrator's decision is final and binding
+• Judgment may be entered in any court of competent jurisdiction
+
+11.4 SMALL CLAIMS JURISDICTION
+
+Disputes under FIVE THOUSAND DOLLARS ($5,000) may be filed in small
+claims court without requirement for mediation or arbitration.
+
+11.5 ATTORNEY FEES & COSTS
+
+The prevailing party in any dispute resolution proceeding (including
+negotiation, mediation, arbitration, or litigation) shall be entitled
+to recover reasonable attorney fees, expert witness fees, court costs,
+and other related expenses from the non-prevailing party.
+
+11.6 GOVERNING LAW
+
+This Contract shall be governed by and construed in accordance with the
+laws of the State of [STATE], without regard to conflicts of law
+provisions. Venue for any legal proceedings shall be [COUNTY], [STATE].
+
+11.7 WAIVER OF JURY TRIAL
+
+Both parties hereby knowingly and voluntarily WAIVE their right to trial
+by jury for any dispute arising under this Contract.
+
+═══════════════════════════════════════════════════════════════
+ARTICLE 12: TERMINATION
+═══════════════════════════════════════════════════════════════
+
+12.1 TERMINATION FOR CAUSE
+
+Either party may terminate this Contract for material breach after
+providing TEN (10) days written notice specifying the breach and
+opportunity to cure. Material breaches include but are not limited to:
+
+By Owner:
+• Failure to make payment within thirty (30) days of due date
+• Repeated denial of access to work areas
+• Interference with Contractor's ability to perform
+
+By Contractor:
+• Abandonment of Work for more than ten (10) consecutive days
+• Repeated failure to comply with building codes
+• Failure to correct deficiencies after written notice
+
+12.2 TERMINATION FOR CONVENIENCE (OWNER)
+
+Owner may terminate this Contract at any time for any reason upon
+SEVEN (7) days written notice to Contractor. Upon termination:
+
+Owner shall pay:
+a) All completed Work at Contract rate
+b) Materials purchased or on order (with invoices)
+c) Equipment rental and cancellation fees
+d) TEN PERCENT (10%) of remaining contract value as liquidated damages
+
+12.3 TERMINATION FOR CONVENIENCE (CONTRACTOR)
+
+Contractor may terminate if:
+a) Owner fails to make payment after thirty (30) days notice
+b) Owner repeatedly interferes with Work progress
+c) Work is stopped by legal authority through no fault of Contractor
+
+Upon termination, Owner pays for all Work completed and materials
+purchased. Contractor shall remove tools and secure site.
+
+12.4 EFFECT OF TERMINATION
+
+Upon termination, Contractor shall:
+• Stop Work immediately (except for site securing)
+• Remove tools, equipment, and unused materials
+• Provide documentation of work completed and costs incurred
+• Provide conditional lien waiver upon receipt of final payment
+
+Owner shall:
+• Make final payment within thirty (30) days
+• Assume responsibility for completing remaining Work
+• Indemnify Contractor for claims arising after termination
+
+═══════════════════════════════════════════════════════════════
+ARTICLE 13: GENERAL PROVISIONS
+═══════════════════════════════════════════════════════════════
+
+13.1 ENTIRE AGREEMENT
+
+This Contract, including all exhibits and attachments, constitutes the
+entire agreement between parties and supersedes all prior negotiations,
+representations, and agreements, whether written or oral.
+
+13.2 AMENDMENTS
+
+No amendment or modification of this Contract is valid unless in writing
+and signed by both parties via Change Order or formal amendment.
+
+13.3 SEVERABILITY
+
+If any provision is held invalid or unenforceable, the remainder of this
+Contract remains in full force and effect. Invalid provisions shall be
+replaced with valid provisions closest to the original intent.
+
+13.4 WAIVER
+
+Failure to enforce any provision does not constitute waiver of that
+provision or any other provision. Waiver of any breach does not waive
+subsequent breaches.
+
+13.5 ASSIGNMENT
+
+Neither party may assign this Contract without written consent of the
+other party. Contractor may assign to subcontractors for performance of
+specific portions of Work without Owner consent.
+
+13.6 NOTICES
+
+All formal notices shall be in writing and delivered:
+• In person with receipt
+• By certified mail, return receipt requested
+• By overnight courier with tracking
+• By email with read receipt confirmation
+
+Addresses:
+• To Owner: [CLIENT_EMAIL] / [CLIENT_ADDRESS]
+• To Contractor: [CONTRACTOR_EMAIL] / [CONTRACTOR_ADDRESS]
+
+13.7 SUCCESSORS & ASSIGNS
+
+This Contract binds and benefits heirs, executors, administrators,
+successors, and permitted assigns of both parties.
+
+13.8 FORCE MAJEURE
+
+Neither party shall be liable for delays or failures to perform due to
+causes beyond their reasonable control, including but not limited to:
+acts of God, war, terrorism, pandemic, fire, flood, earthquake,
+government restrictions, strikes, labor disputes, material shortages,
+or utility failures.
+
+Contractor entitled to reasonable schedule extension for force majeure
+delays without penalty.
+
+13.9 NO THIRD-PARTY BENEFICIARIES
+
+This Contract is solely for the benefit of Owner and Contractor. No
+third party (including subcontractors, suppliers, or lenders) has any
+rights or may enforce any provisions.
+
+13.10 PHOTOGRAPHS & MARKETING
+
+Contractor may photograph Work for portfolio, marketing, and social
+media purposes. Owner may request:
+• Anonymity (no address or identifying information)
+• Interior photos only (no exterior shots)
+• No photography (with written notice)
+
+13.11 OWNER RESPONSIBILITIES
+
+Owner shall:
+• Provide timely decisions on material selections
+• Maintain active utility service during construction
+• Secure personal property and valuables
+• Conduct walkthroughs and provide feedback promptly
+• Communicate changes in writing
+• Process payments per schedule
+
+13.12 SURVIVAL
+
+The following provisions survive termination or completion:
+• Article 7 (Warranty)
+• Article 8 (Insurance & Liability)
+• Article 11 (Dispute Resolution)
+• Payment obligations
+• Indemnification obligations
+
+═══════════════════════════════════════════════════════════════
+ARTICLE 14: ACKNOWLEDGMENTS & SIGNATURES
+═══════════════════════════════════════════════════════════════
+
+14.1 OWNER ACKNOWLEDGMENTS
+
+By signing below, Owner acknowledges and agrees:
+
+☑ I have read and understand all terms and conditions of this Contract
+☑ I understand the scope of work, payment terms, and project timeline
+☑ I understand items included and excluded from Contract Price
+☑ I understand my responsibilities for selections, access, and payment
+☑ I understand all changes require written Change Orders
+☑ I understand Contractor maintains lien rights until final payment
+☑ I have received a copy of this executed Contract for my records
+☑ I have had opportunity to review with legal counsel if desired
+
+14.2 CONTRACTOR ACKNOWLEDGMENTS
+
+By signing below, Contractor acknowledges and agrees:
+
+☑ Contractor will perform Work in professional manner per industry standards
+☑ Contractor will obtain required permits and pass inspections
+☑ Contractor will complete Work per schedule (subject to adjustments)
+☑ Contractor will provide one-year workmanship warranty
+☑ Contractor maintains required insurance throughout project
+☑ Contractor will honor all terms and obligations in this Contract
+
+═══════════════════════════════════════════════════════════════
+
+EXECUTED ON THE DATE FIRST WRITTEN ABOVE:
+
+CONTRACTOR:                          OWNER/CLIENT:
+
+_______________________________      _______________________________
+Signature                            Signature
+
+_______________________________      _______________________________
+Print Name                           Print Name
+
+_______________________________      _______________________________
+Title                                Date
+
+_______________________________
+License Number
+
+_______________________________
+Date
+
+
+WITNESS (Optional):
+
+_______________________________
+Signature
+
+_______________________________
+Print Name
+
+_______________________________
+Date
+
+═══════════════════════════════════════════════════════════════
+END OF CONTRACT
+═══════════════════════════════════════════════════════════════
+
+ATTACHMENTS:
+☐ Exhibit A: Detailed Scope of Work
+☐ Exhibit B: Material Specifications & Allowances
+☐ Exhibit C: Project Plans & Drawings (if applicable)
+☐ Exhibit D: Payment Schedule Breakdown
+☐ Exhibit E: Unit Prices for Additional Work
+☐ Certificate of Insurance
+☐ Contractor License (copy)
+
+═══════════════════════════════════════════════════════════════

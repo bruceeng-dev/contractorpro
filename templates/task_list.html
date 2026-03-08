@@ -4,10 +4,19 @@
 <div class="container">
   <div class="page-header">
     <h1>Task Management</h1>
-    <div>
+    <div style="display: flex; gap: 0.5rem;">
+      <a href="{{ url_for('calendar_view') }}" class="btn">📅 Schedule Tasks</a>
+      <a href="{{ url_for('gantt_chart') }}" class="btn btn--sm">📊 Gantt Chart</a>
       <a href="{{ url_for('dashboard') }}" class="btn btn--sm">← Dashboard</a>
     </div>
   </div>
+
+  <!-- Workflow Tip -->
+  {% if total_tasks > 0 %}
+  <div style="background: #e8f4f8; border-left: 4px solid #3498db; padding: 1rem 1.5rem; border-radius: 4px; margin-bottom: 2rem;">
+    <strong>💡 Workflow Tip:</strong> Drag tasks to specific dates on the <a href="{{ url_for('calendar_view') }}" style="color: #3498db; text-decoration: underline;">Calendar</a> to schedule them, then visualize the timeline in the <a href="{{ url_for('gantt_chart') }}" style="color: #3498db; text-decoration: underline;">Gantt Chart</a>.
+  </div>
+  {% endif %}
 
   <!-- Task Statistics -->
   <div class="stats-grid">
@@ -29,8 +38,30 @@
     </div>
   </div>
 
+  <!-- Job Filter Notice -->
+  {% if filtered_job %}
+  <div style="background: #e8f4f8; border-left: 4px solid #3498db; padding: 1rem 1.5rem; border-radius: 4px; margin-bottom: 1.5rem; display: flex; justify-content: space-between; align-items: center;">
+    <div>
+      <strong>📋 Viewing tasks for:</strong> {{ filtered_job.client_name }} - {{ filtered_job.project_type }}
+    </div>
+    <div style="display: flex; gap: 10px;">
+      <a href="{{ url_for('job_detail', job_id=filtered_job.id) }}" class="btn btn--sm">← Back to Job</a>
+      <a href="{{ url_for('task_list') }}" class="btn btn--sm">View All Jobs</a>
+    </div>
+  </div>
+  {% endif %}
+
   <!-- Filter Controls -->
   <div class="filter-controls">
+    <div class="filter-group">
+      <label for="filter-job">Filter by Job:</label>
+      <select id="filter-job" onchange="window.location.href = this.value ? '{{ url_for('task_list') }}?job_id=' + this.value : '{{ url_for('task_list') }}'">
+        <option value="">All Jobs</option>
+        {% for job in all_jobs_with_tasks %}
+        <option value="{{ job.id }}" {% if job_id_filter == job.id %}selected{% endif %}>{{ job.client_name }} - {{ job.project_type }}</option>
+        {% endfor %}
+      </select>
+    </div>
     <div class="filter-group">
       <label for="filter-status">Filter by Status:</label>
       <select id="filter-status" onchange="filterTasks()">
@@ -58,6 +89,11 @@
         Critical Path Only
       </label>
     </div>
+    <div class="filter-group" style="flex-grow: 1; text-align: right;">
+      <button id="consolidate-btn" class="btn btn--primary" onclick="showConsolidateModal()" style="display: none;">
+        🔗 Consolidate Selected (<span id="selected-count">0</span>)
+      </button>
+    </div>
   </div>
 
   <!-- Jobs with Tasks -->
@@ -78,12 +114,24 @@
       <!-- Tasks for this job -->
       <div class="tasks-grid">
         {% for task in job.tasks %}
-        <div class="task-card" 
-             data-status="{{ task.status }}" 
+        <div class="task-card"
+             data-status="{{ task.status }}"
              data-priority="{{ task.priority }}"
              data-critical="{{ task.is_critical_path | lower }}"
-             data-task-id="{{ task.id }}">
-          
+             data-task-id="{{ task.id }}"
+             data-task-name="{{ task.task_name }}"
+             data-cost="{{ task.cost or 0 }}"
+             data-estimated-days="{{ task.estimated_days or 0 }}"
+             data-job-id="{{ task.job_id }}">
+
+          <!-- Selection Checkbox -->
+          <div class="task-select-wrapper">
+            <input type="checkbox"
+                   class="task-select-checkbox"
+                   data-task-id="{{ task.id }}"
+                   onchange="updateSelectedCount()">
+          </div>
+
           <div class="task-header">
             <div class="task-title">
               <h3>{{ task.task_name }}</h3>
@@ -160,7 +208,7 @@
           <!-- Quick Actions -->
           <div class="task-actions">
             <button class="btn btn--sm" onclick="editTask({{ task.id }})">✏️ Edit</button>
-            {% if task.scheduled_end_date and task.scheduled_end_date < today() and task.status != 'completed' %}
+            {% if task.scheduled_end_date and task.scheduled_end_date < today and task.status != 'completed' %}
             <span class="overdue-indicator">⚠️ OVERDUE</span>
             {% endif %}
           </div>
@@ -188,10 +236,10 @@
       <h3>Edit Task</h3>
       <button onclick="hideEditTask()" class="close">&times;</button>
     </div>
-    
+
     <form id="edit-task-form" method="POST" class="form">
       <input type="hidden" id="edit-task-id" name="task_id">
-      
+
       <div class="form-row">
         <div class="form-col">
           <label for="edit-assigned_to">Assigned To</label>
@@ -208,7 +256,7 @@
           </select>
         </div>
       </div>
-      
+
       <div class="form-row">
         <div class="form-col">
           <label for="edit-scheduled_start_date">Scheduled Start</label>
@@ -219,7 +267,7 @@
           <input id="edit-scheduled_end_date" name="scheduled_end_date" type="date">
         </div>
       </div>
-      
+
       <div class="form-row">
         <div class="form-col">
           <label for="edit-status">Status</label>
@@ -231,12 +279,52 @@
           </select>
         </div>
       </div>
-      
+
       <div class="form-actions">
         <button type="button" onclick="hideEditTask()" class="btn btn--secondary">Cancel</button>
         <button type="submit" class="btn">Save Changes</button>
       </div>
     </form>
+  </div>
+</div>
+
+<!-- Consolidate Tasks Modal -->
+<div id="consolidate-modal" class="modal" style="display: none;">
+  <div class="modal-content">
+    <div class="modal-header">
+      <h3>Consolidate Tasks</h3>
+      <button onclick="hideConsolidateModal()" class="close">&times;</button>
+    </div>
+
+    <div class="form" style="padding: 1.5rem;">
+      <div class="consolidate-info">
+        <p style="margin-bottom: 1rem; color: #4a5568;">
+          You are consolidating <strong id="consolidate-task-count">0</strong> tasks into a single task.
+        </p>
+        <div id="consolidate-summary" style="background: #f7fafc; padding: 1rem; border-radius: 4px; margin-bottom: 1.5rem;">
+          <!-- Summary will be populated by JavaScript -->
+        </div>
+      </div>
+
+      <div class="form-row">
+        <div class="form-col">
+          <label for="consolidated-task-name">Consolidated Task Name</label>
+          <input id="consolidated-task-name" type="text" placeholder="Enter name for consolidated task" required>
+        </div>
+      </div>
+
+      <div class="form-row">
+        <div class="form-col">
+          <label for="consolidated-description">Description (optional)</label>
+          <textarea id="consolidated-description" rows="3" placeholder="Describe the consolidated task"></textarea>
+        </div>
+      </div>
+
+      <div class="form-actions">
+        <button type="button" onclick="hideConsolidateModal()" class="btn btn--secondary">Cancel</button>
+        <button type="button" onclick="consolidateTasks()" class="btn btn--primary">Consolidate Tasks</button>
+      </div>
+    </div>
   </div>
 </div>
 
@@ -352,6 +440,27 @@
   border-radius: 6px;
   padding: 1rem;
   transition: all 0.2s;
+  position: relative;
+}
+
+.task-select-wrapper {
+  position: absolute;
+  top: 0.5rem;
+  right: 0.5rem;
+  z-index: 10;
+}
+
+.task-select-checkbox {
+  width: 18px;
+  height: 18px;
+  cursor: pointer;
+  accent-color: #3182ce;
+}
+
+.task-card.task-selected {
+  background: #ebf8ff;
+  border-color: #3182ce;
+  border-width: 2px;
 }
 
 .task-card[data-status="completed"] {
@@ -646,6 +755,129 @@ document.getElementById('edit-task-modal').addEventListener('click', function(e)
 function today() {
   return new Date().toISOString().split('T')[0];
 }
+
+// Task Consolidation Functions
+function updateSelectedCount() {
+  const selectedCheckboxes = document.querySelectorAll('.task-select-checkbox:checked');
+  const count = selectedCheckboxes.length;
+
+  document.getElementById('selected-count').textContent = count;
+  document.getElementById('consolidate-btn').style.display = count >= 2 ? 'inline-block' : 'none';
+
+  // Highlight selected tasks
+  document.querySelectorAll('.task-card').forEach(card => {
+    const checkbox = card.querySelector('.task-select-checkbox');
+    if (checkbox && checkbox.checked) {
+      card.classList.add('task-selected');
+    } else {
+      card.classList.remove('task-selected');
+    }
+  });
+}
+
+function showConsolidateModal() {
+  const selectedCheckboxes = document.querySelectorAll('.task-select-checkbox:checked');
+
+  if (selectedCheckboxes.length < 2) {
+    alert('Please select at least 2 tasks to consolidate');
+    return;
+  }
+
+  // Build summary
+  let totalCost = 0;
+  let totalDays = 0;
+  let taskNames = [];
+  let jobId = null;
+
+  selectedCheckboxes.forEach(checkbox => {
+    const card = checkbox.closest('.task-card');
+    const cost = parseFloat(card.dataset.cost) || 0;
+    const days = parseInt(card.dataset.estimatedDays) || 0;
+    const name = card.dataset.taskName;
+
+    totalCost += cost;
+    totalDays += days;
+    taskNames.push(name);
+
+    if (!jobId) {
+      jobId = card.dataset.jobId;
+    }
+  });
+
+  // Populate summary
+  document.getElementById('consolidate-task-count').textContent = selectedCheckboxes.length;
+  document.getElementById('consolidate-summary').innerHTML = `
+    <div style="display: grid; gap: 0.5rem; font-size: 0.9rem;">
+      <div><strong>Tasks to consolidate:</strong></div>
+      <ul style="margin: 0.5rem 0; padding-left: 1.5rem; color: #4a5568;">
+        ${taskNames.map(name => `<li>${name}</li>`).join('')}
+      </ul>
+      <div><strong>Combined Cost:</strong> $${totalCost.toLocaleString()}</div>
+      <div><strong>Combined Duration:</strong> ${totalDays} days</div>
+    </div>
+  `;
+
+  // Suggest a consolidated name
+  document.getElementById('consolidated-task-name').value = `Consolidated: ${taskNames[0]}${taskNames.length > 1 ? ' + ' + (taskNames.length - 1) + ' more' : ''}`;
+
+  document.getElementById('consolidate-modal').style.display = 'block';
+}
+
+function hideConsolidateModal() {
+  document.getElementById('consolidate-modal').style.display = 'none';
+  document.getElementById('consolidated-task-name').value = '';
+  document.getElementById('consolidated-description').value = '';
+}
+
+function consolidateTasks() {
+  const selectedCheckboxes = document.querySelectorAll('.task-select-checkbox:checked');
+  const taskIds = Array.from(selectedCheckboxes).map(cb => cb.dataset.taskId);
+  const consolidatedName = document.getElementById('consolidated-task-name').value;
+  const consolidatedDescription = document.getElementById('consolidated-description').value;
+
+  if (!consolidatedName) {
+    alert('Please enter a name for the consolidated task');
+    return;
+  }
+
+  if (taskIds.length < 2) {
+    alert('Please select at least 2 tasks to consolidate');
+    return;
+  }
+
+  // Send to backend
+  fetch('/api/tasks/consolidate', {
+    method: 'POST',
+    headers: {
+      'Content-Type': 'application/json',
+    },
+    body: JSON.stringify({
+      task_ids: taskIds,
+      consolidated_name: consolidatedName,
+      consolidated_description: consolidatedDescription
+    })
+  })
+  .then(response => response.json())
+  .then(data => {
+    if (data.success) {
+      hideConsolidateModal();
+      location.reload();
+    } else {
+      alert('Failed to consolidate tasks: ' + (data.message || 'Unknown error'));
+    }
+  })
+  .catch(error => {
+    console.error('Error:', error);
+    alert('Failed to consolidate tasks');
+  });
+}
+
+// Close consolidate modal when clicking outside
+document.getElementById('consolidate-modal').addEventListener('click', function(e) {
+  if (e.target === this) {
+    hideConsolidateModal();
+  }
+});
 </script>
 
 {% endblock %}

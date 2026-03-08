@@ -7,19 +7,22 @@
     <a href="{{ url_for('new_estimate') }}" class="btn">+ New Estimate</a>
   </div>
 
-  {% if estimates %}
+  {% if estimates or pos_quotes %}
   <div class="estimates-grid">
     {% for estimate in estimates %}
     <div class="estimate-card">
       <div class="estimate-header">
-        <div class="estimate-number">{{ estimate.estimate_number }}</div>
+        <div class="estimate-number">
+          <span class="estimate-type-badge">📋 Traditional</span>
+          {{ estimate.estimate_number }}
+        </div>
         <span class="badge badge--{{ estimate.status }}">{{ estimate.status.title() }}</span>
       </div>
-      
+
       <div class="estimate-details">
         <h3>{{ estimate.client_name }}</h3>
         <p class="project-desc">{{ estimate.project_description or 'No description' }}</p>
-        
+
         <div class="estimate-breakdown">
           <div class="cost-item">
             <span class="cost-label">Labor</span>
@@ -34,13 +37,13 @@
             <span class="cost-value">${{ "{:,.2f}".format(estimate.equipment_cost) }}</span>
           </div>
         </div>
-        
+
         <div class="estimate-total">
           <span class="total-label">Total</span>
           <span class="total-value">${{ "{:,.2f}".format(estimate.total_cost) }}</span>
         </div>
       </div>
-      
+
       <div class="estimate-meta">
         <div class="meta-item">
           <span class="meta-label">Created</span>
@@ -53,7 +56,7 @@
         </div>
         {% endif %}
       </div>
-      
+
       <div class="estimate-actions">
         <a href="{{ url_for('estimate_detail', estimate_id=estimate.id) }}" class="btn btn--sm">View Details</a>
         {% if estimate.status == 'draft' %}
@@ -64,13 +67,82 @@
       </div>
     </div>
     {% endfor %}
+
+    {% for quote in pos_quotes %}
+    <div class="estimate-card pos-quote-card">
+      <div class="estimate-header">
+        <div class="estimate-number">
+          <span class="estimate-type-badge pos-badge">🛒 POS Quote</span>
+          {{ quote.quote_number }}
+        </div>
+        <span class="badge badge--{{ quote.status }}">{{ quote.status.title() }}</span>
+      </div>
+
+      <div class="estimate-details">
+        <h3>{{ quote.client_name or 'No Client Name' }}</h3>
+        {% if quote.job %}
+        <p class="project-desc">
+          <span class="job-link-badge">🔗 Job #{{ quote.job.id }}</span>
+          {{ quote.job.project_type or 'Linked Job' }}
+        </p>
+        {% else %}
+        <p class="project-desc">{{ quote.notes[:100] if quote.notes else 'No description' }}</p>
+        {% endif %}
+
+        <div class="estimate-breakdown pos-breakdown">
+          <div class="cost-item">
+            <span class="cost-label">Line Items</span>
+            <span class="cost-value">{{ quote.line_items|length }} items</span>
+          </div>
+          <div class="cost-item">
+            <span class="cost-label">Subtotal</span>
+            <span class="cost-value">${{ "{:,.2f}".format(quote.subtotal) }}</span>
+          </div>
+          {% if quote.tax_amount > 0 %}
+          <div class="cost-item">
+            <span class="cost-label">Tax ({{ quote.tax_rate }}%)</span>
+            <span class="cost-value">${{ "{:,.2f}".format(quote.tax_amount) }}</span>
+          </div>
+          {% endif %}
+        </div>
+
+        <div class="estimate-total">
+          <span class="total-label">Total</span>
+          <span class="total-value">${{ "{:,.2f}".format(quote.total_amount) }}</span>
+        </div>
+      </div>
+
+      <div class="estimate-meta">
+        <div class="meta-item">
+          <span class="meta-label">Created</span>
+          <span class="meta-value">{{ quote.created_date.strftime('%m/%d/%Y') }}</span>
+        </div>
+        {% if quote.expiry_date %}
+        <div class="meta-item">
+          <span class="meta-label">Expires</span>
+          <span class="meta-value">{{ quote.expiry_date.strftime('%m/%d/%Y') }}</span>
+        </div>
+        {% endif %}
+      </div>
+
+      <div class="estimate-actions">
+        <a href="{{ url_for('pos_quote_detail', quote_id=quote.id) }}" class="btn btn--sm">View Details</a>
+        {% if quote.job_id %}
+        <a href="{{ url_for('job_detail', job_id=quote.job_id) }}" class="btn btn--sm btn--outline">View Job</a>
+        {% endif %}
+      </div>
+    </div>
+    {% endfor %}
   </div>
   {% else %}
   <div class="empty-state">
     <div class="empty-icon">📊</div>
-    <h3>No estimates yet</h3>
-    <p class="muted">Create your first estimate to start winning more projects</p>
-    <a href="{{ url_for('new_estimate') }}" class="btn">Create First Estimate</a>
+    <h3>No estimates or quotes yet</h3>
+    <p class="muted">Create your first estimate or POS quote to start winning more projects</p>
+    <div style="display: flex; gap: 10px; justify-content: center; margin-top: 20px;">
+      <a href="{{ url_for('new_estimate') }}" class="btn">Create Traditional Estimate</a>
+      <a href="{{ url_for('pos_multilayer') }}" class="btn btn--outline">Create POS Quote</a>
+    </div>
   </div>
   {% endif %}
 </div>
@@ -95,6 +167,10 @@
   box-shadow: 0 4px 12px rgba(0,0,0,0.1);
 }
 
+.pos-quote-card {
+  border-left: 4px solid #8b5cf6;
+}
+
 .estimate-header {
   display: flex;
   justify-content: space-between;
@@ -107,6 +183,36 @@
   font-weight: 600;
   color: var(--accent);
   font-size: 14px;
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.estimate-type-badge {
+  font-size: 11px;
+  padding: 2px 8px;
+  border-radius: 4px;
+  background: #e0e7ff;
+  color: #4f46e5;
+  font-weight: 600;
+  display: inline-block;
+  width: fit-content;
+}
+
+.estimate-type-badge.pos-badge {
+  background: #f3e8ff;
+  color: #8b5cf6;
+}
+
+.job-link-badge {
+  display: inline-block;
+  font-size: 11px;
+  padding: 2px 8px;
+  border-radius: 4px;
+  background: #dbeafe;
+  color: #1e40af;
+  font-weight: 600;
+  margin-right: 8px;
 }
 
 .estimate-details h3 {

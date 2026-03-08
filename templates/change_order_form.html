@@ -1,0 +1,198 @@
+{% extends "base.html" %}
+{% block content %}
+
+<div class="container">
+  <div class="page-header">
+    <div>
+      <h1>{% if change_order %}Edit{% else %}New{% endif %} Change Order</h1>
+      <p class="muted">Project: {{ job.project_type }} - {{ job.client_name }}</p>
+    </div>
+    <div>
+      <a href="{{ url_for('job_detail', job_id=job.id) }}" class="btn btn--sm">Cancel</a>
+    </div>
+  </div>
+
+  <form method="POST" class="form-card">
+    <!-- Change Order Header -->
+    <div class="form-section">
+      <h3>Change Order Information</h3>
+      <div class="form-row">
+        <div class="form-group">
+          <label>Change Order Number</label>
+          <input type="text" name="change_order_number"
+                 value="{{ change_order.change_order_number if change_order else 'CO-' + job.id|string + '-001' }}"
+                 required>
+          <span class="form-hint">Auto-generated, can be customized</span>
+        </div>
+        <div class="form-group">
+          <label>Status</label>
+          <select name="status">
+            <option value="draft" {% if not change_order or change_order.status == 'draft' %}selected{% endif %}>Draft</option>
+            <option value="sent" {% if change_order and change_order.status == 'sent' %}selected{% endif %}>Sent to Client</option>
+            <option value="approved" {% if change_order and change_order.status == 'approved' %}selected{% endif %}>Approved</option>
+            <option value="rejected" {% if change_order and change_order.status == 'rejected' %}selected{% endif %}>Rejected</option>
+          </select>
+        </div>
+      </div>
+    </div>
+
+    <!-- Change Description -->
+    <div class="form-section">
+      <h3>Change Description</h3>
+      <div class="form-group">
+        <label>Title</label>
+        <input type="text" name="title"
+               value="{{ change_order.title if change_order else '' }}"
+               placeholder="e.g., Add granite countertops upgrade"
+               required>
+      </div>
+      <div class="form-group">
+        <label>Detailed Description</label>
+        <textarea name="description" rows="4" required>{{ change_order.description if change_order else '' }}</textarea>
+        <span class="form-hint">Describe the scope of work being added or changed</span>
+      </div>
+      <div class="form-group">
+        <label>Reason for Change</label>
+        <textarea name="reason" rows="3">{{ change_order.reason if change_order else '' }}</textarea>
+        <span class="form-hint">Client request, unforeseen conditions, design modification, etc.</span>
+      </div>
+    </div>
+
+    <!-- Financial Impact (Auto-filled from project) -->
+    <div class="form-section">
+      <h3>Financial Impact</h3>
+      <div class="form-row">
+        <div class="form-group">
+          <label>Original Contract Amount</label>
+          <input type="number" step="0.01" name="original_contract_amount"
+                 value="{{ change_order.original_contract_amount if change_order else job.budget }}"
+                 readonly style="background: #f7fafc;">
+          <span class="form-hint">From project budget</span>
+        </div>
+        <div class="form-group">
+          <label>Additional Cost</label>
+          <input type="number" step="0.01" name="additional_cost"
+                 value="{{ change_order.additional_cost if change_order else '' }}"
+                 id="additionalCost"
+                 required
+                 oninput="calculateNewTotal()">
+          <span class="form-hint">Enter change order amount</span>
+        </div>
+        <div class="form-group">
+          <label>New Contract Amount</label>
+          <input type="number" step="0.01" name="new_contract_amount"
+                 value="{{ change_order.new_contract_amount if change_order else '' }}"
+                 id="newContractAmount"
+                 readonly style="background: #e6f7ff; font-weight: 700; font-size: 18px;">
+          <span class="form-hint">Auto-calculated</span>
+        </div>
+      </div>
+    </div>
+
+    <!-- Schedule Impact (Auto-filled from project) -->
+    <div class="form-section">
+      <h3>Schedule Impact</h3>
+      <div class="form-row">
+        <div class="form-group">
+          <label>Original Completion Date</label>
+          <input type="date" name="original_completion_date"
+                 value="{{ change_order.original_completion_date if change_order else job.expected_end_date }}"
+                 readonly style="background: #f7fafc;">
+          <span class="form-hint">From project end date</span>
+        </div>
+        <div class="form-group">
+          <label>Additional Days</label>
+          <input type="number" name="additional_days"
+                 value="{{ change_order.additional_days if change_order else 0 }}"
+                 id="additionalDays"
+                 oninput="calculateNewDate()">
+          <span class="form-hint">Days to extend timeline</span>
+        </div>
+        <div class="form-group">
+          <label>New Completion Date</label>
+          <input type="date" name="new_completion_date"
+                 value="{{ change_order.new_completion_date if change_order else '' }}"
+                 id="newCompletionDate"
+                 readonly style="background: #e6f7ff; font-weight: 700;">
+          <span class="form-hint">Auto-calculated</span>
+        </div>
+      </div>
+    </div>
+
+    <!-- Client Information (Pre-filled) -->
+    <div class="form-section">
+      <h3>Client Information</h3>
+      <div class="alert alert-info">
+        <strong>Client:</strong> {{ job.client_name }}<br>
+        <strong>Project Address:</strong> {{ job.address }}<br>
+        {% if job.client_email %}<strong>Email:</strong> {{ job.client_email }}<br>{% endif %}
+        {% if job.client_phone %}<strong>Phone:</strong> {{ job.client_phone }}{% endif %}
+      </div>
+    </div>
+
+    <!-- Approval Information -->
+    {% if change_order and change_order.status in ['approved', 'rejected'] %}
+    <div class="form-section">
+      <h3>Approval Status</h3>
+      <div class="form-row">
+        <div class="form-group">
+          <label>Approved By</label>
+          <input type="text" name="approved_by"
+                 value="{{ change_order.approved_by if change_order else '' }}">
+        </div>
+        <div class="form-group">
+          <label>Approved Date</label>
+          <input type="date" name="approved_date"
+                 value="{{ change_order.approved_date if change_order else '' }}">
+        </div>
+      </div>
+      {% if change_order.status == 'rejected' %}
+      <div class="form-group">
+        <label>Rejection Reason</label>
+        <textarea name="rejection_reason" rows="3">{{ change_order.rejection_reason if change_order else '' }}</textarea>
+      </div>
+      {% endif %}
+    </div>
+    {% endif %}
+
+    <!-- Action Buttons -->
+    <div class="form-actions">
+      <button type="submit" name="action" value="save" class="btn">Save Change Order</button>
+      <button type="submit" name="action" value="send" class="btn" style="background: #48bb78;">Send to Client</button>
+      <button type="submit" name="action" value="pdf" class="btn btn--secondary">Generate PDF</button>
+      <a href="{{ url_for('job_detail', job_id=job.id) }}" class="btn btn--sm">Cancel</a>
+    </div>
+  </form>
+</div>
+
+<script>
+// Auto-calculate new contract amount
+function calculateNewTotal() {
+  const original = parseFloat(document.querySelector('[name="original_contract_amount"]').value) || 0;
+  const additional = parseFloat(document.getElementById('additionalCost').value) || 0;
+  const newTotal = original + additional;
+  document.getElementById('newContractAmount').value = newTotal.toFixed(2);
+}
+
+// Auto-calculate new completion date
+function calculateNewDate() {
+  const originalDate = document.querySelector('[name="original_completion_date"]').value;
+  const additionalDays = parseInt(document.getElementById('additionalDays').value) || 0;
+
+  if (originalDate && additionalDays > 0) {
+    const date = new Date(originalDate);
+    date.setDate(date.getDate() + additionalDays);
+    document.getElementById('newCompletionDate').value = date.toISOString().split('T')[0];
+  } else {
+    document.getElementById('newCompletionDate').value = originalDate;
+  }
+}
+
+// Initialize calculations on page load
+document.addEventListener('DOMContentLoaded', function() {
+  calculateNewTotal();
+  calculateNewDate();
+});
+</script>
+
+{% endblock %}

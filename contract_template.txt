@@ -1,0 +1,961 @@
+CONSTRUCTION CONTRACT TEMPLATE
+
+================================
+PROFESSIONAL CONSTRUCTION AGREEMENT
+EXHIBIT A – COMPREHENSIVE SCOPE OF WORK
+================================
+
+Contract Number: [CONTRACT_NUMBER]
+Effective Date: [CONTRACT_DATE]
+
+## 1. PARTIES TO THE AGREEMENT
+
+**OWNER/CLIENT:**
+Name: [CLIENT_NAME]
+Address: [CLIENT_ADDRESS]
+Phone: [CLIENT_PHONE]
+Email: [CLIENT_EMAIL]
+
+**CONTRACTOR:**
+Company: [CONTRACTOR_NAME]
+Address: [CONTRACTOR_ADDRESS]
+License Number: [CONTRACTOR_LICENSE]
+Phone: [CONTRACTOR_PHONE]
+Email: [CONTRACTOR_EMAIL]
+
+**PROJECT LOCATION:**
+[PROJECT_ADDRESS]
+Parcel/Tax ID: [PARCEL_ID]
+
+**PROJECT TYPE:** [PROJECT_TYPE]
+
+---
+
+## 2. PROJECT OBJECTIVES & SCOPE SUMMARY
+
+This agreement covers the complete renovation and construction work as described herein. The Contractor agrees to furnish all labor, materials, equipment, and services necessary to complete the following objectives:
+
+[PROJECT_OBJECTIVES]
+
+* Maintain a safe and livable environment with appropriate dust control and daily cleanup protocols.
+* Complete all work in compliance with applicable building codes, regulations, and permit requirements.
+* Provide professional coordination of all trades and subcontractors.
+* Ensure quality workmanship meeting or exceeding industry standards.
+
+**Project Commencement:** Work shall commence on or about [PROJECT_START_DATE], subject to permit approval and material availability.
+
+**Substantial Completion Target:** [SUBSTANTIAL_COMPLETION_DATE]
+
+**Final Completion Target:** [FINAL_COMPLETION_DATE]
+
+---
+
+## 3. DETAILED SCOPE OF WORK (BY DISCIPLINE)
+
+The following work shall be performed by Contractor or Contractor's authorized subcontractors:
+
+### 3.1 Site Preparation & Protection
+
+* **Access and Staging:**
+  - Establish protected pathways and work zones
+  - Install temporary barriers, floor protection, and wall protection
+  - Provide secure storage for materials and tools on-site
+  - Maintain safe egress routes per OSHA requirements
+
+* **Environmental Controls:**
+  - Install temporary dust partitions with zipper access where feasible
+  - Deploy negative air machines with HEPA filtration in active work zones
+  - Seal HVAC registers in work areas to prevent dust migration
+  - Provide adequate ventilation during finish work
+
+* **Utility Protection:**
+  - Identify and mark all existing utilities prior to demolition
+  - Coordinate utility shut-offs with Owner (minimum 24-hour notice)
+  - Protect active utilities from damage during construction
+  - Provide temporary power, lighting, and ventilation as needed
+
+### 3.2 Demolition & Removal
+
+[DEMOLITION_WORK]
+
+* **Selective Demolition:**
+  - Remove only materials specifically identified in scope
+  - Protect adjacent areas and finishes to remain
+  - Cut and patch per industry standards to minimize collateral damage
+  - Cap, label, and secure all utilities during demolition phase
+
+* **Hazardous Materials:**
+  - Visual inspection for potential asbestos-containing materials (ACM) or lead-based paint
+  - If suspect materials identified, work will STOP pending Owner-contracted testing
+  - Contractor not responsible for hazmat abatement (see Exclusions)
+
+* **Disposal & Recycling:**
+  - Load-out debris daily or as space permits
+  - Haul all demolition waste to licensed disposal facility
+  - Provide dump receipts upon Owner request
+  - Recycle materials where economically feasible (metal, cardboard, clean wood)
+  - Separate and properly dispose of hazardous waste (paint, solvents, batteries)
+
+### 3.3 Structural & Framing Work
+
+[STRUCTURAL_WORK]
+
+* **Structural Modifications:**
+  - Install engineered beams, headers, and support columns per stamped plans (if applicable)
+  - Obtain structural engineer review for load-bearing alterations
+  - Temporary shoring and bracing during structural work
+  - Anchor and fasten per IRC/IBC specifications
+
+* **Rough Framing:**
+  - Frame new walls, soffits, and blocking per approved drawings
+  - Use dimensional lumber meeting or exceeding Grade 2 or better
+  - Install metal framing where specified for wet areas or fire-rated assemblies
+  - Frame openings to accommodate specified door and window sizes
+  - Provide backing and blocking for cabinets, fixtures, and grab bars
+
+* **Inspections:**
+  - Schedule and obtain framing inspection approval
+  - Correct any inspector-noted deficiencies
+  - Provide Engineer's Letter of Compliance if structural work performed
+
+### 3.4 Electrical Work (MEP)
+
+[ELECTRICAL_WORK]
+
+* **Rough Electrical:**
+  - Run circuits per National Electrical Code (NEC) current edition
+  - Install outlet boxes, junction boxes, and device boxes at code-compliant heights
+  - Provide AFCI protection for bedrooms, GFCI protection for wet locations
+  - Upgrade panel capacity if existing service inadequate (priced separately if discovered)
+  - Label all circuits at panel and in attic/crawl spaces
+
+* **Trim Electrical:**
+  - Install all switches, outlets, and cover plates
+  - Install light fixtures per allowance or Owner-supplied
+  - Install ceiling fans with proper bracing and control switches
+  - Test all circuits for proper polarity, grounding, and GFCI function
+  - Provide panel schedule and circuit directory
+
+* **Permits & Inspections:**
+  - Obtain electrical permit and coordinate rough/final inspections
+  - Provide temporary power during construction
+  - Correct all inspector-noted deficiencies at no cost to Owner
+
+* **Code Compliance:**
+  - AFCI breakers for all 15A and 20A bedroom circuits
+  - GFCI protection for kitchen countertop, bathroom, garage, exterior outlets
+  - Tamper-resistant receptacles in areas accessible to children
+  - Arc-fault and ground-fault testing with documentation
+
+### 3.5 Plumbing Work (MEP)
+
+[PLUMBING_WORK]
+
+* **Rough Plumbing:**
+  - Relocate or extend water supply lines using PEX, copper, or CPVC per code
+  - Install drain, waste, and vent (DWV) piping per UPC/IPC
+  - Provide proper venting for all fixtures and drain slope per code
+  - Install hose bibs, shut-off valves, and access panels where required
+  - Pressure test all supply lines; drain test all waste lines
+
+* **Finish Plumbing:**
+  - Set toilets, sinks, faucets, and shower fixtures per allowance or Owner-supplied
+  - Install angle stops, supply lines, and P-traps
+  - Connect and test garbage disposals, dishwashers, and other appliances
+  - Caulk and seal all penetrations and fixture bases
+  - Final water flow and leak inspection
+
+* **Permits & Inspections:**
+  - Obtain plumbing permit and coordinate inspections
+  - Provide backflow prevention if required by jurisdiction
+  - Correct all inspector-noted deficiencies
+
+### 3.6 HVAC (Heating, Ventilation, Air Conditioning)
+
+[HVAC_WORK]
+
+* **Ductwork Modifications:**
+  - Reroute supply and return ducts to accommodate new layout
+  - Seal all duct joints with mastic (not duct tape)
+  - Insulate ducts in unconditioned spaces to R-6 or better
+  - Restore vapor barriers at all penetrations
+
+* **Ventilation:**
+  - Install bath exhaust fans ducted to exterior (no attic termination)
+  - Provide range hood vented to exterior or recirculating per Owner preference
+  - Install fresh air intake if required by code for tight construction
+
+* **Balance & Commissioning:**
+  - Balance airflow after completion to ensure even temperature distribution
+  - Test all registers for proper CFM delivery
+  - Provide Owner with filter replacement schedule
+
+### 3.7 Insulation & Drywall
+
+* **Insulation:**
+  - Install or replace insulation at all opened walls and ceilings
+  - Meet or exceed current energy code R-values for climate zone
+  - Use fiberglass batts, blown-in cellulose, or spray foam per specification
+  - Vapor barrier installation per local code requirements
+  - Seal all penetrations and gaps to prevent thermal bridging
+
+* **Drywall Installation:**
+  - Hang 1/2" or 5/8" drywall per code (5/8" Type X for fire-rated assemblies)
+  - Tape, mud, and sand to Level 4 finish (smooth, ready for paint)
+  - Use moisture-resistant (MR) or mold-resistant drywall in wet areas
+  - Provide smooth, defect-free surfaces; repair any imperfections
+  - Install corner beads on all outside corners
+
+* **Texturing:**
+  - Match existing texture or provide smooth finish as specified
+  - Orange peel, knockdown, or skip trowel textures available
+  - Ceiling texture to match existing adjacent areas
+
+### 3.8 Cabinets, Trim & Millwork
+
+[MILLWORK_DETAILS]
+
+* **Cabinet Installation:**
+  - Install cabinets level, plumb, and securely fastened to wall studs
+  - Shim and scribe cabinets for perfect fit
+  - Install soft-close hinges and drawer glides
+  - Adjust doors and drawers for smooth operation
+  - Touch up any installation damage with factory-matched finish
+
+* **Trim & Molding:**
+  - Install baseboard, casing, crown molding per design
+  - Miter corners precisely; caulk nail holes and seams
+  - Use paint-grade MDF or stain-grade hardwood per specification
+  - Match existing profiles in adjacent spaces or upgrade as specified
+  - Install door and window trim with reveals consistent throughout
+
+* **Specialty Millwork:**
+  - Built-in shelving, benches, or custom features per drawings
+  - Install with proper anchoring and structural support
+  - Pre-finish or prepare for paint per Owner selection
+
+### 3.9 Countertops & Tile Work
+
+[COUNTERTOP_TILE_WORK]
+
+* **Countertop Installation:**
+  - Template after cabinet installation for precise fit
+  - Fabricate and install per allowance material selection
+  - Provide polished edges, backsplash, and cutouts for sink/cooktop
+  - Undermount or drop-in sink installation per design
+  - Seal natural stone per manufacturer recommendations
+
+* **Tile Installation:**
+  - Prepare substrate with cement board or Kerdi waterproof membrane in wet areas
+  - Install tile with proper thinset adhesive and grout per TCNA standards
+  - Provide expansion joints and proper slope in shower floors
+  - Seal grout in wet areas with penetrating sealer
+  - Caulk inside corners and transitions (never grout)
+
+* **Backsplash & Accent Tile:**
+  - Install kitchen backsplash to full height or 4" above countertop per design
+  - Align tile layout for symmetrical appearance
+  - Cut tile cleanly around outlets and fixtures
+  - Use bullnose or Schluter trim for finished edges
+
+### 3.10 Flooring & Painting
+
+[FLOORING_PAINT_WORK]
+
+* **Flooring Preparation:**
+  - Remove existing flooring and inspect subfloor for damage
+  - Repair or replace damaged subfloor sheathing
+  - Level subfloor within 3/16" over 10 feet
+  - Install appropriate underlayment (cement board, moisture barrier, foam)
+
+* **Flooring Installation:**
+  - Install hardwood, LVP, tile, or carpet per specification
+  - Provide proper expansion gaps for floating floors
+  - Nail hardwood per manufacturer nailing schedule
+  - Install transitions, reducers, and thresholds at doorways
+  - Final sand and finish hardwood with 3 coats polyurethane (if applicable)
+
+* **Painting:**
+  - Prime all new drywall, wood, and previously unpainted surfaces
+  - Apply two finish coats of premium interior paint
+  - Cut in cleanly at ceilings, corners, and trim
+  - Use paint sprayer or roller for smooth, even finish
+  - Touch up after final fixture installation
+
+* **Paint Schedule:**
+  - Walls: [WALL_PAINT_SPEC] (e.g., Sherwin Williams Duration, Eggshell)
+  - Trim: [TRIM_PAINT_SPEC] (e.g., Semi-gloss white enamel)
+  - Ceilings: [CEILING_PAINT_SPEC] (e.g., Flat white ceiling paint)
+
+### 3.11 Exterior Work (if applicable)
+
+[EXTERIOR_WORK]
+
+* **Exterior Repairs:**
+  - Repair or replace damaged siding, trim, or roofing
+  - Flash all penetrations and roof/wall transitions
+  - Caulk and seal all exterior openings
+  - Paint or stain exterior surfaces to match existing
+
+* **Roof Work:**
+  - Install roof jacks for plumbing vents with proper flashing
+  - Repair or replace damaged shingles to match existing
+  - Ensure proper attic ventilation (ridge vent, soffit vents)
+
+* **Exterior Finishes:**
+  - Install exterior doors and windows per energy code
+  - Install exterior light fixtures and outlets
+  - Slope grade away from foundation for proper drainage
+
+### 3.12 Permits, Inspections & Closeout
+
+* **Permit Coordination:**
+  - Research and obtain all required building permits
+  - Pay permit fees (included in contract price unless otherwise noted)
+  - Post permits visibly at job site
+  - Schedule all required inspections (framing, MEP rough, insulation, final)
+
+* **Inspection Management:**
+  - Coordinate inspector access and walkthrough
+  - Correct all inspector punch items promptly
+  - Obtain signed-off permit cards and Certificates of Occupancy
+  - Provide copies of all inspection reports to Owner
+
+* **Closeout Documentation:**
+  - **Final lien waivers** from Contractor and all subcontractors
+  - **Manufacturer warranties** for appliances, fixtures, and equipment
+  - **Care & maintenance instructions** for finishes and materials
+  - **As-built notes** showing concealed utility routing, shutoffs, and access panels
+  - **Paint & finish schedule** with color names and product specifications
+  - **Photo log** of concealed MEP work (in-wall plumbing, electrical routing)
+  - **Owner's manual** with emergency shutoffs, circuit panel directory, and HVAC filter info
+
+* **Final Walkthrough:**
+  - Schedule walkthrough with Owner upon substantial completion
+  - Create punch list of remaining items requiring correction
+  - Complete all punch items within 10 business days
+  - Obtain Owner signature on Completion Certificate
+
+---
+
+## 4. INCLUSIONS
+
+The following items are INCLUDED in the contract price:
+
+* **Labor:** All labor for demolition, installation, finishing, and project management
+* **Materials:** All materials specified in scope unless noted as "Owner-supplied"
+* **Equipment:** Tools, scaffolding, ladders, generators, and construction equipment
+* **Supervision:** Project manager coordination and on-site supervision
+* **Permits:** Building permits and inspection fees for work described in scope
+* **Inspections:** Coordination and correction of inspector punch items
+* **Protection:** Dust barriers, floor protection, door and window protection
+* **Cleanup:** Daily broom-clean and end-of-project deep clean
+* **Waste Removal:** Dumpster, hauling, and disposal fees
+* **Consumables:** Fasteners, adhesives, sealants, caulk, and incidentals
+* **Utility Management:** Safe shutdown and reactivation of electrical, plumbing, gas
+* **Testing:** Electrical circuit testing, plumbing pressure testing, HVAC balancing
+* **Warranty Service:** One-year workmanship warranty and service
+
+---
+
+## 5. EXCLUSIONS / OWNER-SUPPLIED ITEMS
+
+The following items are EXCLUDED from the contract price:
+
+* **Appliances:** Major kitchen appliances (refrigerator, range, dishwasher, microwave) are Owner-supplied; Contractor will install if within scope
+* **Specialty Fixtures:** Fixtures exceeding $500 per unit unless covered by specific allowance
+* **Structural Engineering:** Engineered drawings for structural modifications (Owner to provide if required)
+* **Hazardous Materials:** Testing, abatement, or removal of asbestos, lead paint, or mold
+* **Underground Utilities:** Relocation of main water, sewer, gas, or electrical service lines
+* **Landscaping:** Restoration of lawns, plants, or hardscaping damaged during construction
+* **Furniture & Decor:** Window treatments, furniture, artwork, or decorative items
+* **Security Systems:** Installation or modification of alarm or surveillance systems
+* **Smart Home Integration:** Advanced home automation beyond standard electrical work
+* **Pest Control:** Termite treatment, rodent removal, or extermination services
+* **Storage & Moving:** Relocation or storage of Owner's personal belongings
+* **Premium Hours:** Weekend or holiday work (available at premium rates upon request)
+
+[ADDITIONAL_EXCLUSIONS]
+
+---
+
+## 6. ALLOWANCES
+
+The following allowances are included in the contract price for MATERIALS ONLY (labor for installation is included in base contract price):
+
+[ALLOWANCES_LIST]
+
+**Allowance Terms:**
+* Allowances cover material cost only; installation labor is included in contract price
+* Owner makes selections within allowance amount during selection phase
+* Overages beyond allowance amount require Change Order at actual cost + 15% OH&P
+* Unused allowance amounts credited to Owner via Change Order deduction
+* Allowance reconciliation occurs upon material purchase or final completion
+
+**Selection Deadlines:**
+* Fixture selections due: [FIXTURE_SELECTION_DEADLINE]
+* Finish selections due: [FINISH_SELECTION_DEADLINE]
+* Delayed selections may impact project timeline
+
+---
+
+## 7. UNIT PRICES FOR CHANGE ORDER WORK
+
+The following unit prices apply to approved changes beyond the base scope:
+
+[UNIT_PRICES]
+
+**Additional Standard Rates:**
+* **Carpenter labor:** $85/hour (2-hour minimum)
+* **Electrician labor:** $125/hour (licensed, 2-hour minimum)
+* **Plumber labor:** $135/hour (licensed, 2-hour minimum)
+* **General laborer:** $45/hour
+* **Project management:** 15% markup on subcontracted work
+* **Materials markup:** Actual cost + 15% overhead & profit
+* **Equipment rental:** Actual cost + 10%
+
+**Change Order Process:**
+* All changes require written Change Order signed by both parties
+* Change Order must specify cost impact, schedule impact, and scope description
+* No verbal approvals accepted; email confirmation required at minimum
+* Payment for change order work due per same schedule as base contract
+
+---
+
+## 8. PROJECT SCHEDULE & MILESTONES
+
+**Baseline Timeline:**
+
+[PROJECT_TIMELINE]
+
+**Key Milestones:**
+* Permit Approval: [PERMIT_DATE]
+* Demolition Complete: [DEMO_COMPLETE_DATE]
+* Rough Inspections Pass: [ROUGH_INSPECTION_DATE]
+* Substantial Completion: [SUBSTANTIAL_COMPLETION_DATE]
+* Final Completion: [FINAL_COMPLETION_DATE]
+
+**Schedule Assumptions:**
+* Owner provides timely selections within specified deadlines
+* Materials arrive per manufacturer lead times (current market conditions)
+* No unforeseen structural or code issues discovered
+* Weather permits outdoor work during scheduled periods
+* Permits and inspections approved without major corrections
+
+**Schedule Adjustments:**
+* Long-lead items (custom cabinets, countertops, tile) may extend finish dates if not ordered early
+* Change Orders will extend schedule based on scope complexity
+* Owner-caused delays (late selections, access issues) will extend timeline accordingly
+* Contractor will provide updated schedule after any approved Change Order
+
+**Working Hours:**
+* Standard hours: Monday-Friday, 7:30 AM - 5:00 PM
+* Weekend/holiday work available at premium rates (1.5x base rate)
+* Contractor will provide 24-hour notice before accessing property
+
+---
+
+## 9. QUALITY STANDARDS & ACCEPTANCE CRITERIA
+
+All work shall meet or exceed the following standards:
+
+**General Workmanship:**
+* Work performed in a professional manner consistent with industry best practices
+* All surfaces smooth, plumb, level, square, and free of defects
+* Materials installed per manufacturer specifications and recommendations
+* All work complies with applicable building codes and permit requirements
+
+**Electrical Standards:**
+* All circuits labeled at panel and tested for proper function
+* AFCI/GFCI devices tested and functioning correctly
+* Outlets installed at consistent heights (12" AFF standard, 42" countertop)
+* Switches installed at 48" AFF unless otherwise specified
+* Light fixtures installed level and securely fastened
+* Panel schedule updated and legible
+
+**Plumbing Standards:**
+* All supply lines pressure tested to 80 PSI for 2 hours minimum
+* All drain lines tested for leaks and proper flow
+* Hot water on left, cold water on right (facing fixture)
+* All traps properly vented per code
+* No leaks at any connection points
+* Proper fixture operation and water flow
+
+**Finish Standards:**
+* Drywall smooth and defect-free (Level 4 finish minimum)
+* Paint coverage even with no holidays, runs, or brush marks
+* Tile grout lines consistent in width (1/16" to 1/8" typical)
+* Trim joints tight with minimal caulking required
+* Cabinet doors and drawers adjusted for smooth operation
+* All surfaces clean and free of construction debris
+
+**Acceptance Process:**
+* Contractor notifies Owner of Substantial Completion
+* Owner walkthrough scheduled within 5 business days
+* Punch list created documenting remaining items
+* Contractor completes punch list within 10 business days
+* Final walkthrough and Owner acceptance signature
+* Final payment due per contract terms
+
+---
+
+## 10. ASSUMPTIONS & SITE CONDITIONS
+
+This contract is based on the following assumptions:
+
+**Structural Conditions:**
+* Existing structure is sound with no hidden defects or damage
+* Foundations, framing, and load-bearing elements are adequate
+* Roof structure is sound with no active leaks or rot
+* Subfloors are structurally adequate (minor leveling included)
+
+**Environmental Conditions:**
+* No asbestos-containing materials (ACM) present in work areas
+* No lead-based paint requiring special abatement procedures
+* No mold or moisture issues requiring remediation
+* No underground storage tanks or contaminated soil
+
+**Utility Conditions:**
+* Existing electrical service has adequate capacity for new load
+* Existing plumbing and drain lines are functional and up to code
+* HVAC system has adequate capacity for conditioned space
+* No major utility relocations required beyond normal rough-in
+
+**Access & Logistics:**
+* Owner provides clear access to work areas 7:30 AM - 5:00 PM Monday-Friday
+* Parking available for contractor vehicles on-site or street
+* Water and electricity available for construction use
+* No special security clearances or access procedures required
+
+**Concealed Conditions:**
+* If conditions differ materially from assumptions, work will STOP
+* Contractor will notify Owner immediately upon discovery
+* Resolution via Change Order after Owner review and approval
+* Examples: rot, termite damage, outdated wiring, plumbing leaks, structural deficiencies
+
+---
+
+## 11. OWNER RESPONSIBILITIES
+
+Owner agrees to:
+
+* **Provide Access:** Clear access to work areas during standard working hours
+* **Secure Property:** Protect personal belongings and valuables; lock interior rooms if desired
+* **Timely Decisions:** Make material and fixture selections per specified deadlines
+* **Maintain Utilities:** Keep water, electricity, and gas service active during construction
+* **Approve Payments:** Process payment applications within terms specified in Section 12
+* **Final Approval:** Conduct walkthroughs and provide punch list feedback promptly
+* **Communicate Changes:** Submit all change requests in writing via email or text
+* **Site Cleanliness:** Maintain reasonable cleanliness in occupied areas adjacent to work zones
+
+---
+
+## 12. PAYMENT TERMS & SCHEDULE
+
+**Total Contract Price:** [TOTAL_VALUE]
+
+**Payment Schedule:**
+
+1. **[PAYMENT_MILESTONE_1]:** [AMOUNT_1] ([PERCENTAGE_1]%)
+   - Due: Upon contract signing
+   - Covers: Mobilization, permits, material deposits, initial labor
+
+2. **[PAYMENT_MILESTONE_2]:** [AMOUNT_2] ([PERCENTAGE_2]%)
+   - Due: Upon completion of rough work and passing inspections
+   - Covers: Demolition complete, framing, MEP rough-ins, rough inspections passed
+
+3. **[PAYMENT_MILESTONE_3]:** [AMOUNT_3] ([PERCENTAGE_3]%)
+   - Due: Upon substantial completion of work
+   - Covers: Drywall, paint, flooring, cabinets, fixtures installed; project 90% complete
+
+4. **[PAYMENT_MILESTONE_4]:** [AMOUNT_4] ([PERCENTAGE_4]%)
+   - Due: Upon final completion and Owner acceptance
+   - Covers: Punch list complete, final inspections passed, closeout documents delivered
+
+**Payment Terms:**
+* Payment due within **[PAYMENT_TERMS] days** of invoice date
+* Acceptable payment methods: Check, ACH transfer, wire transfer
+* Late payments subject to **1.5% monthly service charge** (18% APR)
+* Progress payments do not constitute final acceptance of work quality
+* Final payment triggers release of contractor lien rights and final lien waiver
+
+**Lien Waivers:**
+* Conditional lien waivers provided with each progress payment invoice
+* Unconditional final lien waiver provided upon receipt of final payment
+* Subcontractor lien waivers provided with final payment documentation
+
+---
+
+## 13. INSURANCE & LIABILITY
+
+**Contractor Insurance:**
+* General Liability: Minimum $[INSURANCE_AMOUNT] per occurrence
+* Workers' Compensation: Statutory limits for all employees and subcontractors
+* Automobile Liability: $1,000,000 combined single limit
+* Certificates of Insurance provided upon request
+
+**Owner Insurance:**
+* Owner responsible for maintaining property/homeowners insurance during construction
+* Owner should notify insurance carrier of renovation work and ensure coverage
+* Builder's Risk insurance recommended for projects exceeding $100,000
+
+**Liability Limitations:**
+* Contractor liability limited to direct cost of remedial work
+* Contractor not liable for consequential, indirect, or punitive damages
+* Contractor not responsible for pre-existing conditions or concealed defects
+* Contractor not liable for damage to underground utilities not marked by utility locator
+
+---
+
+## 14. WARRANTY
+
+**Workmanship Warranty:**
+* Contractor warrants all labor and workmanship for **[WARRANTY_PERIOD]** from date of final completion
+* Warranty covers defects in installation, materials, and construction methods
+* Warranty does not cover normal wear and tear, abuse, or Owner modifications
+* Warranty does not cover Owner-supplied materials or fixtures
+
+**Manufacturer Warranties:**
+* All materials and equipment covered by manufacturer warranties
+* Manufacturer warranties pass through to Owner
+* Contractor will facilitate warranty claims but is not responsible for manufacturer defects
+* Owner receives all warranty documentation at project closeout
+
+**Warranty Service:**
+* Report warranty issues in writing via email or phone
+* Contractor will respond within 5 business days
+* Contractor will schedule repair at mutually convenient time
+* Emergency issues (leaks, electrical hazards) addressed within 24 hours
+
+**Warranty Exclusions:**
+* Damage caused by Owner negligence, abuse, or improper maintenance
+* Modifications or repairs performed by others
+* Normal settling, shrinkage, or expansion of materials
+* Issues caused by Owner failure to maintain (e.g., clogged gutters causing leak)
+
+---
+
+## 15. CHANGE ORDERS & MODIFICATIONS
+
+**Change Order Requirements:**
+* ALL modifications to scope, schedule, or price require written Change Order
+* Change Order must be signed by both parties before work begins
+* Verbal approvals or text messages do not constitute valid Change Orders
+* Email approval acceptable if followed by signed Change Order within 5 days
+
+**Change Order Pricing:**
+* Labor billed at rates specified in Section 7 (Unit Prices)
+* Materials billed at actual cost + 15% overhead and profit markup
+* Subcontracted work billed at actual cost + 15% project management fee
+* Schedule impact documented with number of days extension
+
+**Change Order Process:**
+1. Owner or Contractor identifies scope change
+2. Contractor prepares Change Order with cost and schedule impact
+3. Owner reviews and approves or requests modifications
+4. Both parties sign Change Order
+5. Contractor proceeds with modified scope
+6. Payment for change order work included in next progress invoice
+
+---
+
+## 16. DISPUTE RESOLUTION
+
+**Good Faith Negotiation:**
+* Parties agree to first attempt resolution through good faith discussion
+* Project manager and Owner meet to discuss issue and potential solutions
+* Document agreed resolution in writing (email acceptable)
+
+**Mediation:**
+* If negotiation fails, parties agree to non-binding mediation
+* Mediator selected by mutual agreement or via local dispute resolution center
+* Mediation costs split equally between parties
+* Mediation must be attempted before litigation or arbitration
+
+**Arbitration:**
+* Disputes exceeding $5,000 resolved through binding arbitration
+* Arbitration conducted per American Arbitration Association (AAA) rules
+* Arbitrator selected per AAA procedures
+* Arbitration conducted in [COUNTY], [STATE]
+* Prevailing party entitled to reasonable attorney fees and costs
+
+**Litigation:**
+* Disputes under $5,000 may be resolved in small claims court
+* Litigation venue: [COUNTY] Superior Court, [STATE]
+* Prevailing party entitled to reasonable attorney fees and costs
+
+---
+
+## 17. LIENS & LIEN RIGHTS
+
+**Contractor Lien Rights:**
+* Contractor retains mechanic's lien rights until final payment received
+* Preliminary Notice provided per state requirements (if applicable)
+* Conditional lien waivers provided with each progress payment
+* Unconditional final lien waiver provided upon receipt of final payment
+
+**Subcontractor Protection:**
+* Owner may request subcontractor lien waivers before releasing final payment
+* Contractor provides contact information for all subcontractors and suppliers
+* Owner may withhold final payment pending lien waiver receipt (max 10 days)
+
+**Notice to Cure:**
+* Owner must provide 10-day written notice before filing any lien claim
+* Notice allows Contractor opportunity to cure payment dispute
+* Good faith payment disputes do not constitute breach of contract
+
+---
+
+## 18. TERMINATION
+
+**Termination for Cause:**
+* Either party may terminate for material breach after 10-day cure notice
+* Material breach examples: non-payment, abandonment, repeated code violations
+* Terminating party entitled to damages caused by breach
+
+**Termination for Convenience (Owner):**
+* Owner may terminate contract at any time for any reason with 7-day written notice
+* Owner pays for all completed work, materials on-site, and cancellation fees
+* Owner pays 10% of remaining contract value as liquidated damages
+
+**Termination for Convenience (Contractor):**
+* Contractor may terminate if Owner fails to make payment after 30-day notice
+* Contractor may terminate if Owner repeatedly interferes with work progress
+* Contractor removes tools and materials; Owner responsible for completing work
+
+**Effect of Termination:**
+* All payments due immediately upon termination
+* Contractor provides documentation of work completed and costs incurred
+* Contractor releases lien rights upon receipt of payment for work performed
+* Both parties release all claims except for amounts owed per termination terms
+
+---
+
+## 19. PERMITS & CODE COMPLIANCE
+
+**Permit Responsibility:**
+* Contractor obtains all required building, electrical, plumbing, and mechanical permits
+* Permit fees included in contract price unless otherwise noted
+* Permits posted visibly at job site during construction
+* Copies of approved permits provided to Owner
+
+**Inspection Coordination:**
+* Contractor schedules all required inspections with building department
+* Contractor provides access for inspector and accompanies during inspection
+* Contractor corrects all inspection deficiencies at no cost to Owner
+* Contractor obtains signed-off permits and Certificate of Occupancy (if required)
+
+**Code Compliance:**
+* All work performed per current edition of applicable building codes:
+  - International Residential Code (IRC) or International Building Code (IBC)
+  - National Electrical Code (NEC)
+  - Uniform Plumbing Code (UPC) or International Plumbing Code (IPC)
+  - International Mechanical Code (IMC)
+  - International Energy Conservation Code (IECC)
+
+**Pre-Existing Violations:**
+* Contract covers only work described in scope
+* Pre-existing code violations outside scope are Owner's responsibility
+* If inspector requires correction of pre-existing violations, priced via Change Order
+* Contractor will identify known violations discovered during work
+
+---
+
+## 20. SAFETY & SITE MANAGEMENT
+
+**OSHA Compliance:**
+* All work performed per OSHA safety regulations
+* Contractor provides safety equipment for workers (harnesses, hard hats, etc.)
+* Contractor maintains safe job site with proper barricades and warnings
+
+**Site Security:**
+* Contractor locks up tools and secures site at end of each workday
+* Owner responsible for overall property security (alarm systems, locked gates)
+* Contractor not responsible for theft from property unless caused by Contractor negligence
+
+**Damage to Property:**
+* Contractor takes reasonable care to protect existing structure and finishes
+* Normal construction damage (minor drywall cracks, settling) expected and will be repaired
+* Contractor repairs damage caused by Contractor's work at no cost to Owner
+* Contractor not responsible for pre-existing damage or defects
+
+---
+
+## 21. ENVIRONMENTAL & HEALTH STANDARDS
+
+**Dust Control:**
+* HEPA filtration and negative air machines deployed in active work zones
+* Plastic barriers installed to isolate work areas where feasible
+* Daily cleanup and dust removal from work areas
+* Owner should expect some dust migration despite best efforts
+
+**Lead-Safe Practices:**
+* If home built before 1978, Contractor follows EPA Lead-Safe Certified practices
+* Contractor maintains Lead-Safe Certification (if applicable)
+* Lead testing is Owner's responsibility if desired
+* Lead abatement (if required) is outside scope and Owner's responsibility
+
+**Asbestos & Hazmat:**
+* Visual inspection for suspect asbestos-containing materials (ACM)
+* If suspect materials found, work STOPS pending testing
+* Testing and abatement contracted directly by Owner
+* Contractor resumes work after clearance provided by certified abatement contractor
+
+**VOC & Indoor Air Quality:**
+* Use low-VOC paints, adhesives, and sealants where feasible
+* Provide ventilation during painting and finishing work
+* Owner should vacate premises during high-VOC activities if sensitive
+
+---
+
+## 22. CLOSEOUT & FINAL COMPLETION
+
+**Substantial Completion:**
+* Work complete and ready for intended use
+* Minor punch list items may remain
+* Owner may occupy space
+* Warranty period begins
+
+**Final Completion:**
+* All punch list items completed
+* All inspections passed and permits signed off
+* All closeout documentation delivered
+* Site cleaned and all debris removed
+
+**Closeout Deliverables:**
+* Copies of all permits and signed inspection reports
+* Certificate of Occupancy (if applicable)
+* Final lien waivers from Contractor and all subcontractors
+* Manufacturer warranties and product registration information
+* Care and maintenance instructions for all finishes and materials
+* As-built notes showing concealed utility routing and access points
+* Paint and finish schedule with product names and colors
+* Photo log of concealed MEP work before close-up
+* Circuit panel directory with room-by-room circuit identification
+* Plumbing shutoff location diagram
+* HVAC filter replacement schedule and recommended maintenance
+* Keys, remotes, and access codes for installed items
+
+**Final Walkthrough:**
+* Contractor notifies Owner when final completion achieved
+* Owner conducts final walkthrough within 5 business days
+* Owner signs Certificate of Completion or provides punch list
+* Final payment due per Section 12 payment terms
+
+---
+
+## 23. GENERAL PROVISIONS
+
+**Entire Agreement:**
+* This contract represents the entire agreement between parties
+* Supersedes all prior oral or written agreements
+* Modifications require written Change Order signed by both parties
+
+**Severability:**
+* If any provision held invalid, remainder of contract remains enforceable
+* Invalid provision replaced with enforceable provision closest to original intent
+
+**Assignment:**
+* Neither party may assign this contract without written consent of other party
+* Contractor may assign to subcontractors for performance of specific work
+
+**Notices:**
+* All notices sent to addresses listed in Section 1
+* Email delivery acceptable for routine communications
+* Certified mail required for formal notices (termination, breach, lien notices)
+
+**Governing Law:**
+* Contract governed by laws of [STATE]
+* Venue for disputes: [COUNTY], [STATE]
+
+**Time is of the Essence:**
+* Parties agree to perform obligations in timely manner
+* Delays caused by one party may entitle other party to extension or damages
+
+**Force Majeure:**
+* Neither party liable for delays due to acts of God, war, pandemic, strikes, or government action
+* Contractor entitled to schedule extension for force majeure delays
+
+**Photographs & Marketing:**
+* Contractor may photograph project for marketing purposes
+* Owner may request anonymity (no address or name disclosed)
+* Owner may decline photography entirely with written notice
+
+---
+
+## 24. SPECIAL CONDITIONS
+
+[SPECIAL_CONDITIONS]
+
+---
+
+## 25. ACKNOWLEDGMENTS & SIGNATURES
+
+**Owner Acknowledgments:**
+
+By signing below, Owner acknowledges:
+
+✓ I have read and understand all terms and conditions of this contract
+✓ I understand the scope of work, payment terms, and project timeline
+✓ I understand items included and excluded from the contract price
+✓ I understand my responsibilities for timely selections and payments
+✓ I understand that changes require written Change Orders
+✓ I have received a copy of this signed contract for my records
+
+**Contractor Acknowledgments:**
+
+By signing below, Contractor acknowledges:
+
+✓ Contractor will perform work in professional manner per industry standards
+✓ Contractor will obtain required permits and pass inspections
+✓ Contractor will complete work per approved schedule (subject to extensions)
+✓ Contractor will provide warranty service per Section 14
+✓ Contractor will maintain required insurance throughout project
+
+---
+
+## SIGNATURES
+
+**CONTRACTOR:**
+
+Signature: _________________________     Date: _______________
+
+Print Name: _________________________
+
+Title: _________________________
+
+License #: _________________________
+
+
+**OWNER/CLIENT:**
+
+Signature: _________________________     Date: _______________
+
+Print Name: _________________________
+
+Title: _________________________
+
+
+**WITNESS (Optional):**
+
+Signature: _________________________     Date: _______________
+
+Print Name: _________________________
+
+================================
+END OF CONTRACT
+================================
+
+NOTES FOR LLM PROCESSING:
+- Replace all [PLACEHOLDER] items with project-specific information extracted from scope analysis
+- Customize each scope section (3.1-3.12) based on analyzed work items from raw scope
+- Generate realistic timeline milestones based on project complexity score
+- Include appropriate allowances from project type (kitchen, bathroom, addition, etc.)
+- Populate unit prices relevant to project type
+- Calculate payment schedule amounts from total contract value
+- Set warranty period (typically 1 year for workmanship)
+- Specify state/county for governing law and dispute resolution
+- Remove or modify sections not applicable to specific project type
+- Ensure all cross-references between sections remain consistent
+- Validate that total payment schedule equals total contract price
+================================

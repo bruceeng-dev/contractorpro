@@ -1,0 +1,49 @@
+{% extends "base.html" %}
+
+{% block content %}
+<div class="container" style="max-width: 800px; margin: 40px auto; padding: 0 20px;">
+  <h1 style="font-size: 2.5em; margin-bottom: 10px;">➕ New POS Category</h1>
+  <p style="color: #7f8c8d; margin-bottom: 30px;">Create a new category for organizing your construction activities</p>
+
+  <form method="POST" style="background: white; padding: 30px; border-radius: 8px; box-shadow: 0 2px 10px rgba(0,0,0,0.1);">
+    <div style="margin-bottom: 20px;">
+      <label style="display: block; font-weight: bold; margin-bottom: 8px; color: #2c3e50;">Category Name *</label>
+      <input type="text" name="name" required
+             placeholder="e.g., Kitchen Renovation, Bathroom Remodel, Roofing"
+             style="width: 100%; padding: 12px; border: 2px solid #e0e0e0; border-radius: 4px; font-size: 1em;">
+    </div>
+
+    <div style="margin-bottom: 20px;">
+      <label style="display: block; font-weight: bold; margin-bottom: 8px; color: #2c3e50;">Description</label>
+      <textarea name="description" rows="3"
+                placeholder="Brief description of this category"
+                style="width: 100%; padding: 12px; border: 2px solid #e0e0e0; border-radius: 4px; font-size: 1em; resize: vertical;"></textarea>
+    </div>
+
+    <div style="margin-bottom: 20px;">
+      <label style="display: block; font-weight: bold; margin-bottom: 8px; color: #2c3e50;">Icon (emoji)</label>
+      <input type="text" name="icon" maxlength="10"
+             placeholder="e.g., 🍳 🚿 🏠"
+             style="width: 100%; padding: 12px; border: 2px solid #e0e0e0; border-radius: 4px; font-size: 1em;">
+      <small style="color: #7f8c8d;">Pick an emoji to represent this category</small>
+    </div>
+
+    <div style="margin-bottom: 20px;">
+      <label style="display: block; font-weight: bold; margin-bottom: 8px; color: #2c3e50;">Keywords (for scope matching) *</label>
+      <input type="text" name="keywords" required
+             placeholder="kitchen,cabinets,countertops,sink,appliances"
+             style="width: 100%; padding: 12px; border: 2px solid #e0e0e0; border-radius: 4px; font-size: 1em;">
+      <small style="color: #7f8c8d;">Comma-separated keywords that will trigger this category when analyzing project scope</small>
+    </div>
+
+    <div style="margin-top: 30px; display: flex; gap: 10px;">
+      <button type="submit" style="flex: 1; padding: 14px; background: #27ae60; color: white; border: none; border-radius: 4px; font-size: 1.1em; cursor: pointer; font-weight: bold;">
+        ✓ Create Category
+      </button>
+      <a href="{{ url_for('pos_admin') }}" style="flex: 1; padding: 14px; background: #95a5a6; color: white; border: none; border-radius: 4px; font-size: 1.1em; text-align: center; text-decoration: none; display: block;">
+        Cancel
+      </a>
+    </div>
+  </form>
+</div>
+{% endblock %}

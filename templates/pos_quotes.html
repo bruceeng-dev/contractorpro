@@ -1,0 +1,183 @@
+{% extends "base.html" %}
+
+{% block content %}
+<div class="container" style="max-width: 1200px; margin: 40px auto; padding: 0 20px;">
+  <div style="margin-bottom: 30px; display: flex; justify-content: space-between; align-items: center;">
+    <div>
+      <h1 style="font-size: 2.5em; margin-bottom: 10px;">📋 All Quotes</h1>
+      <p style="color: #7f8c8d; font-size: 1.1em;">View and manage all quotes - POS and traditional estimates</p>
+    </div>
+    <a href="{{ url_for('pos_multilayer') }}" class="btn" style="background: #3498db; color: white; padding: 12px 25px; text-decoration: none; border-radius: 4px;">
+      🛠️ Create New Quote
+    </a>
+  </div>
+
+  {% if pos_quotes or estimates %}
+    <!-- POS QUOTES SECTION -->
+    {% if pos_quotes %}
+    <h2 style="font-size: 1.8em; margin-bottom: 20px; color: #2c3e50;">
+      📊 POS Quotes ({{ pos_quotes|length }})
+    </h2>
+    <div style="background: white; border-radius: 8px; box-shadow: 0 2px 10px rgba(0,0,0,0.1); overflow: hidden; margin-bottom: 40px;">
+      <table style="width: 100%; border-collapse: collapse;">
+        <thead>
+          <tr style="background: #f8f9fa;">
+            <th style="padding: 15px; text-align: left; border-bottom: 2px solid #e0e0e0;">Quote #</th>
+            <th style="padding: 15px; text-align: left; border-bottom: 2px solid #e0e0e0;">Client</th>
+            <th style="padding: 15px; text-align: left; border-bottom: 2px solid #e0e0e0;">Description</th>
+            <th style="padding: 15px; text-align: left; border-bottom: 2px solid #e0e0e0;">Total</th>
+            <th style="padding: 15px; text-align: left; border-bottom: 2px solid #e0e0e0;">Status</th>
+            <th style="padding: 15px; text-align: left; border-bottom: 2px solid #e0e0e0;">Created</th>
+            <th style="padding: 15px; text-align: center; border-bottom: 2px solid #e0e0e0;">Actions</th>
+          </tr>
+        </thead>
+        <tbody>
+          {% for quote in pos_quotes %}
+            <tr style="border-bottom: 1px solid #e0e0e0;">
+              <td style="padding: 15px; font-weight: bold;">{{ quote.quote_number }}</td>
+              <td style="padding: 15px;">{{ quote.client_name }}</td>
+              <td style="padding: 15px; max-width: 300px;">
+                <div style="overflow: hidden; text-overflow: ellipsis; white-space: nowrap;">
+                  {{ quote.project_description or 'No description' }}
+                </div>
+              </td>
+              <td style="padding: 15px; color: #27ae60; font-weight: bold; font-size: 1.1em;">
+                ${{ '{:,.2f}'.format(quote.total_amount or 0) }}
+              </td>
+              <td style="padding: 15px;">
+                <span style="padding: 5px 12px; border-radius: 12px; font-size: 0.9em; font-weight: bold;
+                     {% if quote.status == 'draft' %}background: #f39c12; color: white;
+                     {% elif quote.status == 'sent' %}background: #3498db; color: white;
+                     {% elif quote.status == 'accepted' %}background: #27ae60; color: white;
+                     {% else %}background: #95a5a6; color: white;{% endif %}">
+                  {{ quote.status|upper }}
+                </span>
+              </td>
+              <td style="padding: 15px; color: #7f8c8d;">
+                {{ quote.created_date.strftime('%m/%d/%Y') }}
+              </td>
+              <td style="padding: 15px; text-align: center;">
+                <div style="display: flex; gap: 8px; justify-content: center;">
+                  <a href="{{ url_for('pos_quote_detail', quote_id=quote.id) }}"
+                     style="background: #3498db; color: white; padding: 6px 12px; border-radius: 4px; text-decoration: none; font-size: 0.9em;">
+                    View
+                  </a>
+                  {% if quote.status == 'draft' and quote.job_id %}
+                  <button onclick="acceptAndGenerateContract({{ quote.id }})"
+                          style="background: #27ae60; color: white; padding: 6px 12px; border-radius: 4px; border: none; cursor: pointer; font-size: 0.9em;">
+                    ✅ Accept & Contract
+                  </button>
+                  {% endif %}
+                </div>
+              </td>
+            </tr>
+          {% endfor %}
+        </tbody>
+      </table>
+    </div>
+    {% endif %}
+
+    <!-- TRADITIONAL ESTIMATES SECTION -->
+    {% if estimates %}
+    <h2 style="font-size: 1.8em; margin-bottom: 20px; color: #2c3e50;">
+      📝 Traditional Estimates ({{ estimates|length }})
+    </h2>
+    <div style="background: white; border-radius: 8px; box-shadow: 0 2px 10px rgba(0,0,0,0.1); overflow: hidden;">
+      <table style="width: 100%; border-collapse: collapse;">
+        <thead>
+          <tr style="background: #f8f9fa;">
+            <th style="padding: 15px; text-align: left; border-bottom: 2px solid #e0e0e0;">Estimate #</th>
+            <th style="padding: 15px; text-align: left; border-bottom: 2px solid #e0e0e0;">Description</th>
+            <th style="padding: 15px; text-align: left; border-bottom: 2px solid #e0e0e0;">Total</th>
+            <th style="padding: 15px; text-align: left; border-bottom: 2px solid #e0e0e0;">Status</th>
+            <th style="padding: 15px; text-align: left; border-bottom: 2px solid #e0e0e0;">Created</th>
+            <th style="padding: 15px; text-align: center; border-bottom: 2px solid #e0e0e0;">Actions</th>
+          </tr>
+        </thead>
+        <tbody>
+          {% for estimate in estimates %}
+            <tr style="border-bottom: 1px solid #e0e0e0;">
+              <td style="padding: 15px; font-weight: bold;">{{ estimate.estimate_number }}</td>
+              <td style="padding: 15px; max-width: 300px;">
+                <div style="overflow: hidden; text-overflow: ellipsis; white-space: nowrap;">
+                  {{ estimate.description or 'No description' }}
+                </div>
+              </td>
+              <td style="padding: 15px; color: #27ae60; font-weight: bold; font-size: 1.1em;">
+                ${{ '{:,.2f}'.format(estimate.total_cost or 0) }}
+              </td>
+              <td style="padding: 15px;">
+                <span style="padding: 5px 12px; border-radius: 12px; font-size: 0.9em; font-weight: bold;
+                     {% if estimate.status == 'draft' %}background: #f39c12; color: white;
+                     {% elif estimate.status == 'sent' %}background: #3498db; color: white;
+                     {% elif estimate.status == 'approved' %}background: #27ae60; color: white;
+                     {% else %}background: #95a5a6; color: white;{% endif %}">
+                  {{ estimate.status|upper }}
+                </span>
+              </td>
+              <td style="padding: 15px; color: #7f8c8d;">
+                {{ estimate.created_date.strftime('%m/%d/%Y') }}
+              </td>
+              <td style="padding: 15px; text-align: center;">
+                <a href="{{ url_for('estimate_detail', estimate_id=estimate.id) }}"
+                   style="background: #3498db; color: white; padding: 6px 12px; border-radius: 4px; text-decoration: none; font-size: 0.9em;">
+                  View
+                </a>
+              </td>
+            </tr>
+          {% endfor %}
+        </tbody>
+      </table>
+    </div>
+    {% endif %}
+  {% else %}
+    <div style="background: white; border-radius: 8px; padding: 60px; text-align: center; box-shadow: 0 2px 10px rgba(0,0,0,0.1);">
+      <div style="font-size: 5em; margin-bottom: 20px;">📋</div>
+      <h2 style="color: #2c3e50; margin-bottom: 10px;">No Quotes Yet</h2>
+      <p style="color: #7f8c8d; margin-bottom: 30px;">Create your first quote using the POS interface</p>
+      <a href="{{ url_for('pos_multilayer') }}" class="btn" style="background: #3498db; color: white; padding: 15px 30px; text-decoration: none; border-radius: 4px; font-size: 1.1em; display: inline-block;">
+        🛠️ Create First Quote
+      </a>
+    </div>
+  {% endif %}
+</div>
+
+<script>
+function acceptAndGenerateContract(quoteId) {
+  if (!confirm('Accept this quote and generate a contract?\n\nThis will:\n- Accept the quote\n- Update the job budget\n- Generate a comprehensive contract with all POS items')) {
+    return;
+  }
+
+  const btn = event.target;
+  btn.disabled = true;
+  btn.textContent = '⏳ Generating...';
+
+  fetch(`/api/pos/quotes/${quoteId}/accept-and-contract`, {
+    method: 'POST',
+    headers: {
+      'Content-Type': 'application/json'
+    }
+  })
+  .then(response => response.json())
+  .then(data => {
+    if (data.success) {
+      alert(data.message);
+      if (data.redirect_url) {
+        window.location.href = data.redirect_url;
+      } else {
+        location.reload();
+      }
+    } else {
+      alert('Error: ' + data.message);
+      btn.disabled = false;
+      btn.textContent = '✅ Accept & Contract';
+    }
+  })
+  .catch(error => {
+    alert('Error generating contract: ' + error);
+    btn.disabled = false;
+    btn.textContent = '✅ Accept & Contract';
+  });
+}
+</script>
+{% endblock %}

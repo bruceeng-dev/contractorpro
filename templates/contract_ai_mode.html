@@ -1,0 +1,310 @@
+<!-- AI Mode: Generate Contract from Scope -->
+<div class="ai-generator-container">
+  {% if not llm_available %}
+  <div class="alert alert--warning">
+    <h3>⚠️ AI Service Not Available</h3>
+    <p>The AI contract generation service requires the OpenAI library. To enable this feature:</p>
+    <pre style="background: #2d3748; color: #e2e8f0; padding: 1rem; border-radius: 4px; margin: 1rem 0;">pip install openai</pre>
+    <p>Then set your API key in the .env file:</p>
+    <pre style="background: #2d3748; color: #e2e8f0; padding: 1rem; border-radius: 4px; margin: 1rem 0;">OPENAI_API_KEY=your_api_key_here</pre>
+    <p style="margin-top: 1rem;">
+      <a href="{{ url_for('unified_contract', job_id=job.id) }}?mode=edit" class="btn btn--primary">Use Manual Editor Instead</a>
+    </p>
+  </div>
+  {% else %}
+  <div class="ai-intro">
+    <h2>🤖 AI Contract Generator</h2>
+    <p>Describe your project scope below, and our AI will generate a comprehensive, professional construction contract including:</p>
+    <ul style="margin: 1rem 0; line-height: 1.8;">
+      <li>✓ Detailed scope of work organized by trade</li>
+      <li>✓ Comprehensive payment terms and milestones</li>
+      <li>✓ Industry-standard terms and conditions</li>
+      <li>✓ Exclusions, allowances, and unit pricing</li>
+      <li>✓ Project timeline and phases</li>
+    </ul>
+  </div>
+
+  <!-- Scope Input Form -->
+  <div class="ai-input-section">
+    <form id="ai-generate-form" onsubmit="generateAIContract(event)">
+      <div class="form-field">
+        <label for="scope_of_work"><strong>Project Scope of Work</strong></label>
+        <p class="help-text">Describe what work needs to be done. Be as detailed as possible about materials, finishes, and specifications.</p>
+        <textarea
+          id="scope_of_work"
+          name="scope_of_work"
+          rows="12"
+          required
+          placeholder="Example: Complete kitchen renovation including:&#10;- Remove and dispose of existing cabinets, countertops, and appliances&#10;- Install new custom shaker-style cabinets (18 linear feet)&#10;- Install quartz countertops with undermount sink&#10;- New tile backsplash (4x12 subway tile)&#10;- Replace all plumbing fixtures&#10;- Update electrical outlets and add under-cabinet lighting&#10;- New hardwood flooring to match existing&#10;- Paint walls and ceiling&#10;&#10;Be as specific as possible about materials, quantities, and finishes."
+        ></textarea>
+      </div>
+
+      <div class="form-row">
+        <div class="form-field">
+          <label>
+            <input type="checkbox" name="generate_tasks" id="generate_tasks" checked>
+            <strong>Also generate project tasks</strong>
+          </label>
+          <p class="help-text">Creates a detailed task list with estimated durations</p>
+        </div>
+
+        <div class="form-field">
+          <label>
+            <input type="checkbox" name="include_pos_quotes" id="include_pos_quotes" {% if pos_quotes %}checked{% endif %}>
+            <strong>Include POS Quote details</strong>
+          </label>
+          <p class="help-text">Integrate line items from existing POS quotes</p>
+        </div>
+      </div>
+
+      {% if pos_quotes %}
+      <div class="pos-quotes-preview" style="background: #f7fafc; padding: 1rem; border-radius: 8px; margin: 1rem 0;">
+        <h4>Available POS Quotes ({{ pos_quotes|length }}):</h4>
+        <ul style="margin-left: 1.5rem; line-height: 1.6;">
+          {% for quote in pos_quotes %}
+          <li>{{ quote.quote_number }} - ${{ "{:,.2f}".format(quote.total_amount or 0) }} ({{ quote.created_date.strftime('%m/%d/%Y') }})</li>
+          {% endfor %}
+        </ul>
+      </div>
+      {% endif %}
+
+      <div class="form-actions" style="margin-top: 2rem;">
+        <button type="submit" class="btn btn--primary btn--large" id="generate-btn">
+          <span id="generate-btn-text">🤖 Generate Contract with AI</span>
+          <span id="generate-spinner" style="display: none;">⏳ Generating...</span>
+        </button>
+        <a href="{{ url_for('unified_contract', job_id=job.id) }}?mode=edit" class="btn btn--secondary">Manual Edit Instead</a>
+      </div>
+    </form>
+  </div>
+
+  <!-- Results Section (hidden initially) -->
+  <div id="ai-results" style="display: none; margin-top: 3rem;">
+    <div class="success-message">
+      <h3>✅ Contract Generated Successfully!</h3>
+      <p id="generation-message"></p>
+    </div>
+
+    <div class="result-actions" style="margin-top: 1.5rem; display: flex; gap: 1rem; flex-wrap: wrap;">
+      <a href="{{ url_for('unified_contract', job_id=job.id) }}?mode=view" class="btn btn--success">👁️ View Contract</a>
+      <a href="{{ url_for('unified_contract', job_id=job.id) }}?mode=edit" class="btn btn--primary">✏️ Edit Contract</a>
+      <button onclick="generateAgain()" class="btn btn--secondary">🔄 Generate Again</button>
+    </div>
+
+    <!-- Analysis Preview -->
+    <div id="analysis-preview" class="analysis-card" style="margin-top: 2rem;">
+      <h4>AI Analysis Summary</h4>
+      <div id="analysis-content"></div>
+    </div>
+  </div>
+  {% endif %}
+</div>
+
+<script>
+async function generateAIContract(event) {
+  event.preventDefault();
+
+  const form = event.target;
+  const formData = new FormData(form);
+  const generateBtn = document.getElementById('generate-btn');
+  const btnText = document.getElementById('generate-btn-text');
+  const btnSpinner = document.getElementById('generate-spinner');
+
+  // Disable button and show spinner
+  generateBtn.disabled = true;
+  btnText.style.display = 'none';
+  btnSpinner.style.display = 'inline';
+
+  try {
+    const response = await fetch('/api/jobs/{{ job.id }}/generate-ai-contract', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json'
+      },
+      body: JSON.stringify({
+        raw_scope: formData.get('scope_of_work'),
+        generate_tasks: formData.get('generate_tasks') === 'on',
+        include_pos_quotes: formData.get('include_pos_quotes') === 'on'
+      })
+    });
+
+    const data = await response.json();
+
+    if (data.success) {
+      // Show success message
+      document.getElementById('generation-message').textContent = data.message;
+
+      // Show analysis if available
+      if (data.analysis) {
+        const analysisContent = document.getElementById('analysis-content');
+        analysisContent.innerHTML = `
+          <p><strong>Project Type:</strong> ${data.analysis.project_type || 'Not specified'}</p>
+          <p><strong>Complexity Score:</strong> ${data.analysis.complexity_score || 'N/A'}/5</p>
+          <p><strong>Estimated Timeline:</strong> ${data.analysis.estimated_timeline || 'TBD'} days</p>
+          ${data.analysis.locations_identified && data.analysis.locations_identified.length > 0 ?
+            `<p><strong>Locations:</strong> ${data.analysis.locations_identified.join(', ')}</p>` : ''}
+          ${data.tasks_generated ? `<p><strong>Tasks Generated:</strong> Yes ✓</p>` : ''}
+        `;
+      }
+
+      // Show results section
+      document.getElementById('ai-results').style.display = 'block';
+
+      // Scroll to results
+      document.getElementById('ai-results').scrollIntoView({ behavior: 'smooth' });
+    } else {
+      alert('Error: ' + data.message);
+    }
+  } catch (error) {
+    console.error('Error generating contract:', error);
+    alert('Failed to generate contract. Please try again or use manual editing.');
+  } finally {
+    // Re-enable button
+    generateBtn.disabled = false;
+    btnText.style.display = 'inline';
+    btnSpinner.style.display = 'none';
+  }
+}
+
+function generateAgain() {
+  document.getElementById('ai-results').style.display = 'none';
+  document.getElementById('ai-generate-form').reset();
+  window.scrollTo({ top: 0, behavior: 'smooth' });
+}
+</script>
+
+<style>
+.ai-generator-container {
+  max-width: 900px;
+  margin: 0 auto;
+}
+
+.ai-intro {
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  color: white;
+  padding: 2rem;
+  border-radius: 12px;
+  margin-bottom: 2rem;
+}
+
+.ai-intro h2 {
+  margin: 0 0 1rem;
+  font-size: 1.8rem;
+}
+
+.ai-intro ul {
+  list-style: none;
+  padding-left: 0;
+}
+
+.ai-intro li {
+  padding-left: 1.5rem;
+}
+
+.ai-input-section {
+  background: white;
+  border: 1px solid #e2e8f0;
+  border-radius: 8px;
+  padding: 2rem;
+}
+
+.form-field {
+  margin-bottom: 1.5rem;
+}
+
+.form-field label {
+  display: block;
+  margin-bottom: 0.5rem;
+  color: #2d3748;
+}
+
+.help-text {
+  font-size: 0.875rem;
+  color: #718096;
+  margin: 0.25rem 0 0.5rem;
+}
+
+.form-field textarea {
+  width: 100%;
+  padding: 1rem;
+  border: 1px solid #cbd5e0;
+  border-radius: 6px;
+  font-family: inherit;
+  font-size: 0.95rem;
+  line-height: 1.6;
+  resize: vertical;
+}
+
+.form-field textarea:focus {
+  outline: none;
+  border-color: #667eea;
+  box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
+}
+
+.form-row {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 2rem;
+  margin: 1.5rem 0;
+}
+
+.form-actions {
+  display: flex;
+  gap: 1rem;
+  align-items: center;
+}
+
+.btn--large {
+  padding: 1rem 2rem;
+  font-size: 1.1rem;
+}
+
+.success-message {
+  background: #d4edda;
+  border: 1px solid #c3e6cb;
+  color: #155724;
+  padding: 1.5rem;
+  border-radius: 8px;
+}
+
+.success-message h3 {
+  margin: 0 0 0.5rem;
+}
+
+.analysis-card {
+  background: #f7fafc;
+  border: 1px solid #e2e8f0;
+  border-radius: 8px;
+  padding: 1.5rem;
+}
+
+.analysis-card h4 {
+  margin: 0 0 1rem;
+  color: #2d3748;
+}
+
+.analysis-card p {
+  margin: 0.5rem 0;
+  line-height: 1.6;
+}
+
+.alert {
+  padding: 1.5rem;
+  border-radius: 8px;
+  margin-bottom: 2rem;
+}
+
+.alert--warning {
+  background: #fff3cd;
+  border: 1px solid #ffc107;
+  color: #856404;
+}
+
+.alert h3 {
+  margin: 0 0 1rem;
+}
+
+.alert pre {
+  overflow-x: auto;
+}
+</style>

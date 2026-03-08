@@ -29,7 +29,7 @@ def init_db():
         print("Database initialized successfully!")
         print("\nCreated tables:")
         print("- users")
-        print("- jobs") 
+        print("- jobs")
         print("- leads")
         print("- documents")
         print("- progress_photos")
@@ -59,14 +59,14 @@ def init_db():
         else:
             print(f"\nAdmin user already exists: {admin_user.username}")
         
-        print("\n✅ Database setup complete!")
+        print("\nDatabase setup complete!")
 
 def reset_db():
     """Reset the database (DROP ALL TABLES and recreate)"""
     app = create_app()
     
     with app.app_context():
-        print("⚠️  WARNING: This will DELETE ALL DATA!")
+        print("WARNING: This will DELETE ALL DATA!")
         response = input("Are you sure you want to reset the database? (yes/no): ")
         
         if response.lower() != 'yes':
@@ -81,19 +81,47 @@ def reset_db():
         
         print("Database reset complete!")
 
+def migrate_add_scope_field():
+    """Add scope_of_work field to Contract table"""
+    app = create_app()
+
+    with app.app_context():
+        print("Adding scope_of_work field to Contract table...")
+
+        try:
+            # Check if column already exists
+            from sqlalchemy import inspect
+            inspector = inspect(db.engine)
+            columns = [col['name'] for col in inspector.get_columns('contract')]
+
+            if 'scope_of_work' in columns:
+                print("scope_of_work field already exists!")
+                return
+
+            # Add the column using raw SQL
+            from sqlalchemy import text
+            with db.engine.connect() as conn:
+                conn.execute(text("ALTER TABLE contract ADD COLUMN scope_of_work TEXT"))
+                conn.commit()
+            print("Successfully added scope_of_work field to Contract table!")
+
+        except Exception as e:
+            print(f"Error during migration: {e}")
+            print("If the field already exists, this is normal.")
+
 def seed_sample_data():
     """Add sample data for development/testing"""
     app = create_app()
-    
+
     with app.app_context():
         # Check if admin user exists
         admin_user = User.query.filter_by(username='admin').first()
         if not admin_user:
             print("Please run 'python migrate.py init' first to create the admin user.")
             return
-        
+
         print("Adding sample data...")
-        
+
         # Sample jobs
         if Job.query.count() == 0:
             sample_jobs = [
@@ -169,7 +197,7 @@ def seed_sample_data():
             db.session.add(sample_estimate)
         
         db.session.commit()
-        print("✅ Sample data added successfully!")
+        print("Sample data added successfully!")
 
 if __name__ == '__main__':
     import sys
@@ -179,16 +207,19 @@ if __name__ == '__main__':
         print("  python migrate.py init       - Initialize database")
         print("  python migrate.py reset      - Reset database (deletes all data)")
         print("  python migrate.py seed       - Add sample data")
+        print("  python migrate.py migrate    - Run database migrations")
         sys.exit(1)
-    
+
     command = sys.argv[1]
-    
+
     if command == 'init':
         init_db()
     elif command == 'reset':
         reset_db()
     elif command == 'seed':
         seed_sample_data()
+    elif command == 'migrate':
+        migrate_add_scope_field()
     else:
         print(f"Unknown command: {command}")
         sys.exit(1)

@@ -35,3 +35,6 @@ gunicorn==21.2.0
 
 # Development and utilities
 python-dateutil==2.8.2
+
+# AI and LLM integration (optional - for contract generation)
+openai==1.12.0

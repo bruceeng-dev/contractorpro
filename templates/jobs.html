@@ -10,22 +10,23 @@
   {% if jobs %}
   <div class="jobs-grid">
     {% for job in jobs %}
-    <div class="job-card">
-      <div class="job-header">
-        <h3>{{ job.client_name }}</h3>
-        <span class="badge badge--{{ job.status }}">{{ job.status }}</span>
+    <a href="{{ url_for('job_detail', job_id=job.id) }}" class="job-card-link">
+      <div class="job-card">
+        <div class="job-header">
+          <h3>{{ job.client_name }}</h3>
+          <span class="badge badge--{{ job.status }}">{{ job.status }}</span>
+        </div>
+        <div class="job-details">
+          <p><strong>Project:</strong> {{ job.project_type }}</p>
+          <p><strong>Address:</strong> {{ job.address }}</p>
+          <p><strong>Start Date:</strong> {{ job.start_date }}</p>
+          <p><strong>Budget:</strong> ${{ job.budget }}</p>
+        </div>
+        <div class="job-actions">
+          <span class="btn btn--sm">View Details →</span>
+        </div>
       </div>
-      <div class="job-details">
-        <p><strong>Project:</strong> {{ job.project_type }}</p>
-        <p><strong>Address:</strong> {{ job.address }}</p>
-        <p><strong>Start Date:</strong> {{ job.start_date }}</p>
-        <p><strong>Budget:</strong> ${{ job.budget }}</p>
-      </div>
-      <div class="job-actions">
-        <a href="#" class="link">Edit</a>
-        <a href="#" class="link">View Details</a>
-      </div>
-    </div>
+    </a>
     {% endfor %}
   </div>
   {% else %}
@@ -36,5 +37,28 @@
   </div>
   {% endif %}
 </div>
+
+<style>
+.job-card-link {
+  text-decoration: none;
+  color: inherit;
+  display: block;
+  transition: transform 0.2s ease;
+}
+
+.job-card-link:hover {
+  transform: translateY(-4px);
+}
+
+.job-card-link:hover .job-card {
+  box-shadow: 0 8px 16px rgba(0, 0, 0, 0.15);
+  border-color: #667eea;
+}
+
+.job-card {
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+</style>
 
 {% endblock %}

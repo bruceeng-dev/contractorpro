@@ -1,0 +1,15 @@
+version: '3.8'
+
+services:
+  contractorpro:
+    build: .
+    container_name: contractorpro-app
+    ports:
+      - "5000:5000"
+    volumes:
+      - ./uploads:/app/uploads
+      - ./contractorpro.db:/app/contractorpro.db
+    environment:
+      - FLASK_ENV=production
+      - DEBUG=False
+    restart: unless-stopped

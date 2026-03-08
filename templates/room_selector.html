@@ -1,0 +1,626 @@
+{% extends "base.html" %}
+{% block content %}
+
+<div class="container">
+  <div class="page-header">
+    <div>
+      <h1>Select Property Rooms & Spaces</h1>
+      <p class="muted">Choose all rooms and areas included in this construction project</p>
+    </div>
+  </div>
+
+  <div class="project-scope-info">
+    <div class="scope-tip">
+      <strong>💡 Tip:</strong> Select all rooms/spaces that will be part of this project. You can add tasks and scope details to each room later.
+    </div>
+  </div>
+
+  <form method="POST" id="roomSelectionForm">
+    <!-- Main Floor -->
+    <div class="room-section">
+      <h2 class="room-section-title">
+        <span class="room-section-icon">🏠</span>
+        Main Floor
+      </h2>
+      <div class="room-grid">
+        <div class="room-card" data-room="Kitchen">
+          <div class="room-icon">🍳</div>
+          <div class="room-name">Kitchen</div>
+          <input type="checkbox" name="rooms[]" value="Kitchen|Main Floor" class="room-checkbox">
+        </div>
+        <div class="room-card" data-room="Living Room">
+          <div class="room-icon">🛋️</div>
+          <div class="room-name">Living Room</div>
+          <input type="checkbox" name="rooms[]" value="Living Room|Main Floor" class="room-checkbox">
+        </div>
+        <div class="room-card" data-room="Dining Room">
+          <div class="room-icon">🍽️</div>
+          <div class="room-name">Dining Room</div>
+          <input type="checkbox" name="rooms[]" value="Dining Room|Main Floor" class="room-checkbox">
+        </div>
+        <div class="room-card" data-room="Family Room">
+          <div class="room-icon">📺</div>
+          <div class="room-name">Family Room</div>
+          <input type="checkbox" name="rooms[]" value="Family Room|Main Floor" class="room-checkbox">
+        </div>
+        <div class="room-card" data-room="Half Bath">
+          <div class="room-icon">🚽</div>
+          <div class="room-name">Half Bath</div>
+          <input type="checkbox" name="rooms[]" value="Half Bath|Main Floor" class="room-checkbox">
+        </div>
+        <div class="room-card" data-room="Entry/Foyer">
+          <div class="room-icon">🚪</div>
+          <div class="room-name">Entry/Foyer</div>
+          <input type="checkbox" name="rooms[]" value="Entry/Foyer|Main Floor" class="room-checkbox">
+        </div>
+        <div class="room-card" data-room="Laundry Room">
+          <div class="room-icon">🧺</div>
+          <div class="room-name">Laundry Room</div>
+          <input type="checkbox" name="rooms[]" value="Laundry Room|Main Floor" class="room-checkbox">
+        </div>
+        <div class="room-card" data-room="Mudroom">
+          <div class="room-icon">👢</div>
+          <div class="room-name">Mudroom</div>
+          <input type="checkbox" name="rooms[]" value="Mudroom|Main Floor" class="room-checkbox">
+        </div>
+        <div class="room-card" data-room="Office">
+          <div class="room-icon">💼</div>
+          <div class="room-name">Office</div>
+          <input type="checkbox" name="rooms[]" value="Office|Main Floor" class="room-checkbox">
+        </div>
+        <div class="room-card" data-room="Pantry">
+          <div class="room-icon">🥫</div>
+          <div class="room-name">Pantry</div>
+          <input type="checkbox" name="rooms[]" value="Pantry|Main Floor" class="room-checkbox">
+        </div>
+      </div>
+    </div>
+
+    <!-- Upper Floor -->
+    <div class="room-section">
+      <h2 class="room-section-title">
+        <span class="room-section-icon">⬆️</span>
+        Upper Floor
+      </h2>
+      <div class="room-grid">
+        <div class="room-card" data-room="Master Bedroom">
+          <div class="room-icon">🛏️</div>
+          <div class="room-name">Master Bedroom</div>
+          <input type="checkbox" name="rooms[]" value="Master Bedroom|Upper Floor" class="room-checkbox">
+        </div>
+        <div class="room-card" data-room="Master Bath">
+          <div class="room-icon">🛁</div>
+          <div class="room-name">Master Bath</div>
+          <input type="checkbox" name="rooms[]" value="Master Bath|Upper Floor" class="room-checkbox">
+        </div>
+        <div class="room-card" data-room="Bedroom 2">
+          <div class="room-icon">🛌</div>
+          <div class="room-name">Bedroom 2</div>
+          <input type="checkbox" name="rooms[]" value="Bedroom 2|Upper Floor" class="room-checkbox">
+        </div>
+        <div class="room-card" data-room="Bedroom 3">
+          <div class="room-icon">🛌</div>
+          <div class="room-name">Bedroom 3</div>
+          <input type="checkbox" name="rooms[]" value="Bedroom 3|Upper Floor" class="room-checkbox">
+        </div>
+        <div class="room-card" data-room="Bedroom 4">
+          <div class="room-icon">🛌</div>
+          <div class="room-name">Bedroom 4</div>
+          <input type="checkbox" name="rooms[]" value="Bedroom 4|Upper Floor" class="room-checkbox">
+        </div>
+        <div class="room-card" data-room="Full Bath 1">
+          <div class="room-icon">🚿</div>
+          <div class="room-name">Full Bath 1</div>
+          <input type="checkbox" name="rooms[]" value="Full Bath 1|Upper Floor" class="room-checkbox">
+        </div>
+        <div class="room-card" data-room="Full Bath 2">
+          <div class="room-icon">🚿</div>
+          <div class="room-name">Full Bath 2</div>
+          <input type="checkbox" name="rooms[]" value="Full Bath 2|Upper Floor" class="room-checkbox">
+        </div>
+        <div class="room-card" data-room="Loft/Bonus Room">
+          <div class="room-icon">🎮</div>
+          <div class="room-name">Loft/Bonus Room</div>
+          <input type="checkbox" name="rooms[]" value="Loft/Bonus Room|Upper Floor" class="room-checkbox">
+        </div>
+        <div class="room-card" data-room="Upper Hallway">
+          <div class="room-icon">🚶</div>
+          <div class="room-name">Upper Hallway</div>
+          <input type="checkbox" name="rooms[]" value="Upper Hallway|Upper Floor" class="room-checkbox">
+        </div>
+      </div>
+    </div>
+
+    <!-- Basement/Lower Level -->
+    <div class="room-section">
+      <h2 class="room-section-title">
+        <span class="room-section-icon">⬇️</span>
+        Basement / Lower Level
+      </h2>
+      <div class="room-grid">
+        <div class="room-card" data-room="Rec Room">
+          <div class="room-icon">🎱</div>
+          <div class="room-name">Rec Room</div>
+          <input type="checkbox" name="rooms[]" value="Rec Room|Basement" class="room-checkbox">
+        </div>
+        <div class="room-card" data-room="Home Theater">
+          <div class="room-icon">🎬</div>
+          <div class="room-name">Home Theater</div>
+          <input type="checkbox" name="rooms[]" value="Home Theater|Basement" class="room-checkbox">
+        </div>
+        <div class="room-card" data-room="Guest Bedroom">
+          <div class="room-icon">🛏️</div>
+          <div class="room-name">Guest Bedroom</div>
+          <input type="checkbox" name="rooms[]" value="Guest Bedroom|Basement" class="room-checkbox">
+        </div>
+        <div class="room-card" data-room="Basement Bath">
+          <div class="room-icon">🚿</div>
+          <div class="room-name">Basement Bath</div>
+          <input type="checkbox" name="rooms[]" value="Basement Bath|Basement" class="room-checkbox">
+        </div>
+        <div class="room-card" data-room="Storage Room">
+          <div class="room-icon">📦</div>
+          <div class="room-name">Storage Room</div>
+          <input type="checkbox" name="rooms[]" value="Storage Room|Basement" class="room-checkbox">
+        </div>
+        <div class="room-card" data-room="Utility Room">
+          <div class="room-icon">🔧</div>
+          <div class="room-name">Utility Room</div>
+          <input type="checkbox" name="rooms[]" value="Utility Room|Basement" class="room-checkbox">
+        </div>
+        <div class="room-card" data-room="Workshop">
+          <div class="room-icon">🛠️</div>
+          <div class="room-name">Workshop</div>
+          <input type="checkbox" name="rooms[]" value="Workshop|Basement" class="room-checkbox">
+        </div>
+        <div class="room-card" data-room="Wine Cellar">
+          <div class="room-icon">🍷</div>
+          <div class="room-name">Wine Cellar</div>
+          <input type="checkbox" name="rooms[]" value="Wine Cellar|Basement" class="room-checkbox">
+        </div>
+      </div>
+    </div>
+
+    <!-- Exterior & Outdoor Spaces -->
+    <div class="room-section">
+      <h2 class="room-section-title">
+        <span class="room-section-icon">🏡</span>
+        Exterior & Outdoor Spaces
+      </h2>
+      <div class="room-grid">
+        <div class="room-card" data-room="Front Porch">
+          <div class="room-icon">🪑</div>
+          <div class="room-name">Front Porch</div>
+          <input type="checkbox" name="rooms[]" value="Front Porch|Exterior" class="room-checkbox">
+        </div>
+        <div class="room-card" data-room="Back Deck">
+          <div class="room-icon">🌲</div>
+          <div class="room-name">Back Deck</div>
+          <input type="checkbox" name="rooms[]" value="Back Deck|Exterior" class="room-checkbox">
+        </div>
+        <div class="room-card" data-room="Patio">
+          <div class="room-icon">☀️</div>
+          <div class="room-name">Patio</div>
+          <input type="checkbox" name="rooms[]" value="Patio|Exterior" class="room-checkbox">
+        </div>
+        <div class="room-card" data-room="Garage">
+          <div class="room-icon">🚗</div>
+          <div class="room-name">Garage</div>
+          <input type="checkbox" name="rooms[]" value="Garage|Exterior" class="room-checkbox">
+        </div>
+        <div class="room-card" data-room="Driveway">
+          <div class="room-icon">🛣️</div>
+          <div class="room-name">Driveway</div>
+          <input type="checkbox" name="rooms[]" value="Driveway|Exterior" class="room-checkbox">
+        </div>
+        <div class="room-card" data-room="Walkway/Sidewalk">
+          <div class="room-icon">👣</div>
+          <div class="room-name">Walkway/Sidewalk</div>
+          <input type="checkbox" name="rooms[]" value="Walkway/Sidewalk|Exterior" class="room-checkbox">
+        </div>
+        <div class="room-card" data-room="Roof">
+          <div class="room-icon">🏠</div>
+          <div class="room-name">Roof</div>
+          <input type="checkbox" name="rooms[]" value="Roof|Exterior" class="room-checkbox">
+        </div>
+        <div class="room-card" data-room="Siding/Exterior Walls">
+          <div class="room-icon">🧱</div>
+          <div class="room-name">Siding/Exterior Walls</div>
+          <input type="checkbox" name="rooms[]" value="Siding/Exterior Walls|Exterior" class="room-checkbox">
+        </div>
+        <div class="room-card" data-room="Windows & Doors">
+          <div class="room-icon">🪟</div>
+          <div class="room-name">Windows & Doors</div>
+          <input type="checkbox" name="rooms[]" value="Windows & Doors|Exterior" class="room-checkbox">
+        </div>
+        <div class="room-card" data-room="Gutters & Downspouts">
+          <div class="room-icon">💧</div>
+          <div class="room-name">Gutters & Downspouts</div>
+          <input type="checkbox" name="rooms[]" value="Gutters & Downspouts|Exterior" class="room-checkbox">
+        </div>
+        <div class="room-card" data-room="Landscaping">
+          <div class="room-icon">🌿</div>
+          <div class="room-name">Landscaping</div>
+          <input type="checkbox" name="rooms[]" value="Landscaping|Exterior" class="room-checkbox">
+        </div>
+        <div class="room-card" data-room="Fence/Gate">
+          <div class="room-icon">🚧</div>
+          <div class="room-name">Fence/Gate</div>
+          <input type="checkbox" name="rooms[]" value="Fence/Gate|Exterior" class="room-checkbox">
+        </div>
+        <div class="room-card" data-room="Pool/Spa">
+          <div class="room-icon">🏊</div>
+          <div class="room-name">Pool/Spa</div>
+          <input type="checkbox" name="rooms[]" value="Pool/Spa|Exterior" class="room-checkbox">
+        </div>
+        <div class="room-card" data-room="Shed/Outbuilding">
+          <div class="room-icon">🏚️</div>
+          <div class="room-name">Shed/Outbuilding</div>
+          <input type="checkbox" name="rooms[]" value="Shed/Outbuilding|Exterior" class="room-checkbox">
+        </div>
+      </div>
+    </div>
+
+    <!-- Custom Spaces -->
+    <div class="room-section">
+      <h2 class="room-section-title">
+        <span class="room-section-icon">➕</span>
+        Custom Spaces
+      </h2>
+      <div class="custom-room-input">
+        <p class="muted">Need to add a space not listed above?</p>
+        <div style="display: flex; gap: 12px; align-items: center; margin-top: 12px;">
+          <input type="text" id="customRoomName" placeholder="Enter room/space name" style="flex: 1; padding: 12px; border: 2px solid #e2e8f0; border-radius: 8px; font-size: 14px;">
+          <select id="customRoomLevel" style="padding: 12px; border: 2px solid #e2e8f0; border-radius: 8px; font-size: 14px;">
+            <option value="Main Floor">Main Floor</option>
+            <option value="Upper Floor">Upper Floor</option>
+            <option value="Basement">Basement</option>
+            <option value="Exterior">Exterior</option>
+            <option value="Other">Other</option>
+          </select>
+          <button type="button" class="btn" onclick="addCustomRoom()">Add Space</button>
+        </div>
+        <div id="customRoomsList" style="margin-top: 16px;"></div>
+      </div>
+    </div>
+
+    <!-- Quick Select Buttons -->
+    <div class="quick-select-bar">
+      <button type="button" class="btn btn--sm" onclick="selectAll()">Select All</button>
+      <button type="button" class="btn btn--sm" onclick="selectNone()">Clear All</button>
+      <button type="button" class="btn btn--sm" onclick="selectFloor('Main Floor')">Main Floor Only</button>
+      <button type="button" class="btn btn--sm" onclick="selectFloor('Upper Floor')">Upper Floor Only</button>
+    </div>
+
+    <!-- Summary -->
+    <div class="selection-summary">
+      <h3>Selected Locations: <span id="selectionCount">0</span></h3>
+      <div id="selectedList" class="selected-chips"></div>
+    </div>
+
+    <!-- Submit -->
+    <div class="form-actions">
+      <button type="submit" class="btn">Continue to Project Details</button>
+      <a href="{{ url_for('jobs_list') }}" class="btn btn--sm">Cancel</a>
+    </div>
+  </form>
+</div>
+
+<style>
+/* Info Section */
+.project-scope-info {
+  margin-bottom: 32px;
+}
+
+.scope-tip {
+  background: linear-gradient(135deg, #e6f7ff 0%, #f0e6ff 100%);
+  border-left: 4px solid #667eea;
+  padding: 16px 20px;
+  border-radius: 8px;
+  font-size: 14px;
+  color: #2d3748;
+}
+
+/* Room Selection Styles */
+.room-section {
+  margin-bottom: 48px;
+}
+
+.custom-room-input {
+  background: white;
+  border: 2px dashed #cbd5e0;
+  border-radius: 12px;
+  padding: 24px;
+}
+
+.room-section-title {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  font-size: 24px;
+  font-weight: 700;
+  color: var(--text);
+  margin-bottom: 24px;
+  padding-bottom: 12px;
+  border-bottom: 3px solid var(--border);
+}
+
+.room-section-icon {
+  font-size: 32px;
+}
+
+.room-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
+  gap: 16px;
+}
+
+.room-card {
+  position: relative;
+  background: white;
+  border: 3px solid #e2e8f0;
+  border-radius: 16px;
+  padding: 24px 16px;
+  text-align: center;
+  cursor: pointer;
+  transition: all 0.2s;
+  user-select: none;
+}
+
+.room-card:hover {
+  border-color: #667eea;
+  transform: translateY(-4px);
+  box-shadow: 0 8px 16px rgba(102, 126, 234, 0.2);
+}
+
+.room-card.selected {
+  border-color: #667eea;
+  background: linear-gradient(135deg, rgba(102, 126, 234, 0.1) 0%, rgba(118, 75, 162, 0.1) 100%);
+  box-shadow: 0 4px 12px rgba(102, 126, 234, 0.3);
+}
+
+.room-card.selected::after {
+  content: "✓";
+  position: absolute;
+  top: 8px;
+  right: 8px;
+  width: 28px;
+  height: 28px;
+  background: #48bb78;
+  color: white;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-weight: 700;
+  font-size: 16px;
+}
+
+.room-icon {
+  font-size: 48px;
+  margin-bottom: 12px;
+}
+
+.room-name {
+  font-weight: 600;
+  font-size: 14px;
+  color: var(--text);
+}
+
+.room-checkbox {
+  display: none;
+}
+
+.quick-select-bar {
+  display: flex;
+  gap: 12px;
+  margin: 32px 0;
+  padding: 24px;
+  background: #f7fafc;
+  border-radius: 12px;
+}
+
+.selection-summary {
+  background: white;
+  border: 2px solid var(--border);
+  border-radius: 12px;
+  padding: 24px;
+  margin: 24px 0;
+}
+
+.selection-summary h3 {
+  margin: 0 0 16px 0;
+  color: var(--text);
+}
+
+.selected-chips {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  min-height: 40px;
+}
+
+.chip {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  color: white;
+  padding: 8px 16px;
+  border-radius: 20px;
+  font-size: 14px;
+  font-weight: 600;
+}
+
+.chip-remove {
+  cursor: pointer;
+  font-size: 18px;
+  line-height: 1;
+  opacity: 0.8;
+  transition: opacity 0.2s;
+}
+
+.chip-remove:hover {
+  opacity: 1;
+}
+
+@media (max-width: 768px) {
+  .room-grid {
+    grid-template-columns: repeat(auto-fill, minmax(120px, 1fr));
+  }
+
+  .quick-select-bar {
+    flex-wrap: wrap;
+  }
+}
+</style>
+
+<script>
+let customRoomCounter = 0;
+
+// Handle room card clicks
+document.querySelectorAll('.room-card').forEach(card => {
+  card.addEventListener('click', function() {
+    const checkbox = this.querySelector('.room-checkbox');
+    checkbox.checked = !checkbox.checked;
+    this.classList.toggle('selected');
+    updateSummary();
+  });
+});
+
+// Add custom room
+function addCustomRoom() {
+  const nameInput = document.getElementById('customRoomName');
+  const levelSelect = document.getElementById('customRoomLevel');
+  const roomName = nameInput.value.trim();
+  const roomLevel = levelSelect.value;
+
+  if (!roomName) {
+    alert('Please enter a room/space name');
+    return;
+  }
+
+  customRoomCounter++;
+  const customId = `custom_${customRoomCounter}`;
+
+  // Create hidden checkbox for form submission
+  const checkbox = document.createElement('input');
+  checkbox.type = 'checkbox';
+  checkbox.name = 'rooms[]';
+  checkbox.value = `${roomName}|${roomLevel}`;
+  checkbox.id = customId;
+  checkbox.checked = true;
+  checkbox.style.display = 'none';
+
+  // Create visual chip
+  const chip = document.createElement('div');
+  chip.className = 'chip';
+  chip.style.marginTop = '8px';
+  chip.innerHTML = `
+    <span>${roomName} (${roomLevel})</span>
+    <span class="chip-remove" onclick="removeCustomRoom('${customId}')">×</span>
+  `;
+
+  const container = document.getElementById('customRoomsList');
+  const wrapper = document.createElement('div');
+  wrapper.id = `wrapper_${customId}`;
+  wrapper.appendChild(checkbox);
+  wrapper.appendChild(chip);
+  container.appendChild(wrapper);
+
+  // Clear input
+  nameInput.value = '';
+  updateSummary();
+}
+
+// Remove custom room
+function removeCustomRoom(customId) {
+  const wrapper = document.getElementById(`wrapper_${customId}`);
+  if (wrapper) {
+    wrapper.remove();
+    updateSummary();
+  }
+}
+
+// Update selection summary
+function updateSummary() {
+  const selected = document.querySelectorAll('.room-checkbox:checked, input[type="checkbox"][name="rooms[]"]:checked');
+  document.getElementById('selectionCount').textContent = selected.length;
+
+  const listContainer = document.getElementById('selectedList');
+  listContainer.innerHTML = '';
+
+  selected.forEach(checkbox => {
+    // Skip if it's in the custom rooms list (already displayed there)
+    if (checkbox.id && checkbox.id.startsWith('custom_')) {
+      return;
+    }
+
+    const roomData = checkbox.value.split('|');
+    const roomName = roomData[0];
+    const floorName = roomData[1];
+
+    const chip = document.createElement('div');
+    chip.className = 'chip';
+    chip.innerHTML = `
+      <span>${roomName} <small style="opacity:0.8;">(${floorName})</small></span>
+      <span class="chip-remove" onclick="removeRoom('${checkbox.value}')">×</span>
+    `;
+    listContainer.appendChild(chip);
+  });
+
+  if (selected.length === 0) {
+    listContainer.innerHTML = '<p class="muted" style="margin:0;">No rooms selected yet. Click rooms above to add them.</p>';
+  }
+}
+
+// Quick select functions
+function selectAll() {
+  document.querySelectorAll('.room-checkbox').forEach(cb => {
+    cb.checked = true;
+    cb.closest('.room-card').classList.add('selected');
+  });
+  updateSummary();
+}
+
+function selectNone() {
+  document.querySelectorAll('.room-checkbox').forEach(cb => {
+    cb.checked = false;
+    cb.closest('.room-card').classList.remove('selected');
+  });
+  updateSummary();
+}
+
+function selectFloor(floorName) {
+  selectNone();
+  document.querySelectorAll('.room-checkbox').forEach(cb => {
+    if (cb.value.includes(floorName)) {
+      cb.checked = true;
+      cb.closest('.room-card').classList.add('selected');
+    }
+  });
+  updateSummary();
+}
+
+function removeRoom(roomValue) {
+  const checkbox = document.querySelector(`.room-checkbox[value="${roomValue}"]`);
+  if (checkbox) {
+    checkbox.checked = false;
+    checkbox.closest('.room-card').classList.remove('selected');
+    updateSummary();
+  }
+}
+
+// Enter key support for custom room input
+document.getElementById('customRoomName').addEventListener('keypress', function(e) {
+  if (e.key === 'Enter') {
+    e.preventDefault();
+    addCustomRoom();
+  }
+});
+
+// Initialize
+updateSummary();
+</script>
+
+{% endblock %}

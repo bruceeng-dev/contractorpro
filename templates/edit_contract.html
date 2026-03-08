@@ -1,0 +1,250 @@
+{% extends "base.html" %}
+{% block content %}
+
+<div class="container">
+  <div class="page-header">
+    <h1>Edit Contract - {{ job.client_name }}</h1>
+    <a href="{{ url_for('view_contract', job_id=job.id) }}" class="btn btn--sm">← Back to Contract</a>
+  </div>
+
+  <div class="panel">
+    <form method="POST" class="form form--wide">
+
+      <!-- Basic Contract Info -->
+      <div class="form-section">
+        <h3>Basic Information</h3>
+        <div class="form-row">
+          <div class="form-col">
+            <label for="title">Contract Title</label>
+            <input type="text" id="title" name="title" value="{{ contract.title }}" required>
+          </div>
+          <div class="form-col">
+            <label for="status">Contract Status</label>
+            <select id="status" name="status">
+              <option value="draft" {% if contract.status == 'draft' %}selected{% endif %}>Draft</option>
+              <option value="sent" {% if contract.status == 'sent' %}selected{% endif %}>Sent</option>
+              <option value="signed" {% if contract.status == 'signed' %}selected{% endif %}>Signed</option>
+              <option value="executed" {% if contract.status == 'executed' %}selected{% endif %}>Executed</option>
+            </select>
+          </div>
+        </div>
+      </div>
+
+      <!-- Contractor Information -->
+      <div class="form-section">
+        <h3>Contractor Information</h3>
+        <div class="form-row">
+          <div class="form-col">
+            <label for="contractor_license_number">License Number</label>
+            <input type="text" id="contractor_license_number" name="contractor_license_number"
+                   value="{{ contract.contractor_license_number or '' }}"
+                   placeholder="e.g., MI-1234567">
+          </div>
+        </div>
+        <div class="form-col">
+          <label for="contractor_address">Contractor Address</label>
+          <textarea id="contractor_address" name="contractor_address" rows="3"
+                    placeholder="Street address, City, State ZIP">{{ contract.contractor_address or '' }}</textarea>
+        </div>
+      </div>
+
+      <!-- Project Timeline -->
+      <div class="form-section">
+        <h3>Project Timeline</h3>
+        <div class="form-row">
+          <div class="form-col">
+            <label for="work_start_date">Work Start Date</label>
+            <input type="date" id="work_start_date" name="work_start_date"
+                   value="{{ contract.work_start_date.strftime('%Y-%m-%d') if contract.work_start_date else '' }}">
+            <small class="muted">Leave blank to use job start date</small>
+          </div>
+          <div class="form-col">
+            <label for="work_completion_date">Work Completion Date</label>
+            <input type="date" id="work_completion_date" name="work_completion_date"
+                   value="{{ contract.work_completion_date.strftime('%Y-%m-%d') if contract.work_completion_date else '' }}">
+            <small class="muted">Leave blank to use job end date</small>
+          </div>
+        </div>
+      </div>
+
+      <!-- Project Description & Scope -->
+      <div class="form-section">
+        <h3>Project Description & Scope</h3>
+        <div class="form-col">
+          <label for="project_description">Project Description (Section 1)</label>
+          <textarea id="project_description" name="project_description" rows="4"
+                    placeholder="Brief description of the overall project...">{{ contract.project_description or '' }}</textarea>
+          <small class="muted">Leave blank to auto-generate from job details</small>
+        </div>
+
+        <div class="form-col">
+          <label for="scope_of_work">Scope of Work Overview (Section 2)</label>
+          <textarea id="scope_of_work" name="scope_of_work" rows="4"
+                    placeholder="Optional introductory text before the detailed task list...">{{ contract.scope_of_work or '' }}</textarea>
+          <small class="muted">The task list will be automatically added below this text</small>
+        </div>
+      </div>
+
+      <!-- Payment Terms -->
+      <div class="form-section">
+        <h3>Payment Terms (Section 3)</h3>
+        <div class="form-row">
+          <div class="form-col">
+            <label for="deposit_percentage">Deposit %</label>
+            <input type="number" id="deposit_percentage" name="deposit_percentage"
+                   value="{{ contract.deposit_percentage or 30 }}"
+                   min="0" max="100" step="0.01">
+          </div>
+          <div class="form-col">
+            <label for="progress_payment_percentage">Progress Payment %</label>
+            <input type="number" id="progress_payment_percentage" name="progress_payment_percentage"
+                   value="{{ contract.progress_payment_percentage or 40 }}"
+                   min="0" max="100" step="0.01">
+          </div>
+          <div class="form-col">
+            <label for="final_payment_percentage">Final Payment %</label>
+            <input type="number" id="final_payment_percentage" name="final_payment_percentage"
+                   value="{{ contract.final_payment_percentage or 30 }}"
+                   min="0" max="100" step="0.01">
+          </div>
+        </div>
+        <div class="form-col">
+          <label for="payment_schedule_notes">Additional Payment Notes</label>
+          <textarea id="payment_schedule_notes" name="payment_schedule_notes" rows="3"
+                    placeholder="Any additional payment terms or notes...">{{ contract.payment_schedule_notes or '' }}</textarea>
+        </div>
+      </div>
+
+      <!-- Standard Contract Clauses -->
+      <div class="form-section">
+        <h3>Standard Contract Clauses</h3>
+        <p style="color: #718096; font-size: 0.9rem; margin-bottom: 1rem;">
+          These fields will auto-populate with standard industry language if left blank. Edit to customize for your business.
+        </p>
+
+        <div class="form-col">
+          <label for="permits_clause">Permits and Licenses (Section 5)</label>
+          <textarea id="permits_clause" name="permits_clause" rows="3">{{ contract.permits_clause or '' }}</textarea>
+          <small class="muted">Leave blank for standard permits clause</small>
+        </div>
+
+        <div class="form-col">
+          <label for="insurance_clause">Insurance (Section 6)</label>
+          <textarea id="insurance_clause" name="insurance_clause" rows="3">{{ contract.insurance_clause or '' }}</textarea>
+          <small class="muted">Leave blank for standard insurance clause</small>
+        </div>
+
+        <div class="form-col">
+          <label for="change_orders_clause">Change Orders (Section 7)</label>
+          <textarea id="change_orders_clause" name="change_orders_clause" rows="3">{{ contract.change_orders_clause or '' }}</textarea>
+          <small class="muted">Leave blank for standard change orders clause</small>
+        </div>
+
+        <div class="form-col">
+          <label for="warranty_clause">Warranty (Section 8)</label>
+          <textarea id="warranty_clause" name="warranty_clause" rows="3">{{ contract.warranty_clause or '' }}</textarea>
+          <small class="muted">Leave blank to auto-generate based on warranty period</small>
+        </div>
+
+        <div class="form-col">
+          <label for="warranty_period_months">Warranty Period (Months)</label>
+          <input type="number" id="warranty_period_months" name="warranty_period_months"
+                 value="{{ contract.warranty_period_months or 12 }}"
+                 min="1" max="120">
+        </div>
+
+        <div class="form-col">
+          <label for="termination_clause">Termination (Section 9)</label>
+          <textarea id="termination_clause" name="termination_clause" rows="3">{{ contract.termination_clause or '' }}</textarea>
+          <small class="muted">Leave blank for standard termination clause</small>
+        </div>
+
+        <div class="form-col">
+          <label for="entire_agreement_clause">Entire Agreement (Section 10)</label>
+          <textarea id="entire_agreement_clause" name="entire_agreement_clause" rows="3">{{ contract.entire_agreement_clause or '' }}</textarea>
+          <small class="muted">Leave blank for standard entire agreement clause</small>
+        </div>
+
+        <div class="form-col">
+          <label for="additional_terms">Additional Terms (Optional Section 11)</label>
+          <textarea id="additional_terms" name="additional_terms" rows="4"
+                    placeholder="Any additional custom terms specific to this project...">{{ contract.additional_terms or '' }}</textarea>
+        </div>
+      </div>
+
+      <div style="display: flex; gap: 1rem; margin-top: 2rem; padding-top: 1rem; border-top: 2px solid #e2e8f0;">
+        <button type="submit" class="btn btn--primary">Save Contract</button>
+        <a href="{{ url_for('view_contract', job_id=job.id) }}" class="btn">Cancel</a>
+      </div>
+    </form>
+  </div>
+</div>
+
+<style>
+.form-section {
+  background: #f7fafc;
+  border: 1px solid #e2e8f0;
+  border-radius: 8px;
+  padding: 1.5rem;
+  margin-bottom: 1.5rem;
+}
+
+.form-section h3 {
+  margin: 0 0 1rem 0;
+  color: #2d3748;
+  font-size: 1.2rem;
+  padding-bottom: 0.5rem;
+  border-bottom: 2px solid #cbd5e0;
+}
+
+.form-row {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+  gap: 1rem;
+  margin-bottom: 1rem;
+}
+
+.form-col {
+  display: flex;
+  flex-direction: column;
+}
+
+.form-col label {
+  font-weight: 600;
+  margin-bottom: 0.5rem;
+  color: #2d3748;
+}
+
+.form-col input,
+.form-col textarea,
+.form-col select {
+  padding: 0.75rem;
+  border: 1px solid #cbd5e0;
+  border-radius: 4px;
+  font-size: 0.95rem;
+}
+
+.form-col textarea {
+  font-family: inherit;
+  resize: vertical;
+}
+
+.muted {
+  color: #718096;
+  font-size: 0.85rem;
+  margin-top: 0.25rem;
+}
+
+.btn--primary {
+  background: #3182ce;
+  color: white;
+  font-weight: 600;
+  padding: 0.75rem 2rem;
+}
+
+.btn--primary:hover {
+  background: #2c5aa0;
+}
+</style>
+
+{% endblock %}

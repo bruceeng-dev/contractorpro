@@ -1,0 +1,217 @@
+{% extends "base.html" %}
+{% block content %}
+
+<div class="container">
+  <div class="page-header">
+    <h1>✏️ Contracts</h1>
+    <p class="muted">Manage all project contracts</p>
+  </div>
+
+  <!-- Contracts List -->
+  {% if contracts %}
+  <div class="contracts-grid">
+    {% for contract in contracts %}
+    <div class="contract-card">
+      <div class="contract-card-header">
+        <div>
+          <h3>{{ contract.job.client_name }}</h3>
+          <p class="contract-meta">
+            {{ contract.job.project_type }} • {{ contract.contract_number }}
+          </p>
+        </div>
+        <span class="contract-status badge badge--{{ contract.job.status }}">
+          {{ contract.job.status.title() }}
+        </span>
+      </div>
+
+      <div class="contract-card-body">
+        <div class="contract-info-row">
+          <div class="info-item">
+            <span class="info-label">Contract Value</span>
+            <span class="info-value">${{ "{:,.2f}".format(contract.total_contract_value or 0) }}</span>
+          </div>
+          <div class="info-item">
+            <span class="info-label">Created</span>
+            <span class="info-value">{{ contract.created_date.strftime('%m/%d/%Y') if contract.created_date else 'N/A' }}</span>
+          </div>
+        </div>
+
+        <div class="contract-info-row" style="margin-top: 1rem;">
+          <div class="info-item">
+            <span class="info-label">Address</span>
+            <span class="info-value small">{{ contract.job.address }}</span>
+          </div>
+        </div>
+      </div>
+
+      <div class="contract-card-actions">
+        <a href="{{ url_for('unified_contract', job_id=contract.job_id) }}?mode=view" class="btn btn--sm btn--primary">
+          👁️ View
+        </a>
+        <a href="{{ url_for('unified_contract', job_id=contract.job_id) }}?mode=edit" class="btn btn--sm">
+          ✏️ Edit
+        </a>
+        <a href="{{ url_for('job_detail', job_id=contract.job_id) }}" class="btn btn--sm btn--secondary">
+          🔨 Job Details
+        </a>
+      </div>
+    </div>
+    {% endfor %}
+  </div>
+
+  {% else %}
+  <!-- Empty State -->
+  <div class="empty-state-container">
+    <div class="empty-state-icon">📄</div>
+    <h2>No Contracts Yet</h2>
+    <p>Contracts are automatically created when you build quotes for jobs.</p>
+    <div class="empty-state-actions">
+      <a href="{{ url_for('jobs_list') }}" class="btn btn--primary">View Jobs</a>
+      <a href="{{ url_for('quote_builder') }}" class="btn btn--success">Create Quote</a>
+    </div>
+  </div>
+  {% endif %}
+</div>
+
+<style>
+.contracts-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(400px, 1fr));
+  gap: 1.5rem;
+  margin-top: 2rem;
+}
+
+.contract-card {
+  background: white;
+  border: 1px solid #e2e8f0;
+  border-radius: 12px;
+  overflow: hidden;
+  transition: all 0.3s;
+}
+
+.contract-card:hover {
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+  transform: translateY(-2px);
+}
+
+.contract-card-header {
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  color: white;
+  padding: 1.5rem;
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+}
+
+.contract-card-header h3 {
+  margin: 0 0 0.5rem;
+  font-size: 1.3rem;
+}
+
+.contract-meta {
+  margin: 0;
+  opacity: 0.9;
+  font-size: 0.875rem;
+}
+
+.contract-status {
+  background: rgba(255, 255, 255, 0.2);
+  color: white;
+  border: 1px solid rgba(255, 255, 255, 0.3);
+}
+
+.contract-card-body {
+  padding: 1.5rem;
+}
+
+.contract-info-row {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 1rem;
+}
+
+.info-item {
+  display: flex;
+  flex-direction: column;
+  gap: 0.25rem;
+}
+
+.info-label {
+  font-size: 0.75rem;
+  color: #718096;
+  text-transform: uppercase;
+  font-weight: 600;
+  letter-spacing: 0.5px;
+}
+
+.info-value {
+  font-size: 1.1rem;
+  font-weight: 600;
+  color: #2d3748;
+}
+
+.info-value.small {
+  font-size: 0.9rem;
+  font-weight: 400;
+  color: #4a5568;
+}
+
+.contract-card-actions {
+  display: flex;
+  gap: 0.5rem;
+  padding: 1rem 1.5rem;
+  background: #f7fafc;
+  border-top: 1px solid #e2e8f0;
+}
+
+.empty-state-container {
+  text-align: center;
+  padding: 4rem 2rem;
+  max-width: 600px;
+  margin: 0 auto;
+}
+
+.empty-state-icon {
+  font-size: 5rem;
+  margin-bottom: 1rem;
+  opacity: 0.5;
+}
+
+.empty-state-container h2 {
+  color: #2d3748;
+  margin-bottom: 1rem;
+}
+
+.empty-state-container p {
+  color: #718096;
+  font-size: 1.1rem;
+  margin-bottom: 2rem;
+}
+
+.empty-state-actions {
+  display: flex;
+  gap: 1rem;
+  justify-content: center;
+}
+
+@media (max-width: 768px) {
+  .contracts-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .contract-card-header {
+    flex-direction: column;
+    gap: 1rem;
+  }
+
+  .contract-info-row {
+    grid-template-columns: 1fr;
+  }
+
+  .contract-card-actions {
+    flex-wrap: wrap;
+  }
+}
+</style>
+
+{% endblock %}

@@ -1,0 +1,4 @@
+# Veo 3.1 Video Generator Requirements
+# Install with: pip install -r requirements_veo3.txt
+
+google-genai>=0.8.0

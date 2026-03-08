@@ -15,7 +15,7 @@
     
     <div class="form-row">
       <div class="form-col">
-        <label for="client_name">Client Name</label>
+        <label for="client_name">Client Name *</label>
         <input id="client_name" name="client_name" type="text" required>
       </div>
       <div class="form-col">
@@ -45,9 +45,9 @@
         </select>
       </div>
       <div class="form-col">
-        <label for="project_type">Project Type</label>
+        <label for="project_type">Project Type *</label>
         <select id="project_type" name="project_type" required>
-          <option value="">Select project type</option>
+          <option value="" disabled selected>Select project type</option>
           <option value="Kitchen Remodel">Kitchen Remodel</option>
           <option value="Bathroom Renovation">Bathroom Renovation</option>
           <option value="Home Addition">Home Addition</option>
@@ -59,7 +59,7 @@
       </div>
     </div>
 
-    <label for="address">Project Address</label>
+    <label for="address">Project Address *</label>
     <input id="address" name="address" type="text" required>
     
     <label for="description">Project Description</label>
@@ -110,11 +110,11 @@
     
     <div class="form-row">
       <div class="form-col">
-        <label for="start_date">Start Date</label>
+        <label for="start_date">Start Date *</label>
         <input id="start_date" name="start_date" type="date" required>
       </div>
       <div class="form-col">
-        <label for="budget">Budget ($)</label>
+        <label for="budget">Budget ($) *</label>
         <input id="budget" name="budget" type="number" step="100" required>
       </div>
     </div>

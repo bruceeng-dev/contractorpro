@@ -10,8 +10,85 @@
     </div>
     <div class="job-actions">
       <span class="badge badge--{{ job.status }}">{{ job.status.title() }}</span>
-      <a href="{{ url_for('contract_generator', job_id=job.id) }}" class="btn btn--primary">📋 Contract Generator</a>
-      <a href="{{ url_for('jobs_list') }}" class="btn btn--sm">← Back to Jobs</a>
+      <a href="{{ url_for('jobs_list') }}" class="btn btn--sm">← Back</a>
+      <a href="{{ url_for('quote_builder') }}?job_id={{ job.id }}" class="btn btn--success">💰 Create Quote</a>
+
+      <!-- Contract Dropdown -->
+      <div class="dropdown-container" style="display: inline-block; position: relative;">
+        <button class="btn btn--primary" onclick="toggleContractMenu(event)">
+          📄 Contract ▼
+        </button>
+        <div class="contract-dropdown" id="contract-dropdown-{{ job.id }}" style="display: none;">
+          <a href="{{ url_for('unified_contract', job_id=job.id) }}?mode=view">View Contract</a>
+          <a href="{{ url_for('unified_contract', job_id=job.id) }}?mode=edit">Edit Contract</a>
+          <a href="{{ url_for('unified_contract', job_id=job.id) }}?mode=ai">Generate with AI</a>
+          <div class="dropdown-divider"></div>
+          <a href="{{ url_for('unified_contract', job_id=job.id) }}?mode=view&format=pdf">Download PDF</a>
+        </div>
+      </div>
+
+      <a href="{{ url_for('calendar_view') }}?job_id={{ job.id }}" class="btn btn--secondary">📅 Schedule</a>
+    </div>
+  </div>
+
+  <!-- KPI Dashboard -->
+  <div class="kpi-dashboard">
+    <div class="kpi-card">
+      <div class="kpi-icon">💰</div>
+      <div class="kpi-content">
+        <div class="kpi-value">${{ "{:,.0f}".format(job.budget or 0) }}</div>
+        <div class="kpi-label">Budget</div>
+      </div>
+    </div>
+
+    <div class="kpi-card">
+      <div class="kpi-icon">📋</div>
+      <div class="kpi-content">
+        <div class="kpi-value">{{ job.pos_quotes|length }}</div>
+        <div class="kpi-label">Quotes</div>
+      </div>
+    </div>
+
+    <div class="kpi-card">
+      <div class="kpi-icon">✅</div>
+      <div class="kpi-content">
+        <div class="kpi-value">{{ job.tasks|length }}</div>
+        <div class="kpi-label">Tasks</div>
+        {% if job.tasks|length > 0 %}
+        <div class="kpi-subtitle">{{ job.tasks|selectattr('status', 'equalto', 'completed')|list|length }} completed</div>
+        {% endif %}
+      </div>
+    </div>
+
+    <div class="kpi-card">
+      <div class="kpi-icon">📄</div>
+      <div class="kpi-content">
+        {% set contract = job.contracts|first if job.contracts else None %}
+        <div class="kpi-value">{{ contract and "Yes" or "No" }}</div>
+        <div class="kpi-label">Contract</div>
+        {% if contract %}
+        <div class="kpi-subtitle">{{ contract.status.title() }}</div>
+        {% endif %}
+      </div>
+    </div>
+
+    <div class="kpi-card">
+      <div class="kpi-icon">📅</div>
+      <div class="kpi-content">
+        <div class="kpi-value">{{ ((job.end_date - job.start_date).days if job.end_date and job.start_date else 'TBD') }}</div>
+        <div class="kpi-label">Days</div>
+        {% if job.start_date %}
+        <div class="kpi-subtitle">Start: {{ job.start_date.strftime('%m/%d/%Y') }}</div>
+        {% endif %}
+      </div>
+    </div>
+
+    <div class="kpi-card kpi-card--status">
+      <div class="kpi-icon">🎯</div>
+      <div class="kpi-content">
+        <div class="kpi-value status-{{ job.status }}">{{ job.status.title() }}</div>
+        <div class="kpi-label">Project Status</div>
+      </div>
     </div>
   </div>
 
@@ -60,6 +137,288 @@
         <p>📍 {{ job.address }}</p>
       </div>
     </div>
+  </div>
+
+  <!-- Trade Categories Section -->
+  {% if job.trade_categories %}
+  <div class="section-card">
+    <div class="section-header">
+      <h3>🔧 Trade Categories</h3>
+    </div>
+    <div class="trade-badges">
+      {% for trade in job.trade_categories %}
+      <div class="trade-badge" style="--trade-color: {{ trade.color }}">
+        <span class="trade-badge-icon">{{ trade.icon }}</span>
+        <span class="trade-badge-name">{{ trade.name }}</span>
+      </div>
+      {% endfor %}
+    </div>
+  </div>
+  {% endif %}
+
+  <!-- Job Specifications Section -->
+  {% if job.specifications %}
+  <div class="section-card">
+    <div class="section-header">
+      <h3>📋 Job Specifications</h3>
+      <p class="spec-subtitle">{{ job.specifications|length }} specifications selected based on trade categories</p>
+    </div>
+    <div class="spec-list">
+      {% for spec in job.specifications %}
+      <div class="spec-item">
+        <span class="spec-bullet">•</span>
+        <span class="spec-name">{{ spec.display_name }}</span>
+      </div>
+      {% endfor %}
+    </div>
+  </div>
+  {% endif %}
+
+  <!-- POS Quotes Section - Moved up for better visibility -->
+  <div class="section-card">
+    <div class="section-header">
+      <h3>💰 Quotes</h3>
+      <a href="{{ url_for('quote_builder') }}?job_id={{ job.id }}&mode=manual" class="btn btn--sm btn--success">+ Create Quote</a>
+    </div>
+    <div id="pos-quotes-container" class="documents-list">
+      <div class="empty-state">
+        <p class="muted">Loading quotes...</p>
+      </div>
+    </div>
+  </div>
+
+  <!-- Job Costing Section -->
+  <div class="section-card">
+    <div class="section-header">
+      <h3>💰 Job Costing - Budget vs Actual</h3>
+      <button class="btn btn--sm" onclick="toggleExpenseForm()">+ Add Expense</button>
+    </div>
+
+    <!-- Budget Summary -->
+    <div class="budget-summary">
+      <div class="budget-metric">
+        <div class="metric-label">Budget</div>
+        <div class="metric-value budget-value">${{ "{:,.2f}".format(job.budget) if job.budget else '0.00' }}</div>
+      </div>
+      <div class="budget-metric">
+        <div class="metric-label">Actual Spent</div>
+        <div class="metric-value actual-value">${{ "{:,.2f}".format(total_actual) }}</div>
+      </div>
+      <div class="budget-metric">
+        <div class="metric-label">Remaining</div>
+        <div class="metric-value {% if budget_remaining < 0 %}over-budget{% else %}remaining-value{% endif %}">
+          ${{ "{:,.2f}".format(budget_remaining) }}
+        </div>
+      </div>
+      <div class="budget-metric">
+        <div class="metric-label">Budget Used</div>
+        <div class="metric-value">{{ "{:.1f}".format(budget_used_pct) }}%</div>
+      </div>
+    </div>
+
+    <!-- Budget Progress Bar -->
+    {% if job.budget %}
+    <div class="budget-progress-bar">
+      <div class="budget-progress-fill {% if budget_used_pct > 100 %}over-budget{% elif budget_used_pct > 80 %}warning{% endif %}"
+           style="width: {{ [budget_used_pct, 100]|min }}%"></div>
+    </div>
+    <p class="budget-progress-label">
+      {% if budget_used_pct > 100 %}
+        ⚠️ Over budget by ${{ "{:,.2f}".format(total_actual - job.budget) }}
+      {% elif budget_used_pct > 80 %}
+        ⚡ Warning: {{ "{:.0f}".format(100 - budget_used_pct) }}% budget remaining
+      {% else %}
+        ✓ {{ "{:.0f}".format(100 - budget_used_pct) }}% budget remaining
+      {% endif %}
+    </p>
+    {% endif %}
+
+    <!-- Expense Entry Form -->
+    {# Expense feature not yet implemented
+    <div id="expense-form" class="expense-form" style="display: none;">
+      <form action="{{ url_for('add_expense', job_id=job.id) }}" method="POST">
+    #}
+    <div id="expense-form" class="expense-form" style="display: none;">
+      <form action="#" method="POST" onsubmit="alert('Expense tracking feature coming soon!'); return false;">
+        <div class="form-grid">
+          <div class="form-field">
+            <label for="expense_date">Date <span class="required">*</span></label>
+            <input type="date" id="expense_date" name="expense_date" value="{{ date.today().strftime('%Y-%m-%d') }}" required>
+          </div>
+
+          <div class="form-field">
+            <label for="category">Category <span class="required">*</span></label>
+            <select id="category" name="category" required onchange="toggleLaborFields()">
+              <option value="">Select category...</option>
+              <option value="labor">Labor</option>
+              <option value="materials">Materials</option>
+              <option value="equipment">Equipment</option>
+              <option value="subcontractor">Subcontractor</option>
+              <option value="permits">Permits & Fees</option>
+              <option value="other">Other</option>
+            </select>
+          </div>
+
+          <div class="form-field">
+            <label for="amount">Amount <span class="required">*</span></label>
+            <input type="number" id="amount" name="amount" step="0.01" min="0" placeholder="0.00" required>
+          </div>
+
+          <div class="form-field">
+            <label for="vendor">Vendor/Supplier</label>
+            <input type="text" id="vendor" name="vendor" placeholder="Home Depot, ABC Supply, etc.">
+          </div>
+        </div>
+
+        <div class="form-field">
+          <label for="description">Description <span class="required">*</span></label>
+          <input type="text" id="description" name="description" placeholder="Brief description of expense..." required>
+        </div>
+
+        <!-- Labor-specific fields -->
+        <div id="labor-fields" style="display: none;">
+          <div class="form-grid">
+            <div class="form-field">
+              <label for="worker_name">Worker Name</label>
+              <input type="text" id="worker_name" name="worker_name" placeholder="John Doe">
+            </div>
+            <div class="form-field">
+              <label for="hours_worked">Hours Worked</label>
+              <input type="number" id="hours_worked" name="hours_worked" step="0.25" min="0" placeholder="8.0">
+            </div>
+            <div class="form-field">
+              <label for="hourly_rate">Hourly Rate</label>
+              <input type="number" id="hourly_rate" name="hourly_rate" step="0.01" min="0" placeholder="25.00">
+            </div>
+          </div>
+        </div>
+
+        <div class="form-field">
+          <label for="notes">Notes</label>
+          <textarea id="notes" name="notes" rows="2" placeholder="Additional details..."></textarea>
+        </div>
+
+        <div class="form-actions">
+          <button type="submit" class="btn btn--primary">Add Expense</button>
+          <button type="button" class="btn btn--sm" onclick="toggleExpenseForm()">Cancel</button>
+        </div>
+      </form>
+    </div>
+
+    <!-- Expense Breakdown by Category -->
+    {% if expense_by_category %}
+    <div class="expense-breakdown">
+      <h4>Expenses by Category</h4>
+      <div class="expense-categories">
+        {% for category, total in expense_by_category.items() %}
+        <div class="expense-category-item">
+          <div class="category-info">
+            <span class="category-icon">
+              {% if category == 'labor' %}👷
+              {% elif category == 'materials' %}🧱
+              {% elif category == 'equipment' %}🔧
+              {% elif category == 'subcontractor' %}👥
+              {% elif category == 'permits' %}📋
+              {% else %}📦{% endif %}
+            </span>
+            <span class="category-name">{{ category.title() }}</span>
+          </div>
+          <span class="category-total">${{ "{:,.2f}".format(total) }}</span>
+        </div>
+        {% endfor %}
+      </div>
+    </div>
+    {% endif %}
+
+    <!-- Recent Expenses List -->
+    {% if expenses %}
+    <div class="expenses-list">
+      <h4>Recent Expenses</h4>
+      {% for expense in expenses[:10] %}
+      <div class="expense-item">
+        <div class="expense-date">{{ expense.expense_date.strftime('%m/%d/%Y') }}</div>
+        <div class="expense-details">
+          <div class="expense-description">{{ expense.description }}</div>
+          <div class="expense-meta">
+            <span class="badge badge--{{ expense.category }}">{{ expense.category.title() }}</span>
+            {% if expense.vendor %}• {{ expense.vendor }}{% endif %}
+            {% if expense.worker_name %}• {{ expense.worker_name }}{% endif %}
+          </div>
+        </div>
+        <div class="expense-amount">${{ "{:,.2f}".format(expense.amount) }}</div>
+      </div>
+      {% endfor %}
+      {% if expenses|length > 10 %}
+      <p class="muted sm">+ {{ expenses|length - 10 }} more expenses</p>
+      {% endif %}
+    </div>
+    {% else %}
+    <div class="empty-state">
+      <p class="muted">No expenses tracked yet. Add your first expense to start tracking costs vs budget.</p>
+    </div>
+    {% endif %}
+  </div>
+
+  <!-- Tasks Section -->
+  <div class="section-card">
+    <div class="section-header">
+      <h3>✅ Tasks & Schedule</h3>
+      <div style="display: flex; gap: 10px;">
+        <a href="{{ url_for('task_list', job_id=job.id) }}" class="btn btn--primary">📋 Tasks</a>
+        <a href="{{ url_for('calendar_view', job_id=job.id) }}" class="btn btn--sm">📅 Calendar</a>
+        <a href="{{ url_for('gantt_chart', job_id=job.id) }}" class="btn btn--sm">📊 Gantt</a>
+      </div>
+    </div>
+
+    {% if job.tasks %}
+      <div class="tasks-summary">
+        <div class="task-stats">
+          <div class="task-stat">
+            <span class="stat-number">{{ job.tasks|length }}</span>
+            <span class="stat-label">Total Tasks</span>
+          </div>
+          <div class="task-stat">
+            <span class="stat-number">{{ job.tasks|selectattr('status', 'equalto', 'completed')|list|length }}</span>
+            <span class="stat-label">Completed</span>
+          </div>
+          <div class="task-stat">
+            <span class="stat-number">{{ job.tasks|selectattr('status', 'equalto', 'in_progress')|list|length }}</span>
+            <span class="stat-label">In Progress</span>
+          </div>
+          <div class="task-stat">
+            <span class="stat-number">{{ job.tasks|selectattr('is_critical_path', 'equalto', true)|list|length }}</span>
+            <span class="stat-label">Critical</span>
+          </div>
+        </div>
+
+        <div class="task-list-preview">
+          <h4>Recent Tasks</h4>
+          {% for task in job.tasks[:5] %}
+          <div class="task-preview-item">
+            <div class="task-preview-info">
+              <span class="task-preview-name">{{ task.task_name }}</span>
+              {% if task.scheduled_start_date %}
+              <span class="task-preview-date">{{ task.scheduled_start_date.strftime('%m/%d') }} - {{ task.scheduled_end_date.strftime('%m/%d') if task.scheduled_end_date else 'TBD' }}</span>
+              {% else %}
+              <span class="task-preview-date">Not scheduled</span>
+              {% endif %}
+            </div>
+            <span class="badge badge--{{ task.status }}">{{ task.status.replace('_', ' ').title() }}</span>
+          </div>
+          {% endfor %}
+          {% if job.tasks|length > 5 %}
+          <p class="muted sm">+ {{ job.tasks|length - 5 }} more tasks</p>
+          {% endif %}
+        </div>
+      </div>
+    {% else %}
+      <div class="empty-state">
+        <p class="muted">No tasks created yet. Create a POS quote to auto-generate tasks.</p>
+        <div style="margin-top: 1rem; display: flex; gap: 10px; justify-content: center;">
+          <a href="{{ url_for('quote_builder') }}?job_id={{ job.id }}&mode=manual" class="btn btn--primary">💰 Create Quote</a>
+        </div>
+      </div>
+    {% endif %}
   </div>
 
   <!-- Progress Photos Section -->
@@ -172,6 +531,54 @@
   </div>
 </div>
 
+<script>
+// Load POS quotes for this job
+async function loadPOSQuotes() {
+  try {
+    const response = await fetch(`/api/jobs/{{ job.id }}/pos-quotes`);
+    const quotes = await response.json();
+
+    const container = document.getElementById('pos-quotes-container');
+
+    if (quotes.length === 0) {
+      container.innerHTML = '<div class="empty-state"><p class="muted">No quotes created yet. Click "+ Build New Quote" to get started.</p></div>';
+      return;
+    }
+
+    let html = '';
+    quotes.forEach(quote => {
+      const statusClass = quote.status === 'accepted' ? 'success' :
+                         quote.status === 'sent' ? 'info' :
+                         quote.status === 'rejected' ? 'danger' : 'warning';
+      const statusEmoji = quote.status === 'accepted' ? '✓' :
+                         quote.status === 'sent' ? '📧' :
+                         quote.status === 'rejected' ? '✗' : '📝';
+
+      html += `
+        <div class="document-item">
+          <div class="doc-icon">${statusEmoji}</div>
+          <div class="doc-info">
+            <h4><a href="/pos/quotes/${quote.id}" style="color: #667eea; text-decoration: none;">${quote.quote_number}</a></h4>
+            <p class="muted sm">${quote.project_description || 'No description'} • $${quote.total_amount.toLocaleString('en-US', {minimumFractionDigits: 2, maximumFractionDigits: 2})}</p>
+            <p class="muted sm">Status: <span class="badge badge--${statusClass}">${quote.status}</span> • Created: ${new Date(quote.created_date).toLocaleDateString()}</p>
+          </div>
+          <a href="/pos/quotes/${quote.id}" class="btn btn--sm">View</a>
+        </div>
+      `;
+    });
+
+    container.innerHTML = html;
+  } catch (error) {
+    console.error('Failed to load POS quotes:', error);
+    const container = document.getElementById('pos-quotes-container');
+    container.innerHTML = '<div class="empty-state"><p class="muted" style="color: #e74c3c;">Failed to load quotes.</p></div>';
+  }
+}
+
+// Load quotes when page loads
+document.addEventListener('DOMContentLoaded', loadPOSQuotes);
+</script>
+
 {% endblock %}
 
 {% block scripts %}
@@ -185,6 +592,17 @@ function toggleMilestone() {
   const checkbox = document.getElementById('is_milestone');
   const fields = document.getElementById('milestone-fields');
   fields.style.display = checkbox.checked ? 'block' : 'none';
+}
+
+function toggleExpenseForm() {
+  const form = document.getElementById('expense-form');
+  form.style.display = form.style.display === 'none' ? 'block' : 'none';
+}
+
+function toggleLaborFields() {
+  const category = document.getElementById('category').value;
+  const laborFields = document.getElementById('labor-fields');
+  laborFields.style.display = category === 'labor' ? 'block' : 'none';
 }
 
 // Auto-set today's date
@@ -409,6 +827,80 @@ document.getElementById('taken_date').value = new Date().toISOString().split('T'
   color: var(--muted);
 }
 
+.quotes-list {
+  display: flex;
+  flex-direction: column;
+  gap: 15px;
+}
+
+.quote-item {
+  display: flex;
+  align-items: center;
+  gap: 15px;
+  padding: 16px;
+  background: white;
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  transition: box-shadow 0.2s;
+}
+
+.quote-item:hover {
+  box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+}
+
+.quote-icon {
+  font-size: 28px;
+  opacity: 0.7;
+}
+
+.quote-info {
+  flex: 1;
+}
+
+.quote-info h4 {
+  margin: 0 0 6px;
+  font-size: 16px;
+}
+
+.quote-info h4 a {
+  color: var(--primary);
+  text-decoration: none;
+}
+
+.quote-info h4 a:hover {
+  text-decoration: underline;
+}
+
+.quote-meta {
+  font-size: 13px;
+  color: var(--muted);
+  margin: 8px 0 0;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  flex-wrap: wrap;
+}
+
+.quote-amount {
+  text-align: right;
+  min-width: 120px;
+}
+
+.amount-label {
+  font-size: 11px;
+  color: var(--muted);
+  text-transform: uppercase;
+  font-weight: 600;
+  letter-spacing: 0.5px;
+}
+
+.amount-value {
+  font-size: 24px;
+  font-weight: bold;
+  color: #27ae60;
+  margin-top: 2px;
+}
+
 @media (max-width: 768px) {
   .job-header {
     flex-direction: column;
@@ -428,5 +920,922 @@ document.getElementById('taken_date').value = new Date().toISOString().split('T'
     grid-template-columns: 1fr;
   }
 }
+
+/* Trade Categories Badges */
+.trade-badges {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.75rem;
+  margin-top: 1rem;
+}
+
+.trade-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+  padding: 0.5rem 1rem;
+  background: white;
+  border: 2px solid var(--trade-color, #667eea);
+  border-radius: 20px;
+  font-size: 0.9rem;
+  font-weight: 500;
+  transition: all 0.2s ease;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+.trade-badge:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.15);
+  background: linear-gradient(135deg, rgba(102, 126, 234, 0.05) 0%, rgba(118, 75, 162, 0.05) 100%);
+}
+
+.trade-badge-icon {
+  font-size: 1.25rem;
+}
+
+.trade-badge-name {
+  color: #2d3748;
+}
+
+/* Job Specifications */
+.spec-subtitle {
+  margin: 0.5rem 0 0 0;
+  color: #718096;
+  font-size: 0.9rem;
+}
+
+.spec-list {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+  gap: 0.5rem;
+  margin-top: 1rem;
+}
+
+.spec-item {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  padding: 0.5rem;
+  background: #f7fafc;
+  border-radius: 4px;
+  border-left: 3px solid #667eea;
+}
+
+.spec-bullet {
+  color: #667eea;
+  font-weight: bold;
+  font-size: 1.2rem;
+}
+
+.spec-name {
+  color: #2d3748;
+  font-size: 0.95rem;
+}
+
+.tasks-summary {
+  display: flex;
+  flex-direction: column;
+  gap: 1.5rem;
+}
+
+.task-stats {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(120px, 1fr));
+  gap: 1rem;
+  padding: 1rem;
+  background: var(--background-light);
+  border-radius: 8px;
+}
+
+.task-stat {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
+  padding: 0.75rem;
+  background: white;
+  border-radius: 6px;
+  border: 1px solid var(--border-color);
+}
+
+.stat-number {
+  font-size: 2em;
+  font-weight: 700;
+  color: var(--primary-color);
+  line-height: 1;
+  margin-bottom: 0.25rem;
+}
+
+.stat-label {
+  font-size: 0.85em;
+  color: var(--text-muted);
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+}
+
+.task-list-preview {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+}
+
+.task-list-preview h4 {
+  margin: 0;
+  color: var(--text-dark);
+  font-size: 1em;
+  border-bottom: 2px solid var(--border-color);
+  padding-bottom: 0.5rem;
+}
+
+.task-preview-item {
+  display: flex;
+  justify-space-between;
+  align-items: center;
+  padding: 0.75rem;
+  background: var(--background-light);
+  border-radius: 4px;
+  border: 1px solid var(--border-color);
+  transition: all 0.2s;
+}
+
+.task-preview-item:hover {
+  background: white;
+  border-color: var(--primary-color);
+  transform: translateX(3px);
+}
+
+.task-preview-info {
+  display: flex;
+  flex-direction: column;
+  gap: 0.25rem;
+  flex: 1;
+}
+
+.task-preview-name {
+  font-weight: 600;
+  color: var(--text-dark);
+}
+
+.task-preview-date {
+  font-size: 0.85em;
+  color: var(--text-muted);
+}
+
+/* Job Costing Styles */
+.budget-summary {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+  gap: 1rem;
+  margin-bottom: 1.5rem;
+}
+
+.budget-metric {
+  background: #f8fafc;
+  padding: 1rem;
+  border-radius: 8px;
+  border: 1px solid var(--border-color);
+  text-align: center;
+}
+
+.metric-label {
+  font-size: 0.85em;
+  color: var(--text-muted);
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  margin-bottom: 0.5rem;
+}
+
+.metric-value {
+  font-size: 1.75em;
+  font-weight: 700;
+  color: var(--text-dark);
+}
+
+.budget-value {
+  color: #3b82f6;
+}
+
+.actual-value {
+  color: #f59e0b;
+}
+
+.remaining-value {
+  color: #10b981;
+}
+
+.over-budget {
+  color: #ef4444 !important;
+}
+
+.budget-progress-bar {
+  width: 100%;
+  height: 24px;
+  background: #e5e7eb;
+  border-radius: 12px;
+  overflow: hidden;
+  margin-bottom: 0.5rem;
+}
+
+.budget-progress-fill {
+  height: 100%;
+  background: linear-gradient(90deg, #10b981 0%, #059669 100%);
+  transition: width 0.3s ease;
+}
+
+.budget-progress-fill.warning {
+  background: linear-gradient(90deg, #f59e0b 0%, #d97706 100%);
+}
+
+.budget-progress-fill.over-budget {
+  background: linear-gradient(90deg, #ef4444 0%, #dc2626 100%);
+}
+
+.budget-progress-label {
+  text-align: center;
+  font-size: 0.9em;
+  color: var(--text-muted);
+  margin: 0.5rem 0 1.5rem;
+}
+
+.expense-form {
+  background: #f8fafc;
+  border: 1px solid var(--border-color);
+  border-radius: 8px;
+  padding: 1.5rem;
+  margin-bottom: 1.5rem;
+}
+
+.form-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+  gap: 1rem;
+  margin-bottom: 1rem;
+}
+
+.form-field {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+}
+
+.form-field label {
+  font-weight: 600;
+  font-size: 0.9em;
+  color: var(--text-dark);
+}
+
+.form-field input,
+.form-field select,
+.form-field textarea {
+  padding: 0.6rem;
+  border: 1px solid var(--border-color);
+  border-radius: 4px;
+  font-size: 0.95em;
+}
+
+.form-field input:focus,
+.form-field select:focus,
+.form-field textarea:focus {
+  outline: none;
+  border-color: var(--primary-color);
+  box-shadow: 0 0 0 2px rgba(102, 126, 234, 0.1);
+}
+
+.required {
+  color: #ef4444;
+}
+
+.form-actions {
+  display: flex;
+  gap: 0.75rem;
+  margin-top: 1rem;
+}
+
+.expense-breakdown {
+  margin: 1.5rem 0;
+}
+
+.expense-breakdown h4 {
+  margin: 0 0 1rem;
+  color: var(--text-dark);
+}
+
+.expense-categories {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+  gap: 0.75rem;
+}
+
+.expense-category-item {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 0.75rem 1rem;
+  background: white;
+  border: 1px solid var(--border-color);
+  border-radius: 6px;
+  transition: all 0.2s;
+}
+
+.expense-category-item:hover {
+  border-color: var(--primary-color);
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+.category-info {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.category-icon {
+  font-size: 1.5em;
+}
+
+.category-name {
+  font-weight: 600;
+  color: var(--text-dark);
+}
+
+.category-total {
+  font-weight: 700;
+  color: #f59e0b;
+  font-size: 1.1em;
+}
+
+.expenses-list {
+  margin-top: 1.5rem;
+}
+
+.expenses-list h4 {
+  margin: 0 0 1rem;
+  color: var(--text-dark);
+}
+
+.expense-item {
+  display: grid;
+  grid-template-columns: 100px 1fr 120px;
+  gap: 1rem;
+  padding: 1rem;
+  background: white;
+  border: 1px solid var(--border-color);
+  border-radius: 6px;
+  margin-bottom: 0.75rem;
+  align-items: center;
+  transition: all 0.2s;
+}
+
+.expense-item:hover {
+  border-color: var(--primary-color);
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+.expense-date {
+  font-size: 0.85em;
+  color: var(--text-muted);
+  font-weight: 600;
+}
+
+.expense-details {
+  display: flex;
+  flex-direction: column;
+  gap: 0.25rem;
+}
+
+.expense-description {
+  font-weight: 600;
+  color: var(--text-dark);
+}
+
+.expense-meta {
+  font-size: 0.85em;
+  color: var(--text-muted);
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  flex-wrap: wrap;
+}
+
+.expense-amount {
+  text-align: right;
+  font-size: 1.25em;
+  font-weight: 700;
+  color: #f59e0b;
+}
+
+@media (max-width: 768px) {
+  .budget-summary {
+    grid-template-columns: repeat(2, 1fr);
+  }
+
+  .expense-item {
+    grid-template-columns: 1fr;
+    gap: 0.5rem;
+  }
+
+  .expense-amount {
+    text-align: left;
+  }
+
+  .form-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .expense-categories {
+    grid-template-columns: 1fr;
+  }
+}
+
+/* AI Chat Widget Styles */
+.ai-chat-widget {
+  position: fixed;
+  bottom: 20px;
+  right: 20px;
+  z-index: 1000;
+}
+
+.ai-chat-toggle {
+  width: 60px;
+  height: 60px;
+  border-radius: 50%;
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  border: none;
+  color: white;
+  font-size: 24px;
+  cursor: pointer;
+  box-shadow: 0 4px 12px rgba(0,0,0,0.2);
+  transition: all 0.3s ease;
+}
+
+.ai-chat-toggle:hover {
+  transform: scale(1.1);
+  box-shadow: 0 6px 16px rgba(0,0,0,0.3);
+}
+
+.ai-chat-panel {
+  position: absolute;
+  bottom: 80px;
+  right: 0;
+  width: 400px;
+  max-width: calc(100vw - 40px);
+  background: white;
+  border-radius: 12px;
+  box-shadow: 0 8px 24px rgba(0,0,0,0.15);
+  display: none;
+}
+
+.ai-chat-panel.active {
+  display: flex;
+  flex-direction: column;
+}
+
+.ai-chat-header {
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  color: white;
+  padding: 16px;
+  border-radius: 12px 12px 0 0;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.ai-chat-header h3 {
+  margin: 0;
+  font-size: 16px;
+}
+
+.ai-chat-close {
+  background: none;
+  border: none;
+  color: white;
+  font-size: 20px;
+  cursor: pointer;
+  padding: 0;
+  width: 24px;
+  height: 24px;
+}
+
+.ai-chat-messages {
+  padding: 16px;
+  height: 400px;
+  overflow-y: auto;
+  background: #f8f9fa;
+}
+
+.ai-message {
+  margin-bottom: 12px;
+  padding: 12px;
+  border-radius: 8px;
+  animation: slideIn 0.3s ease;
+}
+
+@keyframes slideIn {
+  from {
+    opacity: 0;
+    transform: translateY(10px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.ai-message.user {
+  background: #667eea;
+  color: white;
+  margin-left: 40px;
+  text-align: right;
+}
+
+.ai-message.assistant {
+  background: white;
+  color: #333;
+  margin-right: 40px;
+  border: 1px solid #e2e8f0;
+}
+
+.ai-message.loading {
+  background: white;
+  margin-right: 40px;
+  border: 1px solid #e2e8f0;
+  color: #666;
+  font-style: italic;
+}
+
+.ai-chat-input-container {
+  padding: 16px;
+  border-top: 1px solid #e2e8f0;
+  background: white;
+  border-radius: 0 0 12px 12px;
+}
+
+.ai-chat-input {
+  display: flex;
+  gap: 8px;
+}
+
+.ai-chat-input input {
+  flex: 1;
+  padding: 10px 12px;
+  border: 1px solid #cbd5e0;
+  border-radius: 6px;
+  font-size: 14px;
+}
+
+.ai-chat-input button {
+  padding: 10px 20px;
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  color: white;
+  border: none;
+  border-radius: 6px;
+  cursor: pointer;
+  font-size: 14px;
+  font-weight: 600;
+  transition: all 0.2s;
+}
+
+.ai-chat-input button:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 4px 8px rgba(102, 126, 234, 0.4);
+}
+
+.ai-chat-input button:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+  transform: none;
+}
+
+.ai-suggestions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  padding: 12px;
+  background: #f8f9fa;
+  border-bottom: 1px solid #e2e8f0;
+}
+
+.ai-suggestion-btn {
+  padding: 6px 12px;
+  background: white;
+  border: 1px solid #cbd5e0;
+  border-radius: 16px;
+  font-size: 12px;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+
+.ai-suggestion-btn:hover {
+  background: #667eea;
+  color: white;
+  border-color: #667eea;
+}
+
+@media (max-width: 768px) {
+  .ai-chat-panel {
+    width: calc(100vw - 40px);
+    right: 20px;
+  }
+}
 </style>
+
+<!-- AI Chat Widget -->
+<div class="ai-chat-widget">
+  <button class="ai-chat-toggle" onclick="toggleAIChat()" title="Ask AI about this job">
+    🤖
+  </button>
+
+  <div class="ai-chat-panel" id="aiChatPanel">
+    <div class="ai-chat-header">
+      <h3>💬 Job Assistant</h3>
+      <button class="ai-chat-close" onclick="toggleAIChat()">×</button>
+    </div>
+
+    <div class="ai-suggestions">
+      <button class="ai-suggestion-btn" onclick="askQuestion('What is the status of this project?')">📊 Status</button>
+      <button class="ai-suggestion-btn" onclick="askQuestion('What is the budget breakdown?')">💰 Budget</button>
+      <button class="ai-suggestion-btn" onclick="askQuestion('Show me the quotes for this job')">💵 Quotes</button>
+      <button class="ai-suggestion-btn" onclick="askQuestion('What tasks need to be done?')">✅ Tasks</button>
+      <button class="ai-suggestion-btn" onclick="askQuestion('When did this project start?')">📅 Timeline</button>
+    </div>
+
+    <div class="ai-chat-messages" id="aiChatMessages">
+      <div class="ai-message assistant">
+        👋 Hi! I'm your AI assistant for this job. Ask me anything about the project status, budget, tasks, timeline, or progress photos!
+      </div>
+    </div>
+
+    <div class="ai-chat-input-container">
+      <form class="ai-chat-input" onsubmit="sendQuestion(event)">
+        <input
+          type="text"
+          id="aiQuestionInput"
+          placeholder="Ask about this job..."
+          autocomplete="off"
+        />
+        <button type="submit" id="aiSendBtn">Send</button>
+      </form>
+    </div>
+  </div>
+</div>
+
+<script>
+function toggleAIChat() {
+  const panel = document.getElementById('aiChatPanel');
+  panel.classList.toggle('active');
+
+  if (panel.classList.contains('active')) {
+    document.getElementById('aiQuestionInput').focus();
+  }
+}
+
+function askQuestion(question) {
+  document.getElementById('aiQuestionInput').value = question;
+  sendQuestion(new Event('submit'));
+}
+
+async function sendQuestion(event) {
+  event.preventDefault();
+
+  const input = document.getElementById('aiQuestionInput');
+  const question = input.value.trim();
+
+  if (!question) return;
+
+  const messagesDiv = document.getElementById('aiChatMessages');
+  const sendBtn = document.getElementById('aiSendBtn');
+
+  // Add user message
+  const userMsg = document.createElement('div');
+  userMsg.className = 'ai-message user';
+  userMsg.textContent = question;
+  messagesDiv.appendChild(userMsg);
+
+  // Add loading message
+  const loadingMsg = document.createElement('div');
+  loadingMsg.className = 'ai-message loading';
+  loadingMsg.textContent = '🤔 Thinking...';
+  loadingMsg.id = 'loadingMsg';
+  messagesDiv.appendChild(loadingMsg);
+
+  // Scroll to bottom
+  messagesDiv.scrollTop = messagesDiv.scrollHeight;
+
+  // Clear input and disable button
+  input.value = '';
+  sendBtn.disabled = true;
+
+  try {
+    const response = await fetch('/api/jobs/{{ job.id }}/ask', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json'
+      },
+      body: JSON.stringify({ question })
+    });
+
+    const data = await response.json();
+
+    // Remove loading message
+    loadingMsg.remove();
+
+    // Add AI response
+    const aiMsg = document.createElement('div');
+    aiMsg.className = 'ai-message assistant';
+    aiMsg.style.whiteSpace = 'pre-wrap';
+    aiMsg.textContent = data.answer;
+    messagesDiv.appendChild(aiMsg);
+
+    // Show model used
+    if (data.model_used) {
+      const modelBadge = document.createElement('div');
+      modelBadge.style.fontSize = '11px';
+      modelBadge.style.color = '#666';
+      modelBadge.style.marginTop = '4px';
+      modelBadge.textContent = `(${data.model_used})`;
+      aiMsg.appendChild(modelBadge);
+    }
+
+  } catch (error) {
+    console.error('Error asking question:', error);
+    loadingMsg.textContent = '❌ Sorry, I encountered an error. Please try again.';
+    loadingMsg.className = 'ai-message assistant';
+  } finally {
+    sendBtn.disabled = false;
+    messagesDiv.scrollTop = messagesDiv.scrollHeight;
+  }
+}
+
+// Allow Enter key to send
+document.addEventListener('DOMContentLoaded', function() {
+  const input = document.getElementById('aiQuestionInput');
+  if (input) {
+    input.addEventListener('keypress', function(e) {
+      if (e.key === 'Enter' && !e.shiftKey) {
+        e.preventDefault();
+        sendQuestion(e);
+      }
+    });
+  }
+});
+
+// Contract dropdown menu
+function toggleContractMenu(event) {
+  event.stopPropagation();
+  const dropdown = event.target.nextElementSibling;
+  const isVisible = dropdown.style.display === 'block';
+
+  // Close all dropdowns first
+  document.querySelectorAll('.contract-dropdown').forEach(d => d.style.display = 'none');
+
+  // Toggle this dropdown
+  dropdown.style.display = isVisible ? 'none' : 'block';
+}
+
+// Close dropdown when clicking outside
+document.addEventListener('click', function() {
+  document.querySelectorAll('.contract-dropdown').forEach(d => d.style.display = 'none');
+});
+</script>
+
+<style>
+/* Contract Dropdown Styles */
+.contract-dropdown {
+  position: absolute;
+  top: 100%;
+  right: 0;
+  background: white;
+  border: 1px solid #e2e8f0;
+  border-radius: 8px;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+  min-width: 200px;
+  margin-top: 8px;
+  z-index: 1000;
+  overflow: hidden;
+}
+
+.contract-dropdown a {
+  display: block;
+  padding: 12px 16px;
+  color: #2d3748;
+  text-decoration: none;
+  font-size: 14px;
+  transition: background 0.2s;
+}
+
+.contract-dropdown a:hover {
+  background: #f7fafc;
+  color: #667eea;
+}
+
+.dropdown-divider {
+  height: 1px;
+  background: #e2e8f0;
+  margin: 4px 0;
+}
+
+/* KPI Dashboard Styles */
+.kpi-dashboard {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+  gap: 1.5rem;
+  margin: 2rem 0;
+  padding: 0;
+}
+
+.kpi-card {
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  border-radius: 12px;
+  padding: 1.5rem;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
+  gap: 0.75rem;
+  box-shadow: 0 4px 12px rgba(102, 126, 234, 0.2);
+  transition: transform 0.2s, box-shadow 0.2s;
+  color: white;
+  min-height: 140px;
+}
+
+.kpi-card:hover {
+  transform: translateY(-4px);
+  box-shadow: 0 8px 20px rgba(102, 126, 234, 0.3);
+}
+
+.kpi-card:nth-child(1) { background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); }
+.kpi-card:nth-child(2) { background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%); }
+.kpi-card:nth-child(3) { background: linear-gradient(135deg, #4facfe 0%, #00f2fe 100%); }
+.kpi-card:nth-child(4) { background: linear-gradient(135deg, #43e97b 0%, #38f9d7 100%); }
+.kpi-card:nth-child(5) { background: linear-gradient(135deg, #fa709a 0%, #fee140 100%); }
+.kpi-card:nth-child(6) { background: linear-gradient(135deg, #30cfd0 0%, #330867 100%); }
+
+.kpi-icon {
+  font-size: 3rem;
+  opacity: 0.9;
+  margin-bottom: 0.25rem;
+}
+
+.kpi-content {
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  gap: 0.25rem;
+}
+
+.kpi-value {
+  font-size: 2.25rem;
+  font-weight: 700;
+  line-height: 1.1;
+  word-wrap: break-word;
+}
+
+.kpi-label {
+  font-size: 0.9rem;
+  opacity: 0.95;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  font-weight: 600;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.kpi-subtitle {
+  font-size: 0.8rem;
+  opacity: 0.85;
+  margin-top: 0.125rem;
+}
+
+.kpi-value.status-active {
+  color: #d4fc79;
+}
+
+.kpi-value.status-pending {
+  color: #ffeaa7;
+}
+
+.kpi-value.status-completed {
+  color: #55efc4;
+}
+
+@media (max-width: 768px) {
+  .kpi-dashboard {
+    grid-template-columns: repeat(2, 1fr);
+    gap: 1rem;
+  }
+
+  .kpi-card {
+    padding: 1rem;
+  }
+
+  .kpi-icon {
+    font-size: 2rem;
+  }
+
+  .kpi-value {
+    font-size: 1.5rem;
+  }
+}
+</style>
+
 {% endblock %}

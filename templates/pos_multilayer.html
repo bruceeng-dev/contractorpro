@@ -1,0 +1,1173 @@
+{% extends "base.html" %}
+
+{% block head %}
+<style>
+.pos-container {
+  max-width: 1400px;
+  margin: 0 auto;
+  padding: 20px;
+}
+
+.pos-header {
+  text-align: center;
+  margin-bottom: 30px;
+}
+
+.pos-header h1 {
+  font-size: 2.5em;
+  margin-bottom: 10px;
+  color: #2c3e50;
+}
+
+.pos-header p {
+  color: #7f8c8d;
+  font-size: 1.1em;
+}
+
+.job-context {
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  color: white;
+  padding: 12px 20px;
+  border-radius: 6px;
+  margin-top: 15px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 15px;
+}
+
+.job-context .btn {
+  background: white;
+  color: #667eea;
+  border: none;
+  padding: 8px 16px;
+}
+
+/* Layer Navigation */
+.layer-indicator {
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  color: white;
+  padding: 15px 30px;
+  border-radius: 8px;
+  margin-bottom: 30px;
+  text-align: center;
+}
+
+.layer-indicator h2 {
+  margin: 0;
+  font-size: 1.5em;
+}
+
+.layer-indicator p {
+  margin: 5px 0 0 0;
+  opacity: 0.9;
+}
+
+/* Breadcrumb Navigation */
+.breadcrumb {
+  background: white;
+  border-radius: 6px;
+  padding: 15px 25px;
+  margin-bottom: 20px;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+}
+
+.breadcrumb-item {
+  color: #7f8c8d;
+  cursor: pointer;
+  transition: color 0.2s;
+}
+
+.breadcrumb-item:hover {
+  color: #3498db;
+}
+
+.breadcrumb-item.active {
+  color: #2c3e50;
+  font-weight: bold;
+}
+
+.breadcrumb-separator {
+  color: #bdc3c7;
+}
+
+/* Layer 1: Job Specifications */
+.job-specs-section {
+  background: white;
+  border-radius: 8px;
+  padding: 30px;
+  box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+}
+
+.job-specs-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+  gap: 15px;
+  margin-top: 20px;
+}
+
+.spec-checkbox {
+  background: #f8f9fa;
+  border: 2px solid #e0e0e0;
+  border-radius: 6px;
+  padding: 15px;
+  cursor: pointer;
+  transition: all 0.2s;
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.spec-checkbox:hover {
+  border-color: #3498db;
+  transform: translateY(-2px);
+  box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+}
+
+.spec-checkbox.selected {
+  background: #e8f4f8;
+  border-color: #27ae60;
+  box-shadow: 0 0 15px rgba(39,174,96,0.2);
+}
+
+.spec-checkbox input[type="checkbox"] {
+  width: 20px;
+  height: 20px;
+  cursor: pointer;
+}
+
+.spec-info {
+  flex: 1;
+}
+
+.spec-name {
+  font-weight: bold;
+  color: #2c3e50;
+  margin-bottom: 3px;
+}
+
+.spec-desc {
+  font-size: 0.85em;
+  color: #7f8c8d;
+}
+
+.spec-actions {
+  margin-top: 25px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.spec-count {
+  color: #7f8c8d;
+  font-size: 1.1em;
+}
+
+.spec-count strong {
+  color: #27ae60;
+  font-size: 1.3em;
+}
+
+.continue-btn {
+  padding: 15px 40px;
+  background: #27ae60;
+  color: white;
+  border: none;
+  border-radius: 6px;
+  font-size: 1.2em;
+  font-weight: bold;
+  cursor: pointer;
+  transition: all 0.3s;
+}
+
+.continue-btn:hover {
+  background: #229954;
+  transform: scale(1.05);
+}
+
+.continue-btn:disabled {
+  background: #95a5a6;
+  cursor: not-allowed;
+  transform: none;
+}
+
+/* Layer 2+: Main POS Layout */
+.pos-main {
+  display: grid;
+  grid-template-columns: 1fr 350px;
+  gap: 20px;
+}
+
+/* Categories Section */
+.categories-section {
+  background: white;
+  border-radius: 8px;
+  padding: 25px;
+  box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+}
+
+.categories-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(140px, 1fr));
+  gap: 10px;
+  margin-top: 20px;
+}
+
+.category-card {
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  border-radius: 6px;
+  padding: 12px 10px;
+  text-align: center;
+  cursor: pointer;
+  transition: transform 0.2s, box-shadow 0.2s;
+  color: white;
+  border: none;
+}
+
+.category-card:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 4px 12px rgba(0,0,0,0.2);
+}
+
+.category-card.selected {
+  border: 3px solid #f39c12;
+  box-shadow: 0 0 20px rgba(243,156,18,0.5);
+}
+
+.category-icon {
+  font-size: 1.8em;
+  margin-bottom: 6px;
+}
+
+.category-name {
+  font-size: 0.85em;
+  font-weight: bold;
+  margin-bottom: 3px;
+  line-height: 1.2;
+}
+
+.category-desc {
+  font-size: 0.65em;
+  opacity: 0.9;
+  line-height: 1.3;
+}
+
+/* Activities Grid */
+.activities-section {
+  margin-top: 20px;
+  display: none;
+}
+
+.activities-section.active {
+  display: block;
+}
+
+.activities-container-grouped {
+  margin-top: 15px;
+}
+
+.subcategory-section {
+  margin-bottom: 30px;
+}
+
+.subcategory-header {
+  font-size: 1.1rem;
+  color: #2c3e50;
+  margin: 0 0 12px 0;
+  padding: 8px 12px;
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  color: white;
+  border-radius: 6px;
+  font-weight: 600;
+  box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+}
+
+.activities-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(180px, 1fr));
+  gap: 12px;
+  margin-top: 12px;
+}
+
+.activity-card {
+  background: white;
+  border: 2px solid #e0e0e0;
+  border-radius: 6px;
+  padding: 15px;
+  text-align: center;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+
+.activity-card:hover {
+  border-color: #3498db;
+  transform: translateY(-2px);
+}
+
+.activity-card.selected {
+  border-color: #27ae60;
+  background: #e8f8f5;
+}
+
+.activity-name {
+  font-weight: bold;
+  margin-bottom: 5px;
+  color: #2c3e50;
+}
+
+.activity-cost {
+  color: #27ae60;
+  font-size: 1.1em;
+  font-weight: bold;
+}
+
+.activity-unit {
+  font-size: 0.9em;
+  color: #7f8c8d;
+}
+
+/* Shopping Cart (same as original) */
+.cart-section {
+  background: white;
+  border-radius: 8px;
+  padding: 20px;
+  box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+  position: sticky;
+  top: 20px;
+  max-height: calc(100vh - 40px);
+  overflow-y: auto;
+}
+
+.cart-header {
+  font-size: 1.5em;
+  font-weight: bold;
+  margin-bottom: 15px;
+  color: #2c3e50;
+  border-bottom: 2px solid #e0e0e0;
+  padding-bottom: 10px;
+}
+
+.cart-items {
+  margin-bottom: 20px;
+}
+
+.cart-item {
+  background: #f8f9fa;
+  border-radius: 4px;
+  padding: 12px;
+  margin-bottom: 10px;
+  position: relative;
+}
+
+.cart-item-name {
+  font-weight: bold;
+  margin-bottom: 5px;
+  color: #2c3e50;
+}
+
+.cart-item-details {
+  font-size: 0.9em;
+  color: #7f8c8d;
+  margin-bottom: 5px;
+}
+
+.cart-item-price {
+  color: #27ae60;
+  font-weight: bold;
+}
+
+.cart-item-remove {
+  position: absolute;
+  top: 10px;
+  right: 10px;
+  background: #e74c3c;
+  color: white;
+  border: none;
+  border-radius: 50%;
+  width: 24px;
+  height: 24px;
+  cursor: pointer;
+  font-size: 0.9em;
+}
+
+.cart-item-remove:hover {
+  background: #c0392b;
+}
+
+.cart-empty {
+  text-align: center;
+  color: #7f8c8d;
+  padding: 30px 0;
+  font-style: italic;
+}
+
+/* Improved Empty State */
+.cart-empty-state {
+  text-align: center;
+  padding: 40px 20px;
+  background: #f8f9fa;
+  border-radius: 8px;
+  margin: 10px 0;
+}
+
+.cart-empty-icon {
+  font-size: 3em;
+  margin-bottom: 15px;
+  opacity: 0.5;
+}
+
+.cart-empty-title {
+  font-size: 1.1em;
+  font-weight: 600;
+  color: #2c3e50;
+  margin-bottom: 8px;
+}
+
+.cart-empty-text {
+  color: #7f8c8d;
+  font-size: 0.95em;
+  line-height: 1.4;
+}
+
+/* Cart Item Improvements */
+.cart-item {
+  display: flex;
+  gap: 12px;
+  align-items: flex-start;
+}
+
+.cart-item-details-wrapper {
+  flex: 1;
+}
+
+.cart-item-meta {
+  font-size: 0.85em;
+  color: #95a5a6;
+  margin-top: 4px;
+}
+
+/* Cart Breakdown */
+.cart-breakdown {
+  margin-top: 20px;
+  padding-top: 15px;
+  border-top: 1px solid #e0e0e0;
+}
+
+.cart-breakdown-row {
+  display: flex;
+  justify-content: space-between;
+  padding: 8px 0;
+  color: #2c3e50;
+}
+
+.cart-breakdown-row span:last-child {
+  font-weight: 600;
+}
+
+.cart-breakdown-divider {
+  border-top: 2px solid #e0e0e0;
+  margin: 10px 0;
+}
+
+.cart-breakdown-total {
+  font-size: 1.15em;
+  font-weight: 700;
+  color: #27ae60;
+  padding-top: 10px;
+}
+
+.cart-disclaimer {
+  font-size: 0.8em;
+  color: #95a5a6;
+  font-style: italic;
+  margin-top: 8px;
+  text-align: center;
+}
+
+.cart-total {
+  border-top: 2px solid #e0e0e0;
+  padding-top: 15px;
+  margin-top: 15px;
+}
+
+.cart-total-label {
+  font-size: 1.2em;
+  font-weight: bold;
+  margin-bottom: 5px;
+}
+
+.cart-total-amount {
+  font-size: 2em;
+  color: #27ae60;
+  font-weight: bold;
+}
+
+.cart-actions {
+  margin-top: 20px;
+}
+
+.cart-btn {
+  width: 100%;
+  padding: 12px;
+  margin-bottom: 10px;
+  border: none;
+  border-radius: 4px;
+  font-size: 1em;
+  cursor: pointer;
+  transition: background 0.3s;
+}
+
+.cart-btn-primary {
+  background: #27ae60;
+  color: white;
+}
+
+.cart-btn-primary:hover {
+  background: #229954;
+}
+
+.cart-btn-secondary {
+  background: #3498db;
+  color: white;
+}
+
+.cart-btn-secondary:hover {
+  background: #2980b9;
+}
+
+.cart-btn-clear {
+  background: #e74c3c;
+  color: white;
+}
+
+.cart-btn-clear:hover {
+  background: #c0392b;
+}
+
+.loading {
+  text-align: center;
+  padding: 40px;
+  color: #7f8c8d;
+  font-size: 1.2em;
+}
+
+.no-items {
+  text-align: center;
+  padding: 40px;
+  color: #7f8c8d;
+  font-size: 1.1em;
+}
+
+/* Modal (reuse from original) */
+.modal {
+  display: none;
+  position: fixed;
+  z-index: 1000;
+  left: 0;
+  top: 0;
+  width: 100%;
+  height: 100%;
+  background-color: rgba(0,0,0,0.5);
+}
+
+.modal.active {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.modal-content {
+  background: white;
+  border-radius: 8px;
+  padding: 30px;
+  max-width: 600px;
+  width: 90%;
+  max-height: 80vh;
+  overflow-y: auto;
+}
+
+.modal-header {
+  font-size: 1.8em;
+  margin-bottom: 20px;
+  color: #2c3e50;
+}
+
+.modal-close {
+  float: right;
+  font-size: 1.5em;
+  cursor: pointer;
+  color: #7f8c8d;
+}
+
+.modal-close:hover {
+  color: #2c3e50;
+}
+
+.option-group {
+  margin-bottom: 25px;
+}
+
+.option-label {
+  font-weight: bold;
+  margin-bottom: 10px;
+  color: #2c3e50;
+}
+
+.quantity-input {
+  width: 100%;
+  padding: 10px;
+  border: 2px solid #e0e0e0;
+  border-radius: 4px;
+  font-size: 1em;
+}
+
+.modal-actions {
+  margin-top: 25px;
+  display: flex;
+  gap: 10px;
+}
+
+.modal-btn {
+  flex: 1;
+  padding: 12px;
+  border: none;
+  border-radius: 4px;
+  font-size: 1em;
+  cursor: pointer;
+}
+
+.modal-btn-add {
+  background: #27ae60;
+  color: white;
+}
+
+.modal-btn-add:hover {
+  background: #229954;
+}
+
+.modal-btn-cancel {
+  background: #95a5a6;
+  color: white;
+}
+
+.modal-btn-cancel:hover {
+  background: #7f8c8d;
+}
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="pos-container">
+  <div class="pos-header">
+    <h1>🏗️ Multi-Layer Quote Builder</h1>
+    <p>Select job specifications, then build your quote with curated activities</p>
+    {% if job %}
+    <div class="job-context">
+      <strong>Creating quote for:</strong> {{ job.client_name }} - {{ job.project_type }}
+      <a href="{{ url_for('job_detail', job_id=job.id) }}" class="btn btn--sm">← Back to Job</a>
+    </div>
+    {% elif lead %}
+    <div class="job-context">
+      <strong>📞 Creating quote for Lead:</strong> {{ lead.name }} - {{ lead.project_type }}
+      <span style="opacity: 0.9;">{{ lead.phone }} • {{ lead.budget_range }}</span>
+      <a href="{{ url_for('leads_list') }}" class="btn btn--sm">← Back to Leads</a>
+    </div>
+    {% endif %}
+  </div>
+
+  <!-- Layer Indicator -->
+  <div class="layer-indicator" id="layerIndicator">
+    <h2 id="layerTitle">Layer 1: Job Specifications</h2>
+    <p id="layerDescription">Select which aspects of construction apply to this project</p>
+  </div>
+
+  <!-- Breadcrumb Navigation -->
+  <div class="breadcrumb" id="breadcrumb" style="display: none;">
+    <span class="breadcrumb-item" onclick="goToLayer(1)">Job Specs</span>
+    <span class="breadcrumb-separator">›</span>
+    <span class="breadcrumb-item" id="breadcrumbCategories" onclick="goToLayer(2)">Categories</span>
+    <span class="breadcrumb-separator" id="breadcrumbSep2" style="display: none;">›</span>
+    <span class="breadcrumb-item active" id="breadcrumbActivities" style="display: none;"></span>
+  </div>
+
+  <!-- LAYER 1: Job Specifications Selection -->
+  <div id="layer1" class="job-specs-section">
+    <h2>📋 Select Job Specifications</h2>
+    <p style="color: #7f8c8d; margin-bottom: 20px;">
+      Check all construction work categories that apply to this project.
+      This will filter the available activities in the next step.
+    </p>
+
+    <div id="jobSpecsGrid" class="job-specs-grid">
+      <div class="loading">Loading job specifications...</div>
+    </div>
+
+    <div class="spec-actions">
+      <div class="spec-count">
+        Selected: <strong id="selectedCount">0</strong> specifications
+      </div>
+      <button class="continue-btn" id="continueBtn" onclick="continueToLayer2()" disabled>
+        Continue to Categories →
+      </button>
+    </div>
+  </div>
+
+  <!-- LAYER 2: Categories and Activities -->
+  <div id="layer2" style="display: none;">
+    <div class="pos-main">
+      <!-- Categories and Activities -->
+      <div>
+        <div class="categories-section">
+          <h2>📦 Select Categories</h2>
+          <div id="categoriesContainer" class="loading">
+            Click "Continue" above to see filtered categories...
+          </div>
+        </div>
+
+        <!-- Activities Section (shown when category is selected) -->
+        <div id="activitiesSection" class="activities-section">
+          <h2 id="activitiesTitle"></h2>
+          <div id="activitiesContainer"></div>
+        </div>
+      </div>
+
+      <!-- Shopping Cart -->
+      <div class="cart-section">
+        <div class="cart-header">🛒 Quote Cart</div>
+        <div id="cartItems" class="cart-items">
+          <div class="cart-empty">Your cart is empty. Select activities to begin building your quote.</div>
+        </div>
+        <div class="cart-total">
+          <div class="cart-total-label">Total:</div>
+          <div class="cart-total-amount" id="cartTotal">$0.00</div>
+        </div>
+        <div class="cart-actions">
+          <button class="cart-btn cart-btn-primary" onclick="saveQuote()">💾 Save Quote</button>
+          <button class="cart-btn cart-btn-secondary" onclick="viewQuotes()">📋 View Saved Quotes</button>
+          <button class="cart-btn cart-btn-clear" onclick="clearCart()">🗑️ Clear Cart</button>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Drill-down Modal -->
+<div id="optionsModal" class="modal">
+  <div class="modal-content">
+    <span class="modal-close" onclick="closeModal()">&times;</span>
+    <div class="modal-header" id="modalTitle"></div>
+    <div id="modalBody"></div>
+    <div class="modal-actions">
+      <button class="modal-btn modal-btn-add" onclick="addToCart()">Add to Cart</button>
+      <button class="modal-btn modal-btn-cancel" onclick="closeModal()">Cancel</button>
+    </div>
+  </div>
+</div>
+
+<script>
+// Global State
+let allSpecs = [];
+let selectedSpecs = [];
+let sessionToken = null;
+let currentLayer = 1;
+let categories = [];
+let selectedCategory = null;
+let currentActivity = null;
+let cart = [];
+let selectedOptions = {};
+const linkedJobId = {{ job.id if job else 'null' }};
+const linkedLeadId = {{ lead.id if lead else 'null' }};
+const preSelectedSpecIds = {% if job_spec_ids %}{{ job_spec_ids | tojson }}{% else %}[]{% endif %};
+
+// Load job specifications on page load
+document.addEventListener('DOMContentLoaded', function() {
+  loadJobSpecifications();
+});
+
+async function loadJobSpecifications() {
+  try {
+    const grid = document.getElementById('jobSpecsGrid');
+    const response = await fetch('/api/pos/job-specifications');
+    allSpecs = await response.json();
+
+    let html = '';
+
+    // Render all specs in a simple grid (no sections needed)
+    allSpecs.forEach(spec => {
+      html += `
+        <div class="spec-checkbox" id="spec-${spec.id}" onclick="toggleSpec(${spec.id})">
+          <input type="checkbox" id="checkbox-${spec.id}" onclick="event.stopPropagation(); toggleSpec(${spec.id})">
+          <div class="spec-info">
+            <div class="spec-name">${spec.display_name}</div>
+            <div class="spec-desc">${spec.description || ''}</div>
+          </div>
+        </div>
+      `;
+    });
+
+    grid.innerHTML = html;
+
+    // Auto-select specs if coming from a job (wait for next tick to ensure DOM is ready)
+    if (preSelectedSpecIds && preSelectedSpecIds.length > 0) {
+      setTimeout(() => {
+        preSelectedSpecIds.forEach(specId => {
+          const specCard = document.getElementById(`spec-${specId}`);
+          const checkbox = document.getElementById(`checkbox-${specId}`);
+          if (specCard && checkbox) {
+            selectedSpecs.push(specId);
+            specCard.classList.add('selected');
+            checkbox.checked = true;
+          }
+        });
+        // Update count and button state
+        document.getElementById('selectedCount').textContent = selectedSpecs.length;
+        document.getElementById('continueBtn').disabled = selectedSpecs.length === 0;
+      }, 100);
+    }
+
+  } catch (error) {
+    console.error('Error loading job specifications:', error);
+    const grid = document.getElementById('jobSpecsGrid');
+    grid.innerHTML = `
+      <div class="empty-state" style="color: #e74c3c; padding: 40px; text-align: center;">
+        <h3>❌ Error Loading Job Specifications</h3>
+        <p>${error.message}</p>
+        <button class="btn" onclick="location.reload()" style="margin-top: 15px;">Refresh Page</button>
+      </div>
+    `;
+    alert('Failed to load job specifications: ' + error.message);
+  }
+}
+
+function toggleSpec(specId) {
+  const specCard = document.getElementById(`spec-${specId}`);
+  const checkbox = document.getElementById(`checkbox-${specId}`);
+
+  if (selectedSpecs.includes(specId)) {
+    // Deselect
+    selectedSpecs = selectedSpecs.filter(id => id !== specId);
+    specCard.classList.remove('selected');
+    checkbox.checked = false;
+  } else {
+    // Select
+    selectedSpecs.push(specId);
+    specCard.classList.add('selected');
+    checkbox.checked = true;
+  }
+
+  // Update count and button state
+  document.getElementById('selectedCount').textContent = selectedSpecs.length;
+  document.getElementById('continueBtn').disabled = selectedSpecs.length === 0;
+}
+
+async function continueToLayer2() {
+  if (selectedSpecs.length === 0) {
+    alert('Please select at least one job specification');
+    return;
+  }
+
+  // Start POS session
+  try {
+    const response = await fetch('/api/pos/session/start', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        selected_specs: selectedSpecs,
+        project_description: '',
+        job_id: linkedJobId
+      })
+    });
+
+    const data = await response.json();
+    sessionToken = data.session_token;
+
+    // Load filtered categories
+    await loadFilteredCategories();
+
+    // Switch to Layer 2
+    currentLayer = 2;
+    document.getElementById('layer1').style.display = 'none';
+    document.getElementById('layer2').style.display = 'block';
+    document.getElementById('breadcrumb').style.display = 'flex';
+
+    // Update layer indicator
+    document.getElementById('layerTitle').textContent = 'Layer 2: Categories & Activities';
+    document.getElementById('layerDescription').textContent = 'Select categories and activities based on your job specifications';
+
+  } catch (error) {
+    console.error('Error starting session:', error);
+    alert('Failed to start session. Please try again.');
+  }
+}
+
+async function loadFilteredCategories() {
+  try {
+    document.getElementById('categoriesContainer').innerHTML = '<div class="loading">Loading categories...</div>';
+
+    const response = await fetch(`/api/pos/session/${sessionToken}/categories`);
+    const data = await response.json();
+    categories = data.categories;
+
+    if (categories.length === 0) {
+      document.getElementById('categoriesContainer').innerHTML =
+        '<div class="no-items">No categories match your selected job specifications.</div>';
+      return;
+    }
+
+    renderCategories(categories);
+  } catch (error) {
+    console.error('Error loading categories:', error);
+    document.getElementById('categoriesContainer').innerHTML =
+      '<div class="loading">Error loading categories.</div>';
+  }
+}
+
+function renderCategories(cats) {
+  const container = document.getElementById('categoriesContainer');
+  container.className = 'categories-grid';
+
+  container.innerHTML = cats.map(cat => `
+    <div class="category-card" onclick="selectCategory(${cat.id})">
+      <div class="category-icon">${cat.icon || '📦'}</div>
+      <div class="category-name">${cat.name}</div>
+      <div class="category-desc">${cat.description || ''}</div>
+    </div>
+  `).join('');
+}
+
+async function selectCategory(categoryId) {
+  selectedCategory = categoryId;
+
+  // Update UI
+  document.querySelectorAll('.category-card').forEach(card => {
+    card.classList.remove('selected');
+  });
+  event.target.closest('.category-card').classList.add('selected');
+
+  // Load filtered activities
+  try {
+    const response = await fetch(`/api/pos/session/${sessionToken}/category/${categoryId}/activities`);
+    const data = await response.json();
+
+    // Show activities section
+    const activitiesSection = document.getElementById('activitiesSection');
+    activitiesSection.classList.add('active');
+
+    document.getElementById('activitiesTitle').textContent = `${data.category.name} Activities`;
+
+    const activitiesContainer = document.getElementById('activitiesContainer');
+
+    if (data.activities.length === 0) {
+      activitiesContainer.innerHTML = '<div class="no-items">No activities available for your selected job specifications.</div>';
+      return;
+    }
+
+    // Group activities by subcategory
+    const activitiesBySubcategory = {};
+    data.activities.forEach(activity => {
+      const subcategory = activity.subcategory || 'Other';
+      if (!activitiesBySubcategory[subcategory]) {
+        activitiesBySubcategory[subcategory] = [];
+      }
+      activitiesBySubcategory[subcategory].push(activity);
+    });
+
+    activitiesContainer.className = 'activities-container-grouped';
+    let activitiesHTML = '';
+
+    // Render each subcategory with its activities
+    Object.keys(activitiesBySubcategory).forEach(subcategoryName => {
+      activitiesHTML += `
+        <div class="subcategory-section">
+          <h3 class="subcategory-header">${subcategoryName}</h3>
+          <div class="activities-grid">
+            ${activitiesBySubcategory[subcategoryName].map(activity => `
+              <div class="activity-card" onclick="selectActivity(${activity.id}, ${activity.has_subitems})">
+                <div class="activity-name">${activity.name}</div>
+                <div class="activity-cost">$${activity.base_cost.toFixed(2)}</div>
+                <div class="activity-unit">per ${activity.unit}</div>
+              </div>
+            `).join('')}
+          </div>
+        </div>
+      `;
+    });
+
+    activitiesContainer.innerHTML = activitiesHTML;
+
+    // Update breadcrumb
+    document.getElementById('breadcrumbSep2').style.display = 'inline';
+    document.getElementById('breadcrumbActivities').style.display = 'inline';
+    document.getElementById('breadcrumbActivities').textContent = data.category.name;
+  } catch (error) {
+    console.error('Error loading activities:', error);
+  }
+}
+
+async function selectActivity(activityId, hasSubitems) {
+  currentActivity = { id: activityId };
+  selectedOptions = {};
+  await showOptionsModal(activityId);
+}
+
+async function showOptionsModal(activityId) {
+  try {
+    const response = await fetch(`/api/pos/activity/${activityId}/subitems`);
+    const data = await response.json();
+    currentActivity = data.activity;
+
+    document.getElementById('modalTitle').textContent = `Configure: ${data.activity.name}`;
+
+    let modalHTML = `
+      <div class="option-group">
+        <div class="option-label">Quantity:</div>
+        <input type="number" class="quantity-input" id="quantityInput" value="1" min="1" step="0.01">
+      </div>
+    `;
+
+    document.getElementById('modalBody').innerHTML = modalHTML;
+    document.getElementById('optionsModal').classList.add('active');
+  } catch (error) {
+    console.error('Error loading subitems:', error);
+  }
+}
+
+function addToCart() {
+  const quantity = document.getElementById('quantityInput')?.value || 1;
+  let totalCost = currentActivity.base_cost * parseFloat(quantity);
+
+  cart.push({
+    activity_id: currentActivity.id,
+    name: currentActivity.name,
+    quantity: parseFloat(quantity),
+    unit_cost: currentActivity.base_cost,
+    total_cost: totalCost,
+    selected_options: selectedOptions
+  });
+
+  renderCart();
+  closeModal();
+}
+
+function renderCart() {
+  const cartContainer = document.getElementById('cartItems');
+
+  if (cart.length === 0) {
+    cartContainer.innerHTML = '<div class="cart-empty">Your cart is empty. Select activities to begin building your quote.</div>';
+    document.getElementById('cartTotal').textContent = '$0.00';
+    return;
+  }
+
+  let total = 0;
+  cartContainer.innerHTML = cart.map((item, index) => {
+    total += item.total_cost;
+    return `
+      <div class="cart-item">
+        <button class="cart-item-remove" onclick="removeFromCart(${index})">×</button>
+        <div class="cart-item-name">${item.name}</div>
+        <div class="cart-item-details">Qty: ${item.quantity}</div>
+        <div class="cart-item-price">$${item.total_cost.toFixed(2)}</div>
+      </div>
+    `;
+  }).join('');
+
+  document.getElementById('cartTotal').textContent = `$${total.toFixed(2)}`;
+}
+
+function removeFromCart(index) {
+  cart.splice(index, 1);
+  renderCart();
+}
+
+function clearCart() {
+  if (cart.length === 0) return;
+  if (confirm('Are you sure you want to clear your cart?')) {
+    cart = [];
+    renderCart();
+  }
+}
+
+function closeModal() {
+  document.getElementById('optionsModal').classList.remove('active');
+  currentActivity = null;
+  selectedOptions = {};
+  setTimeout(() => {
+    document.getElementById('modalBody').innerHTML = '';
+  }, 300);
+}
+
+async function saveQuote() {
+  if (cart.length === 0) {
+    alert('Your cart is empty!');
+    return;
+  }
+
+  if (!sessionToken) {
+    alert('Session expired. Please refresh and try again.');
+    return;
+  }
+
+  const total = cart.reduce((sum, item) => sum + item.total_cost, 0);
+
+  // Prepare line items in the format expected by backend
+  const lineItems = cart.map(item => ({
+    name: item.name,
+    quantity: item.quantity,
+    unit: 'each',
+    unit_price: item.unit_cost,
+    total: item.total_cost
+  }));
+
+  try {
+    const response = await fetch(`/api/pos/session/${sessionToken}/save-quote`, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        client_name: linkedJobId ? 'Job-linked Quote' : 'New Quote',
+        line_items: lineItems,
+        tax_rate: 0
+      })
+    });
+
+    const data = await response.json();
+
+    if (data.success) {
+      alert(`Quote saved successfully! Quote #${data.quote_number}`);
+      cart = [];
+      renderCart();
+
+      // If linked to a job, redirect back to job detail
+      if (linkedJobId) {
+        window.location.href = `/jobs/${linkedJobId}`;
+      } else {
+        window.location.href = `/pos/quotes/${data.quote_id}`;
+      }
+    } else {
+      alert('Failed to save quote: ' + (data.message || 'Unknown error'));
+    }
+  } catch (error) {
+    console.error('Error saving quote:', error);
+    alert('Failed to save quote. Please try again. Error: ' + error.message);
+  }
+}
+
+function viewQuotes() {
+  window.location.href = '/pos/quotes';
+}
+
+function goToLayer(layer) {
+  if (layer === 1 && currentLayer === 2) {
+    // Go back to job specs
+    document.getElementById('layer1').style.display = 'block';
+    document.getElementById('layer2').style.display = 'none';
+    document.getElementById('breadcrumb').style.display = 'none';
+    document.getElementById('layerTitle').textContent = 'Layer 1: Job Specifications';
+    document.getElementById('layerDescription').textContent = 'Select which aspects of construction apply to this project';
+    currentLayer = 1;
+  }
+}
+</script>
+{% endblock %}

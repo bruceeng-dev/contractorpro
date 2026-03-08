@@ -1,0 +1,353 @@
+{% extends "base.html" %}
+
+{% block head %}
+<style>
+.mappings-container {
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 20px;
+}
+
+.page-header {
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  color: white;
+  padding: 30px;
+  border-radius: 8px;
+  margin-bottom: 30px;
+}
+
+.page-header h1 {
+  margin: 0 0 10px 0;
+}
+
+.page-header p {
+  margin: 0;
+  opacity: 0.9;
+}
+
+.category-section {
+  background: white;
+  border-radius: 8px;
+  padding: 25px;
+  margin-bottom: 20px;
+  box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+}
+
+.category-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 20px;
+  padding-bottom: 15px;
+  border-bottom: 2px solid #e0e0e0;
+}
+
+.category-name {
+  font-size: 1.5em;
+  font-weight: bold;
+  color: #2c3e50;
+}
+
+.category-icon {
+  font-size: 2em;
+}
+
+.specs-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
+  gap: 12px;
+  margin-bottom: 20px;
+}
+
+.spec-checkbox {
+  background: #f8f9fa;
+  border: 2px solid #e0e0e0;
+  border-radius: 6px;
+  padding: 12px;
+  cursor: pointer;
+  transition: all 0.2s;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.spec-checkbox:hover {
+  border-color: #3498db;
+  transform: translateY(-1px);
+}
+
+.spec-checkbox.selected {
+  background: #e8f4f8;
+  border-color: #27ae60;
+}
+
+.spec-checkbox input[type="checkbox"] {
+  width: 18px;
+  height: 18px;
+  cursor: pointer;
+}
+
+.spec-label {
+  font-size: 0.95em;
+  color: #2c3e50;
+  cursor: pointer;
+}
+
+.save-btn {
+  padding: 10px 25px;
+  background: #27ae60;
+  color: white;
+  border: none;
+  border-radius: 4px;
+  font-size: 1em;
+  cursor: pointer;
+  transition: all 0.3s;
+}
+
+.save-btn:hover {
+  background: #229954;
+  transform: scale(1.05);
+}
+
+.save-btn:disabled {
+  background: #95a5a6;
+  cursor: not-allowed;
+  transform: none;
+}
+
+.mapping-info {
+  background: #e8f4f8;
+  padding: 15px;
+  border-radius: 6px;
+  margin-bottom: 20px;
+  color: #2c3e50;
+}
+
+.mapping-info strong {
+  color: #27ae60;
+}
+
+.no-categories {
+  text-align: center;
+  padding: 60px 20px;
+  color: #7f8c8d;
+}
+
+.no-categories a {
+  color: #3498db;
+  text-decoration: none;
+  font-weight: bold;
+}
+
+.no-categories a:hover {
+  text-decoration: underline;
+}
+
+.back-link {
+  display: inline-block;
+  margin-bottom: 20px;
+  color: #3498db;
+  text-decoration: none;
+  font-weight: bold;
+}
+
+.back-link:hover {
+  text-decoration: underline;
+}
+
+.success-message {
+  background: #d4edda;
+  border: 1px solid #c3e6cb;
+  color: #155724;
+  padding: 12px 20px;
+  border-radius: 4px;
+  margin-bottom: 20px;
+}
+
+.loading {
+  text-align: center;
+  padding: 40px;
+  color: #7f8c8d;
+  font-size: 1.2em;
+}
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="mappings-container">
+  <a href="{{ url_for('pos_admin') }}" class="back-link">← Back to POS Admin</a>
+
+  <div class="page-header">
+    <h1>📌 Job Specification Mappings</h1>
+    <p>Configure which job specifications apply to each POS category. This enables intelligent filtering in the multi-layer POS system.</p>
+  </div>
+
+  <div class="mapping-info">
+    <strong>How it works:</strong> When a user selects job specifications in Layer 1, only categories and activities mapped to those specifications will appear in Layer 2.
+    Check all applicable specifications for each category below.
+  </div>
+
+  <div id="categoriesList">
+    <div class="loading">Loading categories and specifications...</div>
+  </div>
+</div>
+
+<script>
+let jobSpecs = [];
+let categories = [];
+let mappings = {}; // Store mappings by category ID
+
+document.addEventListener('DOMContentLoaded', async function() {
+  await loadData();
+  renderCategories();
+});
+
+async function loadData() {
+  try {
+    // Load job specifications
+    const specsResponse = await fetch('/api/pos/job-specifications');
+    jobSpecs = await specsResponse.json();
+
+    // Load categories
+    const catsResponse = await fetch('/api/pos/categories');
+    categories = await catsResponse.json();
+
+    // Load existing mappings
+    const mappingsResponse = await fetch('/api/pos/spec-mappings');
+    const mappingsData = await mappingsResponse.json();
+
+    // Organize mappings by category ID
+    mappings = {};
+    mappingsData.forEach(mapping => {
+      if (!mappings[mapping.category_id]) {
+        mappings[mapping.category_id] = [];
+      }
+      mappings[mapping.category_id].push(mapping.spec_id);
+    });
+
+  } catch (error) {
+    console.error('Error loading data:', error);
+  }
+}
+
+function renderCategories() {
+  const container = document.getElementById('categoriesList');
+
+  if (categories.length === 0) {
+    container.innerHTML = `
+      <div class="no-categories">
+        <h2>No Categories Found</h2>
+        <p>Please <a href="${window.location.origin}/pos/admin">create some POS categories</a> first.</p>
+      </div>
+    `;
+    return;
+  }
+
+  container.innerHTML = categories.map(category => {
+    const categoryMappings = mappings[category.id] || [];
+
+    return `
+      <div class="category-section">
+        <div class="category-header">
+          <div>
+            <div class="category-name">${category.name}</div>
+            <div style="color: #7f8c8d; font-size: 0.9em; margin-top: 5px;">
+              ${category.description || 'No description'}
+            </div>
+          </div>
+          <div class="category-icon">${category.icon || '📦'}</div>
+        </div>
+
+        <div class="specs-grid">
+          ${jobSpecs.map(spec => {
+            const isChecked = categoryMappings.includes(spec.id);
+            return `
+              <div class="spec-checkbox ${isChecked ? 'selected' : ''}"
+                   id="spec-${category.id}-${spec.id}"
+                   onclick="toggleSpecForCategory(${category.id}, ${spec.id})">
+                <input type="checkbox"
+                       id="checkbox-${category.id}-${spec.id}"
+                       ${isChecked ? 'checked' : ''}
+                       onclick="event.stopPropagation(); toggleSpecForCategory(${category.id}, ${spec.id})">
+                <label class="spec-label" for="checkbox-${category.id}-${spec.id}">
+                  ${spec.display_name}
+                </label>
+              </div>
+            `;
+          }).join('')}
+        </div>
+
+        <button class="save-btn" onclick="saveMappingsForCategory(${category.id})">
+          💾 Save Mappings for ${category.name}
+        </button>
+      </div>
+    `;
+  }).join('');
+}
+
+function toggleSpecForCategory(categoryId, specId) {
+  if (!mappings[categoryId]) {
+    mappings[categoryId] = [];
+  }
+
+  const specCard = document.getElementById(`spec-${categoryId}-${specId}`);
+  const checkbox = document.getElementById(`checkbox-${categoryId}-${specId}`);
+
+  if (mappings[categoryId].includes(specId)) {
+    // Remove
+    mappings[categoryId] = mappings[categoryId].filter(id => id !== specId);
+    specCard.classList.remove('selected');
+    checkbox.checked = false;
+  } else {
+    // Add
+    mappings[categoryId].push(specId);
+    specCard.classList.add('selected');
+    checkbox.checked = true;
+  }
+}
+
+async function saveMappingsForCategory(categoryId) {
+  const selectedSpecs = mappings[categoryId] || [];
+  const btn = event.target;
+
+  btn.disabled = true;
+  btn.textContent = 'Saving...';
+
+  try {
+    const response = await fetch('/api/pos/spec-mappings', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        category_id: categoryId,
+        spec_ids: selectedSpecs
+      })
+    });
+
+    const data = await response.json();
+
+    if (data.success) {
+      btn.textContent = '✓ Saved!';
+      btn.style.background = '#27ae60';
+
+      setTimeout(() => {
+        const category = categories.find(c => c.id === categoryId);
+        btn.textContent = `💾 Save Mappings for ${category.name}`;
+        btn.style.background = '';
+        btn.disabled = false;
+      }, 2000);
+    } else {
+      alert('Failed to save mappings: ' + (data.error || 'Unknown error'));
+      btn.disabled = false;
+      const category = categories.find(c => c.id === categoryId);
+      btn.textContent = `💾 Save Mappings for ${category.name}`;
+    }
+  } catch (error) {
+    console.error('Error saving mappings:', error);
+    alert('Failed to save mappings. Please try again.');
+    btn.disabled = false;
+    const category = categories.find(c => c.id === categoryId);
+    btn.textContent = `💾 Save Mappings for ${category.name}`;
+  }
+}
+</script>
+{% endblock %}

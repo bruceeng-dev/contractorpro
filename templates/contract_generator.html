@@ -138,7 +138,8 @@
     </div>
     <div class="summary-actions">
       <button class="btn" onclick="calculateTotal()">Recalculate Total</button>
-      <button class="btn btn--primary">Generate Contract Document</button>
+      {# <a href="{{ url_for('view_contract', job_id=job.id) }}" class="btn btn--primary">View Contract Document</a> #}
+      <button class="btn btn--secondary" onclick="alert('Contract viewing feature coming soon!')">View Contract Document (Coming Soon)</button>
     </div>
   </div>
 </div>

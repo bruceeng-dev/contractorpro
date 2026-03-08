@@ -1,0 +1,152 @@
+<!-- View Mode: Display formatted contract -->
+<div class="contract-actions no-print" style="margin-bottom: 2rem; display: flex; gap: 1rem; flex-wrap: wrap;">
+  <button onclick="window.print()" class="btn btn--primary">🖨️ Print Contract</button>
+  <a href="{{ url_for('unified_contract', job_id=job.id) }}?mode=view&format=pdf" class="btn btn--secondary">📄 Download PDF</a>
+  <a href="{{ url_for('unified_contract', job_id=job.id) }}?mode=edit" class="btn">✏️ Edit Contract</a>
+  <a href="{{ url_for('unified_contract', job_id=job.id) }}?mode=ai" class="btn btn--success">🤖 Generate with AI</a>
+</div>
+
+<div class="contract-document print-area">
+  <!-- Contract Header -->
+  <div style="text-align: center; margin-bottom: 3rem;">
+    <h1 style="font-size: 2.5rem; margin-bottom: 0.5rem; text-transform: uppercase; letter-spacing: 2px;">
+      Construction Agreement
+    </h1>
+    <p style="font-size: 1.2rem; color: #4a5568;">Contract #{{ contract.contract_number }}</p>
+    <p style="margin-top: 1rem;">Date: {{ contract.created_date.strftime('%B %d, %Y') if contract.created_date else date.today().strftime('%B %d, %Y') }}</p>
+  </div>
+
+  <!-- Parties -->
+  <div style="margin-bottom: 3rem;">
+    <h2>Parties to this Agreement</h2>
+    <div style="margin: 1.5rem 0; padding: 1rem; background: #f7fafc; border-left: 4px solid #667eea;">
+      <p><strong>Owner/Client:</strong></p>
+      <p style="margin-left: 1rem;">
+        {{ job.client_name }}<br>
+        {{ job.address }}<br>
+        {% if job.client_email %}{{ job.client_email }}<br>{% endif %}
+        {% if job.client_phone %}{{ job.client_phone }}{% endif %}
+      </p>
+    </div>
+    <div style="margin: 1.5rem 0; padding: 1rem; background: #f7fafc; border-left: 4px solid #48bb78;">
+      <p><strong>Contractor:</strong></p>
+      <p style="margin-left: 1rem;">
+        {{ current_user.company_name or current_user.username }}<br>
+        {{ current_user.email }}
+      </p>
+    </div>
+  </div>
+
+  <!-- Project Description -->
+  <div class="contract-section" style="margin-bottom: 3rem;">
+    <h2>1. Project Description</h2>
+    <p style="line-height: 1.8; margin: 1rem 0;">
+      {% if contract.project_description %}
+        {{ contract.project_description }}
+      {% else %}
+        The Contractor agrees to furnish all labor, materials, equipment, and supervision necessary to complete
+        the {{ job.project_type }} located at {{ job.address }}.
+      {% endif %}
+    </p>
+  </div>
+
+  <!-- Scope of Work -->
+  <div class="contract-section" style="margin-bottom: 3rem;">
+    <h2>2. Scope of Work</h2>
+    {% if contract.scope_of_work %}
+      <div style="line-height: 1.8; margin: 1rem 0; white-space: pre-wrap;">{{ contract.scope_of_work }}</div>
+    {% else %}
+      <p style="margin: 1rem 0;">Detailed scope of work to be defined.</p>
+
+      {% if locations %}
+      <h3 style="margin-top: 2rem;">Work Locations:</h3>
+      {% for location in locations %}
+      <div style="margin: 1.5rem 0; padding: 1rem; border: 1px solid #e2e8f0; border-radius: 8px;">
+        <h4>{{ location.name }}{% if location.square_footage %} ({{ location.square_footage }} sq ft){% endif %}</h4>
+        {% if location.description %}<p>{{ location.description }}</p>{% endif %}
+
+        {% set location_tasks = tasks|selectattr('location_id', 'equalto', location.id)|selectattr('included_in_contract', 'equalto', true)|list %}
+        {% if location_tasks %}
+        <ul style="margin-top: 1rem; list-style-type: disc; margin-left: 2rem;">
+          {% for task in location_tasks %}
+          <li>{{ task.task_name }}{% if task.cost %} - ${{ "{:,.2f}".format(task.cost) }}{% endif %}</li>
+          {% endfor %}
+        </ul>
+        {% endif %}
+      </div>
+      {% endfor %}
+      {% endif %}
+    {% endif %}
+  </div>
+
+  <!-- Contract Value & Payment Terms -->
+  <div class="contract-section" style="margin-bottom: 3rem;">
+    <h2>3. Contract Value & Payment Terms</h2>
+    <p style="font-size: 1.3rem; font-weight: 600; margin: 1rem 0;">
+      Total Contract Value: ${{ "{:,.2f}".format(contract.total_contract_value or job.budget or 0) }}
+    </p>
+
+    {% if contract.payment_terms %}
+      <div style="line-height: 1.8; margin: 1rem 0; white-space: pre-wrap;">{{ contract.payment_terms }}</div>
+    {% else %}
+      <p style="margin: 1rem 0;">Standard payment terms apply. Payment schedule to be determined.</p>
+    {% endif %}
+  </div>
+
+  <!-- Terms and Conditions -->
+  <div class="contract-section" style="margin-bottom: 3rem;">
+    <h2>4. Terms and Conditions</h2>
+    {% if contract.terms_and_conditions %}
+      <div style="line-height: 1.8; margin: 1rem 0; white-space: pre-wrap;">{{ contract.terms_and_conditions }}</div>
+    {% else %}
+      <ul style="margin-left: 2rem; line-height: 1.8;">
+        <li>All work will be performed in accordance with local building codes</li>
+        <li>Contractor will obtain all necessary permits</li>
+        <li>One year warranty on workmanship</li>
+        <li>Change orders require written approval</li>
+      </ul>
+    {% endif %}
+  </div>
+
+  <!-- Signatures -->
+  <div class="contract-section" style="margin-top: 4rem; page-break-before: avoid;">
+    <h2>Signatures</h2>
+    <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 3rem; margin-top: 3rem;">
+      <div>
+        <p>_________________________________</p>
+        <p><strong>Contractor Signature</strong></p>
+        <p style="margin-top: 1rem;">Date: _______________</p>
+      </div>
+      <div>
+        <p>_________________________________</p>
+        <p><strong>Client Signature</strong></p>
+        <p style="margin-top: 1rem;">Date: _______________</p>
+      </div>
+    </div>
+  </div>
+</div>
+
+<style>
+@media print {
+  .no-print, .contract-actions {
+    display: none !important;
+  }
+  .contract-document {
+    max-width: 100%;
+  }
+}
+
+.contract-section h2 {
+  color: #2d3748;
+  font-size: 1.5rem;
+  margin-bottom: 1rem;
+  border-bottom: 2px solid #667eea;
+  padding-bottom: 0.5rem;
+}
+
+.contract-section h3 {
+  color: #4a5568;
+  font-size: 1.2rem;
+  margin: 1.5rem 0 1rem;
+}
+</style>

@@ -1,0 +1,1223 @@
+{% extends "base.html" %}
+
+{% block head %}
+<style>
+.pos-container {
+  max-width: 1400px;
+  margin: 0 auto;
+  padding: 20px;
+}
+
+.pos-header {
+  text-align: center;
+  margin-bottom: 30px;
+}
+
+.pos-header h1 {
+  font-size: 2.5em;
+  margin-bottom: 10px;
+  color: #2c3e50;
+}
+
+.pos-header p {
+  color: #7f8c8d;
+  font-size: 1.1em;
+}
+
+/* Scope Input Section */
+.scope-section {
+  background: white;
+  border-radius: 8px;
+  padding: 30px;
+  margin-bottom: 30px;
+  box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+}
+
+.scope-section h2 {
+  margin-top: 0;
+  color: #2c3e50;
+}
+
+.scope-input {
+  width: 100%;
+  min-height: 120px;
+  padding: 15px;
+  font-size: 1em;
+  border: 2px solid #e0e0e0;
+  border-radius: 4px;
+  resize: vertical;
+  font-family: inherit;
+}
+
+.scope-input:focus {
+  outline: none;
+  border-color: #3498db;
+}
+
+.analyze-btn {
+  margin-top: 15px;
+  padding: 12px 30px;
+  background: #3498db;
+  color: white;
+  border: none;
+  border-radius: 4px;
+  font-size: 1.1em;
+  cursor: pointer;
+  transition: background 0.3s;
+}
+
+.analyze-btn:hover {
+  background: #2980b9;
+}
+
+/* Main POS Layout */
+.pos-main {
+  display: grid;
+  grid-template-columns: 1fr 350px;
+  gap: 20px;
+}
+
+/* Categories Section */
+.categories-section {
+  background: white;
+  border-radius: 8px;
+  padding: 25px;
+  box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+}
+
+.categories-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+  gap: 15px;
+  margin-top: 20px;
+}
+
+.category-card {
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  border-radius: 8px;
+  padding: 20px;
+  text-align: center;
+  cursor: pointer;
+  transition: transform 0.2s, box-shadow 0.2s;
+  color: white;
+  border: none;
+}
+
+.category-card:hover {
+  transform: translateY(-3px);
+  box-shadow: 0 5px 15px rgba(0,0,0,0.2);
+}
+
+.category-card.selected {
+  border: 3px solid #f39c12;
+  box-shadow: 0 0 20px rgba(243,156,18,0.5);
+}
+
+.category-icon {
+  font-size: 2.5em;
+  margin-bottom: 10px;
+}
+
+.category-name {
+  font-size: 1.2em;
+  font-weight: bold;
+  margin-bottom: 5px;
+}
+
+.category-desc {
+  font-size: 0.9em;
+  opacity: 0.9;
+}
+
+/* Activities Grid */
+.activities-section {
+  margin-top: 20px;
+  display: none;
+}
+
+.activities-section.active {
+  display: block;
+}
+
+.activities-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(180px, 1fr));
+  gap: 12px;
+  margin-top: 15px;
+}
+
+.activity-card {
+  background: white;
+  border: 2px solid #e0e0e0;
+  border-radius: 6px;
+  padding: 15px;
+  text-align: center;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+
+.activity-card:hover {
+  border-color: #3498db;
+  transform: translateY(-2px);
+}
+
+.activity-card.selected {
+  border-color: #27ae60;
+  background: #e8f8f5;
+}
+
+.activity-name {
+  font-weight: bold;
+  margin-bottom: 5px;
+  color: #2c3e50;
+}
+
+.activity-cost {
+  color: #27ae60;
+  font-size: 1.1em;
+  font-weight: bold;
+}
+
+.activity-unit {
+  font-size: 0.9em;
+  color: #7f8c8d;
+}
+
+/* Shopping Cart */
+.cart-section {
+  background: white;
+  border-radius: 8px;
+  padding: 20px;
+  box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+  position: sticky;
+  top: 20px;
+  max-height: calc(100vh - 40px);
+  overflow-y: auto;
+}
+
+.cart-header {
+  font-size: 1.5em;
+  font-weight: bold;
+  margin-bottom: 15px;
+  color: #2c3e50;
+  border-bottom: 2px solid #e0e0e0;
+  padding-bottom: 10px;
+}
+
+.cart-items {
+  margin-bottom: 20px;
+}
+
+.cart-item {
+  background: #f8f9fa;
+  border-radius: 4px;
+  padding: 12px;
+  margin-bottom: 10px;
+  position: relative;
+}
+
+.cart-item-name {
+  font-weight: bold;
+  margin-bottom: 5px;
+  color: #2c3e50;
+}
+
+.cart-item-details {
+  font-size: 0.9em;
+  color: #7f8c8d;
+  margin-bottom: 5px;
+}
+
+.cart-item-price {
+  color: #27ae60;
+  font-weight: bold;
+}
+
+.cart-item-remove {
+  position: absolute;
+  top: 10px;
+  right: 10px;
+  background: #e74c3c;
+  color: white;
+  border: none;
+  border-radius: 50%;
+  width: 24px;
+  height: 24px;
+  cursor: pointer;
+  font-size: 0.9em;
+}
+
+.cart-item-remove:hover {
+  background: #c0392b;
+}
+
+.cart-empty {
+  text-align: center;
+  color: #7f8c8d;
+  padding: 30px 0;
+  font-style: italic;
+}
+
+.cart-total {
+  border-top: 2px solid #e0e0e0;
+  padding-top: 15px;
+  margin-top: 15px;
+}
+
+.cart-total-label {
+  font-size: 1.2em;
+  font-weight: bold;
+  margin-bottom: 5px;
+}
+
+.cart-total-amount {
+  font-size: 2em;
+  color: #27ae60;
+  font-weight: bold;
+}
+
+.cart-actions {
+  margin-top: 20px;
+}
+
+.cart-btn {
+  width: 100%;
+  padding: 12px;
+  margin-bottom: 10px;
+  border: none;
+  border-radius: 4px;
+  font-size: 1em;
+  cursor: pointer;
+  transition: background 0.3s;
+}
+
+.cart-btn-primary {
+  background: #27ae60;
+  color: white;
+}
+
+.cart-btn-primary:hover {
+  background: #229954;
+}
+
+.cart-btn-secondary {
+  background: #3498db;
+  color: white;
+}
+
+.cart-btn-secondary:hover {
+  background: #2980b9;
+}
+
+.cart-btn-clear {
+  background: #e74c3c;
+  color: white;
+}
+
+.cart-btn-clear:hover {
+  background: #c0392b;
+}
+
+/* Modal for drill-down options */
+.modal {
+  display: none;
+  position: fixed;
+  z-index: 1000;
+  left: 0;
+  top: 0;
+  width: 100%;
+  height: 100%;
+  background-color: rgba(0,0,0,0.5);
+}
+
+.modal.active {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.modal-content {
+  background: white;
+  border-radius: 8px;
+  padding: 30px;
+  max-width: 600px;
+  width: 90%;
+  max-height: 80vh;
+  overflow-y: auto;
+}
+
+.modal-header {
+  font-size: 1.8em;
+  margin-bottom: 20px;
+  color: #2c3e50;
+}
+
+.modal-close {
+  float: right;
+  font-size: 1.5em;
+  cursor: pointer;
+  color: #7f8c8d;
+}
+
+.modal-close:hover {
+  color: #2c3e50;
+}
+
+.option-group {
+  margin-bottom: 25px;
+}
+
+.option-label {
+  font-weight: bold;
+  margin-bottom: 10px;
+  color: #2c3e50;
+}
+
+.option-choices {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
+  gap: 10px;
+}
+
+.option-choice {
+  background: white;
+  border: 2px solid #e0e0e0;
+  border-radius: 4px;
+  padding: 10px;
+  cursor: pointer;
+  transition: all 0.2s;
+  text-align: center;
+}
+
+.option-choice:hover {
+  border-color: #3498db;
+}
+
+.option-choice.selected {
+  border-color: #27ae60;
+  background: #e8f8f5;
+}
+
+.option-choice-name {
+  font-weight: bold;
+  margin-bottom: 3px;
+}
+
+.option-choice-cost {
+  font-size: 0.9em;
+  color: #27ae60;
+}
+
+.quantity-input {
+  width: 100%;
+  padding: 10px;
+  border: 2px solid #e0e0e0;
+  border-radius: 4px;
+  font-size: 1em;
+}
+
+.modal-actions {
+  margin-top: 25px;
+  display: flex;
+  gap: 10px;
+}
+
+.modal-btn {
+  flex: 1;
+  padding: 12px;
+  border: none;
+  border-radius: 4px;
+  font-size: 1em;
+  cursor: pointer;
+}
+
+.modal-btn-add {
+  background: #27ae60;
+  color: white;
+}
+
+.modal-btn-add:hover {
+  background: #229954;
+}
+
+.modal-btn-cancel {
+  background: #95a5a6;
+  color: white;
+}
+
+.modal-btn-cancel:hover {
+  background: #7f8c8d;
+}
+
+.loading {
+  text-align: center;
+  padding: 40px;
+  color: #7f8c8d;
+  font-size: 1.2em;
+}
+
+.no-categories {
+  text-align: center;
+  padding: 40px;
+  color: #7f8c8d;
+}
+
+.no-categories a {
+  color: #3498db;
+  text-decoration: none;
+  font-weight: bold;
+}
+
+.no-categories a:hover {
+  text-decoration: underline;
+}
+
+/* Quote Option Cards */
+.option-card {
+  background: white;
+  border: 3px solid #e0e0e0;
+  border-radius: 10px;
+  padding: 25px;
+  transition: all 0.3s;
+  position: relative;
+}
+
+.option-card:hover {
+  transform: translateY(-5px);
+  box-shadow: 0 8px 20px rgba(0,0,0,0.15);
+}
+
+.option-card-recommended {
+  border-color: #27ae60;
+  box-shadow: 0 4px 15px rgba(39,174,96,0.2);
+}
+
+.option-badge {
+  display: inline-block;
+  padding: 6px 16px;
+  border-radius: 20px;
+  color: white;
+  font-weight: bold;
+  font-size: 0.9em;
+  margin-bottom: 15px;
+}
+
+.option-price {
+  font-size: 2.5em;
+  font-weight: bold;
+  color: #27ae60;
+  margin: 15px 0;
+}
+
+.option-desc {
+  color: #7f8c8d;
+  margin-bottom: 15px;
+  font-size: 0.95em;
+}
+
+.option-timeline {
+  background: #ecf0f1;
+  padding: 8px 12px;
+  border-radius: 5px;
+  margin-bottom: 15px;
+  font-size: 0.9em;
+  color: #2c3e50;
+}
+
+.option-items {
+  max-height: 300px;
+  overflow-y: auto;
+  margin: 15px 0;
+  padding: 10px;
+  background: #f8f9fa;
+  border-radius: 5px;
+  font-size: 0.85em;
+}
+
+.option-category-group {
+  margin-bottom: 15px;
+}
+
+.option-category-group:last-child {
+  margin-bottom: 0;
+}
+
+.option-category-header {
+  font-weight: bold;
+  color: #2c3e50;
+  background: #e8f4f8;
+  padding: 8px 10px;
+  border-radius: 4px;
+  margin-bottom: 8px;
+  font-size: 0.95em;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.option-category-total {
+  color: #3498db;
+  font-size: 0.9em;
+}
+
+.option-item {
+  padding: 8px 10px;
+  color: #34495e;
+  border-bottom: 1px solid #e0e0e0;
+  background: white;
+  margin-bottom: 4px;
+  border-radius: 3px;
+}
+
+.option-item:last-child {
+  margin-bottom: 0;
+}
+
+.option-item-name {
+  font-weight: 500;
+  color: #2c3e50;
+  margin-bottom: 4px;
+}
+
+.option-item-details {
+  display: flex;
+  justify-content: space-between;
+  font-size: 0.9em;
+  color: #7f8c8d;
+}
+
+.option-item-quantity {
+  color: #95a5a6;
+}
+
+.option-item-cost {
+  font-weight: bold;
+  color: #27ae60;
+}
+
+.option-select-btn {
+  width: 100%;
+  padding: 14px;
+  background: #3498db;
+  color: white;
+  border: none;
+  border-radius: 6px;
+  font-size: 1.1em;
+  font-weight: bold;
+  cursor: pointer;
+  transition: all 0.3s;
+  margin-top: 15px;
+}
+
+.option-select-btn:hover {
+  background: #2980b9;
+  transform: scale(1.02);
+}
+
+.option-select-btn-primary {
+  background: #27ae60;
+}
+
+.option-select-btn-primary:hover {
+  background: #229954;
+}
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="pos-container">
+  <div class="pos-header">
+    <h1>🛠️ Quick Quote Builder</h1>
+    <p>Describe your project and select relevant activities to generate an instant quote</p>
+  </div>
+
+  <!-- Scope of Work Input -->
+  <div class="scope-section">
+    <h2>📝 Describe Your Project</h2>
+    <textarea
+      id="scopeInput"
+      class="scope-input"
+      placeholder="Example: Complete kitchen renovation including new cabinets, countertops, sink, and backsplash..."
+    ></textarea>
+    <div style="display: flex; gap: 10px; margin-top: 15px;">
+      <button class="analyze-btn" onclick="generateQuoteOptions()" style="flex: 1;">
+        ⚡ Generate Smart Quote Options
+      </button>
+      <button class="analyze-btn" onclick="analyzeScope()" style="flex: 0 0 auto; background: #95a5a6;">
+        🔍 Manual Mode
+      </button>
+    </div>
+  </div>
+
+  <!-- AI-Generated Quote Options -->
+  <div id="quoteOptionsSection" style="display: none; margin-bottom: 30px;">
+    <div style="background: white; border-radius: 8px; padding: 30px; box-shadow: 0 2px 10px rgba(0,0,0,0.1);">
+      <h2 style="margin-top: 0; color: #2c3e50;">✨ AI-Generated Quote Options</h2>
+      <p style="color: #7f8c8d; margin-bottom: 25px;" id="analysisInfo"></p>
+
+      <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 20px;">
+        <!-- Basic Option -->
+        <div class="option-card" data-tier="basic">
+          <div class="option-badge" style="background: #3498db;">BASIC</div>
+          <div class="option-price" id="basicPrice">$0</div>
+          <p class="option-desc">Essential work to complete the project</p>
+          <div class="option-timeline" id="basicTimeline"></div>
+          <div class="option-items" id="basicItems"></div>
+          <button class="option-select-btn" onclick="selectTierOption('basic')">Select Basic</button>
+        </div>
+
+        <!-- Standard Option -->
+        <div class="option-card option-card-recommended" data-tier="standard">
+          <div class="option-badge" style="background: #27ae60;">STANDARD ⭐</div>
+          <div class="option-price" id="standardPrice">$0</div>
+          <p class="option-desc">Recommended option with quality upgrades</p>
+          <div class="option-timeline" id="standardTimeline"></div>
+          <div class="option-items" id="standardItems"></div>
+          <button class="option-select-btn option-select-btn-primary" onclick="selectTierOption('standard')">Select Standard</button>
+        </div>
+
+        <!-- Premium Option -->
+        <div class="option-card" data-tier="premium">
+          <div class="option-badge" style="background: #f39c12;">PREMIUM</div>
+          <div class="option-price" id="premiumPrice">$0</div>
+          <p class="option-desc">Complete transformation with premium finishes</p>
+          <div class="option-timeline" id="premiumTimeline"></div>
+          <div class="option-items" id="premiumItems"></div>
+          <button class="option-select-btn" onclick="selectTierOption('premium')">Select Premium</button>
+        </div>
+      </div>
+
+      <div style="margin-top: 25px; text-align: center;">
+        <button class="analyze-btn" onclick="hideQuoteOptions()" style="background: #95a5a6;">
+          ← Back to Manual Selection
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Main POS Interface -->
+  <div class="pos-main">
+    <!-- Categories and Activities -->
+    <div>
+      <div class="categories-section">
+        <h2>📦 Select Categories</h2>
+        <div id="categoriesContainer" class="loading">
+          Loading categories...
+        </div>
+      </div>
+
+      <!-- Activities Section (shown when category is selected) -->
+      <div id="activitiesSection" class="activities-section">
+        <h2 id="activitiesTitle"></h2>
+        <div id="activitiesContainer"></div>
+      </div>
+    </div>
+
+    <!-- Shopping Cart -->
+    <div class="cart-section">
+      <div class="cart-header">🛒 Quote Cart</div>
+      <div id="cartItems" class="cart-items">
+        <div class="cart-empty">Your cart is empty. Select activities to begin building your quote.</div>
+      </div>
+      <div class="cart-total">
+        <div class="cart-total-label">Total:</div>
+        <div class="cart-total-amount" id="cartTotal">$0.00</div>
+      </div>
+      <div class="cart-actions">
+        <button class="cart-btn cart-btn-primary" onclick="saveQuote()">💾 Save Quote</button>
+        <button class="cart-btn cart-btn-secondary" onclick="viewQuotes()">📋 View Saved Quotes</button>
+        <button class="cart-btn cart-btn-clear" onclick="clearCart()">🗑️ Clear Cart</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Drill-down Modal -->
+<div id="optionsModal" class="modal">
+  <div class="modal-content">
+    <span class="modal-close" onclick="closeModal()">&times;</span>
+    <div class="modal-header" id="modalTitle"></div>
+    <div id="modalBody"></div>
+    <div class="modal-actions">
+      <button class="modal-btn modal-btn-add" onclick="addToCart()">Add to Cart</button>
+      <button class="modal-btn modal-btn-cancel" onclick="closeModal()">Cancel</button>
+    </div>
+  </div>
+</div>
+
+<script>
+let categories = [];
+let selectedCategory = null;
+let currentActivity = null;
+let cart = [];
+let selectedOptions = {};
+
+// Load categories on page load
+document.addEventListener('DOMContentLoaded', function() {
+  loadCategories();
+});
+
+async function loadCategories() {
+  try {
+    const response = await fetch('/api/pos/categories');
+    categories = await response.json();
+
+    if (categories.length === 0) {
+      document.getElementById('categoriesContainer').innerHTML = `
+        <div class="no-categories">
+          <p>No categories configured yet.</p>
+          <p><a href="/pos/admin">Set up your POS categories →</a></p>
+        </div>
+      `;
+      return;
+    }
+
+    renderCategories(categories);
+  } catch (error) {
+    console.error('Error loading categories:', error);
+    document.getElementById('categoriesContainer').innerHTML =
+      '<div class="loading">Error loading categories. Please refresh the page.</div>';
+  }
+}
+
+function renderCategories(cats) {
+  const container = document.getElementById('categoriesContainer');
+  container.className = 'categories-grid';
+
+  container.innerHTML = cats.map(cat => `
+    <div class="category-card" onclick="selectCategory(${cat.id})">
+      <div class="category-icon">${cat.icon || '📦'}</div>
+      <div class="category-name">${cat.name}</div>
+      <div class="category-desc">${cat.description || ''}</div>
+    </div>
+  `).join('');
+}
+
+async function analyzeScope() {
+  const scope = document.getElementById('scopeInput').value.trim();
+
+  // Show manual interface
+  document.getElementById('quoteOptionsSection').style.display = 'none';
+  document.getElementById('categoriesContainer').closest('.pos-main').style.display = 'grid';
+
+  if (!scope) {
+    // Just show all categories if no scope
+    renderCategories(categories);
+    return;
+  }
+
+  try {
+    const response = await fetch('/api/pos/analyze-scope', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ scope: scope })
+    });
+
+    const data = await response.json();
+
+    if (data.matched_categories.length > 0) {
+      renderCategories(data.matched_categories);
+      // Highlight first matched category
+      if (data.matched_categories[0]) {
+        setTimeout(() => {
+          const firstCard = document.querySelector('.category-card');
+          if (firstCard) {
+            firstCard.click();
+          }
+        }, 100);
+      }
+    } else {
+      renderCategories(categories);
+      alert('No specific categories matched. Showing all categories.');
+    }
+  } catch (error) {
+    console.error('Error analyzing scope:', error);
+  }
+}
+
+async function selectCategory(categoryId) {
+  selectedCategory = categoryId;
+
+  // Update UI
+  document.querySelectorAll('.category-card').forEach(card => {
+    card.classList.remove('selected');
+  });
+  event.target.closest('.category-card').classList.add('selected');
+
+  // Load activities
+  try {
+    const response = await fetch(`/api/pos/category/${categoryId}/activities`);
+    const data = await response.json();
+
+    // Show activities section
+    const activitiesSection = document.getElementById('activitiesSection');
+    activitiesSection.classList.add('active');
+
+    document.getElementById('activitiesTitle').textContent = `${data.category.name} Activities`;
+
+    const activitiesContainer = document.getElementById('activitiesContainer');
+    activitiesContainer.className = 'activities-grid';
+    activitiesContainer.innerHTML = data.activities.map(activity => `
+      <div class="activity-card" onclick="selectActivity(${activity.id}, ${activity.has_subitems})">
+        <div class="activity-name">${activity.name}</div>
+        <div class="activity-cost">$${activity.base_cost.toFixed(2)}</div>
+        <div class="activity-unit">per ${activity.unit}</div>
+      </div>
+    `).join('');
+  } catch (error) {
+    console.error('Error loading activities:', error);
+  }
+}
+
+async function selectActivity(activityId, hasSubitems) {
+  currentActivity = { id: activityId };
+  selectedOptions = {};
+
+  // ALWAYS show modal to allow quantity entry, regardless of subitems
+  await showOptionsModal(activityId);
+}
+
+async function showOptionsModal(activityId) {
+  try {
+    const response = await fetch(`/api/pos/activity/${activityId}/subitems`);
+    const data = await response.json();
+
+    currentActivity = data.activity;
+
+    document.getElementById('modalTitle').textContent = `Configure: ${data.activity.name}`;
+
+    let modalHTML = '';
+
+    // Quantity input (always shown)
+    modalHTML += `
+      <div class="option-group">
+        <div class="option-label">Quantity:</div>
+        <input type="number" class="quantity-input" id="quantityInput" value="1" min="1" step="0.01">
+      </div>
+    `;
+
+    // Render subitems
+    data.subitems.forEach(subitem => {
+      modalHTML += renderSubitem(subitem);
+    });
+
+    document.getElementById('modalBody').innerHTML = modalHTML;
+    document.getElementById('optionsModal').classList.add('active');
+  } catch (error) {
+    console.error('Error loading subitems:', error);
+  }
+}
+
+function renderSubitem(subitem) {
+  let html = `<div class="option-group">`;
+  html += `<div class="option-label">${subitem.question_text || subitem.name}${subitem.is_required ? ' *' : ''}</div>`;
+
+  if (subitem.option_type === 'choice') {
+    html += `<div class="option-choices">`;
+    subitem.children.forEach(child => {
+      html += `
+        <div class="option-choice" onclick="selectOption(${subitem.id}, ${child.id}, ${child.cost_modifier})">
+          <div class="option-choice-name">${child.name}</div>
+          <div class="option-choice-cost">${child.cost_modifier > 0 ? '+$' + child.cost_modifier.toFixed(2) : child.cost_modifier < 0 ? '-$' + Math.abs(child.cost_modifier).toFixed(2) : 'Included'}</div>
+        </div>
+      `;
+    });
+    html += `</div>`;
+  } else if (subitem.option_type === 'quantity') {
+    html += `<input type="number" class="quantity-input" data-subitem="${subitem.id}" min="0" step="0.01">`;
+  } else if (subitem.option_type === 'yes_no') {
+    html += `
+      <div class="option-choices">
+        <div class="option-choice" onclick="selectOption(${subitem.id}, 'yes', 0)">Yes</div>
+        <div class="option-choice" onclick="selectOption(${subitem.id}, 'no', 0)">No</div>
+      </div>
+    `;
+  }
+
+  html += `</div>`;
+  return html;
+}
+
+function selectOption(subitemId, optionId, costModifier) {
+  selectedOptions[subitemId] = {
+    option: optionId,
+    cost_modifier: costModifier
+  };
+
+  // Visual feedback
+  const parent = event.target.closest('.option-group');
+  parent.querySelectorAll('.option-choice').forEach(choice => {
+    choice.classList.remove('selected');
+  });
+  event.target.closest('.option-choice').classList.add('selected');
+}
+
+function addToCart() {
+  const quantity = document.getElementById('quantityInput')?.value || 1;
+
+  // Calculate total cost
+  let totalCost = currentActivity.base_cost * parseFloat(quantity);
+  Object.values(selectedOptions).forEach(opt => {
+    if (opt.cost_modifier) {
+      totalCost += opt.cost_modifier * parseFloat(quantity);
+    }
+  });
+
+  // Add to cart
+  cart.push({
+    activity_id: currentActivity.id,
+    name: currentActivity.name,
+    quantity: parseFloat(quantity),
+    unit_cost: currentActivity.base_cost,
+    total_cost: totalCost,
+    selected_options: selectedOptions
+  });
+
+  renderCart();
+  closeModal();
+}
+
+function renderCart() {
+  const cartContainer = document.getElementById('cartItems');
+
+  if (cart.length === 0) {
+    cartContainer.innerHTML = '<div class="cart-empty">Your cart is empty. Select activities to begin building your quote.</div>';
+    document.getElementById('cartTotal').textContent = '$0.00';
+    return;
+  }
+
+  let total = 0;
+  cartContainer.innerHTML = cart.map((item, index) => {
+    total += item.total_cost;
+    return `
+      <div class="cart-item">
+        <button class="cart-item-remove" onclick="removeFromCart(${index})">×</button>
+        <div class="cart-item-name">${item.name}</div>
+        <div class="cart-item-details">Qty: ${item.quantity}</div>
+        <div class="cart-item-price">$${item.total_cost.toFixed(2)}</div>
+      </div>
+    `;
+  }).join('');
+
+  document.getElementById('cartTotal').textContent = `$${total.toFixed(2)}`;
+}
+
+function removeFromCart(index) {
+  cart.splice(index, 1);
+  renderCart();
+}
+
+function clearCart() {
+  if (cart.length === 0) return;
+
+  if (confirm('Are you sure you want to clear your cart?')) {
+    cart = [];
+    renderCart();
+  }
+}
+
+function closeModal() {
+  document.getElementById('optionsModal').classList.remove('active');
+  currentActivity = null;
+  selectedOptions = {};
+
+  // Clear modal body to reset all inputs
+  setTimeout(() => {
+    document.getElementById('modalBody').innerHTML = '';
+  }, 300); // Delay to allow modal close animation
+}
+
+async function saveQuote() {
+  if (cart.length === 0) {
+    alert('Your cart is empty!');
+    return;
+  }
+
+  const scope = document.getElementById('scopeInput').value.trim();
+  const total = cart.reduce((sum, item) => sum + item.total_cost, 0);
+
+  try {
+    const response = await fetch('/api/pos/quote', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        scope_of_work: scope,
+        total_amount: total,
+        items: cart
+      })
+    });
+
+    const data = await response.json();
+
+    if (data.success) {
+      alert('Quote saved successfully!');
+      cart = [];
+      renderCart();
+      window.location.href = `/pos/quotes/${data.quote_id}`;
+    }
+  } catch (error) {
+    console.error('Error saving quote:', error);
+    alert('Failed to save quote. Please try again.');
+  }
+}
+
+function viewQuotes() {
+  window.location.href = '/pos/quotes';
+}
+
+// NEW: Intelligent Quote Generation Functions
+let generatedOptions = null;
+
+async function generateQuoteOptions() {
+  const scope = document.getElementById('scopeInput').value.trim();
+
+  if (!scope) {
+    alert('Please describe your project first!');
+    return;
+  }
+
+  // Show loading
+  const btn = event.target;
+  btn.disabled = true;
+  btn.textContent = '⏳ Analyzing...';
+
+  try {
+    const response = await fetch('/api/pos/generate-options', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ scope: scope })
+    });
+
+    const data = await response.json();
+
+    if (!data.success) {
+      alert('Failed to generate options: ' + (data.error || 'Unknown error'));
+      return;
+    }
+
+    generatedOptions = data;
+    displayQuoteOptions(data);
+
+  } catch (error) {
+    console.error('Error generating options:', error);
+    alert('Failed to generate quote options. Please try again.');
+  } finally {
+    btn.disabled = false;
+    btn.textContent = '⚡ Generate Smart Quote Options';
+  }
+}
+
+function displayQuoteOptions(data) {
+  const { analysis, options } = data;
+
+  // Update analysis info
+  document.getElementById('analysisInfo').innerHTML = `
+    <strong>Project Type:</strong> ${analysis.project_type} &nbsp;|&nbsp;
+    <strong>Complexity:</strong> ${analysis.complexity}/5 &nbsp;|&nbsp;
+    <strong>Estimated Duration:</strong> ${analysis.estimated_days} days
+  `;
+
+  // Display each tier
+  options.forEach((option, index) => {
+    const tier = option.tier.toLowerCase();
+
+    // Update price
+    document.getElementById(`${tier}Price`).textContent = `$${option.total.toLocaleString()}`;
+
+    // Update timeline
+    document.getElementById(`${tier}Timeline`).textContent =
+      `⏱️ ${option.timeline_days} days estimated`;
+
+    // Group items by category
+    const itemsByCategory = {};
+    option.items.forEach(item => {
+      const category = item.category_name || 'Other';
+      if (!itemsByCategory[category]) {
+        itemsByCategory[category] = [];
+      }
+      itemsByCategory[category].push(item);
+    });
+
+    // Build HTML with category grouping
+    let itemsHtml = '';
+    Object.keys(itemsByCategory).forEach(categoryName => {
+      const categoryItems = itemsByCategory[categoryName];
+      const categoryTotal = categoryItems.reduce((sum, item) => sum + item.total_cost, 0);
+
+      itemsHtml += `
+        <div class="option-category-group">
+          <div class="option-category-header">
+            <span>📦 ${categoryName}</span>
+            <span class="option-category-total">$${categoryTotal.toFixed(2)}</span>
+          </div>
+      `;
+
+      categoryItems.forEach(item => {
+        itemsHtml += `
+          <div class="option-item">
+            <div class="option-item-name">${item.activity_name}</div>
+            <div class="option-item-details">
+              <span class="option-item-quantity">${item.quantity} ${item.unit} @ $${item.unit_cost.toFixed(2)}/${item.unit}</span>
+              <span class="option-item-cost">$${item.total_cost.toFixed(2)}</span>
+            </div>
+          </div>
+        `;
+      });
+
+      itemsHtml += `</div>`;
+    });
+
+    document.getElementById(`${tier}Items`).innerHTML = itemsHtml || '<p style="color: #7f8c8d;">No items matched for this tier</p>';
+  });
+
+  // Show the options section and hide manual interface
+  document.getElementById('quoteOptionsSection').style.display = 'block';
+  document.getElementById('categoriesContainer').closest('.pos-main').style.display = 'none';
+}
+
+function selectTierOption(tier) {
+  if (!generatedOptions || !generatedOptions.options) {
+    alert('No options available');
+    return;
+  }
+
+  const option = generatedOptions.options.find(opt => opt.tier.toLowerCase() === tier);
+
+  if (!option) {
+    alert('Option not found');
+    return;
+  }
+
+  // Clear existing cart
+  cart = [];
+
+  // Add all items from selected option to cart
+  option.items.forEach(item => {
+    cart.push({
+      activity_id: item.activity_id,
+      name: item.activity_name,
+      quantity: item.quantity,
+      unit_cost: item.unit_cost,
+      total_cost: item.total_cost,
+      selected_options: {}  // Pre-configured for this tier
+    });
+  });
+
+  // Update cart display
+  renderCart();
+
+  // Hide options, show manual interface
+  hideQuoteOptions();
+
+  // Scroll to cart
+  document.querySelector('.cart-section').scrollIntoView({ behavior: 'smooth' });
+
+  alert(`${option.tier} option added to cart! ($${option.total.toLocaleString()})\n\nYou can review and adjust items before saving.`);
+}
+
+function hideQuoteOptions() {
+  document.getElementById('quoteOptionsSection').style.display = 'none';
+  document.getElementById('categoriesContainer').closest('.pos-main').style.display = 'grid';
+}
+</script>
+{% endblock %}

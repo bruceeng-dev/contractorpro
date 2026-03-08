@@ -1,0 +1,442 @@
+{% extends "base.html" %}
+{% block content %}
+
+<div class="container">
+  <div class="page-header">
+    <h1>💰 Quote Builder</h1>
+    <p class="muted">Create professional quotes and estimates with AI assistance or manual tools</p>
+  </div>
+
+  <!-- Mode Tabs -->
+  <div class="builder-tabs">
+    <a href="{{ url_for('quote_builder') }}?mode=ai{% if job %}&job_id={{ job.id }}{% endif %}"
+       class="builder-tab {% if mode == 'ai' %}active{% endif %}">
+      <span class="tab-icon">🤖</span>
+      <span class="tab-text">
+        <strong>AI Quote</strong>
+        <small>Natural language → instant quote</small>
+      </span>
+    </a>
+    <a href="{% if job %}{{ url_for('pos_multilayer', job_id=job.id) }}{% else %}{{ url_for('pos_multilayer') }}{% endif %}"
+       class="builder-tab {% if mode == 'manual' %}active{% endif %}">
+      <span class="tab-icon">🛠️</span>
+      <span class="tab-text">
+        <strong>Manual (POS)</strong>
+        <small>Detailed line-item builder</small>
+      </span>
+    </a>
+  </div>
+
+  <!-- AI Quote Builder Mode -->
+  {% if mode == 'ai' %}
+  <div class="builder-content">
+    {% if not llm_available %}
+    <div class="alert alert--warning">
+      <h3>⚠️ AI Service Not Available</h3>
+      <p>The AI quote builder requires the OpenAI library. Install it with:</p>
+      <pre style="background: #2d3748; color: #e2e8f0; padding: 1rem; border-radius: 4px;">pip install openai</pre>
+      <p style="margin-top: 1rem;">
+        <a href="{{ url_for('pos_multilayer') }}" class="btn btn--primary">Use Manual POS Builder Instead</a>
+      </p>
+    </div>
+    {% else %}
+    <div class="ai-quote-section">
+      <!-- Job Selection -->
+      <div class="form-field">
+        <label for="job_select"><strong>Select Job (Optional)</strong></label>
+        <select id="job_select" class="form-control" onchange="selectJob(this.value)">
+          <option value="">-- New Quote (No Job) --</option>
+          {% for j in jobs %}
+          <option value="{{ j.id }}" {% if job and j.id == job.id %}selected{% endif %}>
+            {{ j.client_name }} - {{ j.project_type }}
+          </option>
+          {% endfor %}
+        </select>
+      </div>
+
+      {% if job %}
+      <div class="selected-job-info">
+        <h3>📌 Quote for: {{ job.client_name }}</h3>
+        <p>{{ job.project_type }} • {{ job.address }}</p>
+      </div>
+      {% endif %}
+
+      <!-- AI Chat Interface -->
+      <div class="ai-chat-container">
+        <div class="ai-chat-header">
+          <h3>💬 Describe Your Quote</h3>
+          <p>Tell me what work needs to be done, and I'll build a detailed quote for you</p>
+        </div>
+
+        <div class="ai-messages" id="ai-messages">
+          <div class="ai-message assistant">
+            👋 Hi! I'm your AI quote assistant. Describe the project and I'll help you create a professional quote.
+            <div class="suggestion-chips">
+              <button class="chip" onclick="useSuggestion('I need a kitchen remodel with new cabinets, countertops, and tile backsplash')">Kitchen Remodel</button>
+              <button class="chip" onclick="useSuggestion('Bathroom renovation with new shower, vanity, and tile work')">Bathroom Reno</button>
+              <button class="chip" onclick="useSuggestion('Complete interior painting for a 2000 sq ft home')">Interior Paint</button>
+            </div>
+          </div>
+        </div>
+
+        <form class="ai-input-form" onsubmit="sendAIQuoteRequest(event)">
+          <textarea
+            id="ai-input"
+            placeholder="Example: I need a full kitchen remodel - 15x12 feet, new shaker cabinets, quartz countertops, subway tile backsplash, new appliances..."
+            rows="3"
+          ></textarea>
+          <button type="submit" class="btn btn--primary" id="ai-send-btn">
+            <span id="send-text">Generate Quote</span>
+            <span id="send-spinner" style="display: none;">Generating...</span>
+          </button>
+        </form>
+      </div>
+
+      <!-- Generated Quote Preview -->
+      <div id="quote-preview" class="quote-preview" style="display: none;">
+        <div class="preview-header">
+          <h3>✨ Generated Quote</h3>
+          <div id="quote-total" class="quote-total"></div>
+        </div>
+        <div id="quote-details" class="quote-details"></div>
+        <div class="preview-actions">
+          <button onclick="saveAIQuote()" class="btn btn--success">💾 Save Quote</button>
+          <button onclick="editAIQuote()" class="btn btn--primary">✏️ Edit in POS</button>
+          <button onclick="regenerate()" class="btn btn--secondary">🔄 Regenerate</button>
+        </div>
+      </div>
+    </div>
+    {% endif %}
+  </div>
+
+  {% else %}
+  <!-- Manual mode redirects to POS multilayer -->
+  <div class="builder-content">
+    <p class="redirect-message">Redirecting to POS Multilayer Builder...</p>
+    <script>
+      window.location.href = "{{ url_for('pos_multilayer') }}{% if job %}?job_id={{ job.id }}{% endif %}";
+    </script>
+  </div>
+  {% endif %}
+</div>
+
+<script>
+function selectJob(jobId) {
+  if (jobId) {
+    window.location.href = "{{ url_for('quote_builder') }}?mode={{ mode }}&job_id=" + jobId;
+  } else {
+    window.location.href = "{{ url_for('quote_builder') }}?mode={{ mode }}";
+  }
+}
+
+function useSuggestion(text) {
+  document.getElementById('ai-input').value = text;
+  document.getElementById('ai-input').focus();
+}
+
+async function sendAIQuoteRequest(event) {
+  event.preventDefault();
+
+  const input = document.getElementById('ai-input');
+  const message = input.value.trim();
+
+  if (!message) return;
+
+  const sendBtn = document.getElementById('ai-send-btn');
+  const sendText = document.getElementById('send-text');
+  const sendSpinner = document.getElementById('send-spinner');
+
+  // Add user message
+  addMessage('user', message);
+  input.value = '';
+
+  // Show loading
+  sendBtn.disabled = true;
+  sendText.style.display = 'none';
+  sendSpinner.style.display = 'inline';
+
+  addMessage('assistant', '🤔 Analyzing your requirements...');
+
+  try {
+    const response = await fetch('/api/ai-quote-builder/generate', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        scope: message,
+        job_id: {{ job.id if job else 'null' }}
+      })
+    });
+
+    const data = await response.json();
+
+    if (data.success) {
+      // Show generated quote
+      displayQuote(data.quote);
+      addMessage('assistant', '✅ I\'ve generated a quote based on your description. Review it below!');
+    } else {
+      addMessage('assistant', '❌ Sorry, I encountered an error: ' + data.message);
+    }
+  } catch (error) {
+    console.error('Error:', error);
+    addMessage('assistant', '❌ Failed to generate quote. Please try again.');
+  } finally {
+    sendBtn.disabled = false;
+    sendText.style.display = 'inline';
+    sendSpinner.style.display = 'none';
+  }
+}
+
+function addMessage(type, content) {
+  const messagesDiv = document.getElementById('ai-messages');
+  const messageDiv = document.createElement('div');
+  messageDiv.className = 'ai-message ' + type;
+  messageDiv.textContent = content;
+  messagesDiv.appendChild(messageDiv);
+  messagesDiv.scrollTop = messagesDiv.scrollHeight;
+}
+
+function displayQuote(quote) {
+  document.getElementById('quote-preview').style.display = 'block';
+  document.getElementById('quote-total').innerHTML = `<strong>Total: $${quote.total.toLocaleString('en-US', {minimumFractionDigits: 2})}</strong>`;
+
+  let detailsHTML = '<div class="quote-items">';
+  quote.items.forEach(item => {
+    detailsHTML += `
+      <div class="quote-item">
+        <span class="item-name">${item.name}</span>
+        <span class="item-price">$${item.price.toFixed(2)}</span>
+      </div>
+    `;
+  });
+  detailsHTML += '</div>';
+
+  document.getElementById('quote-details').innerHTML = detailsHTML;
+
+  // Scroll to preview
+  document.getElementById('quote-preview').scrollIntoView({ behavior: 'smooth' });
+}
+
+function saveAIQuote() {
+  alert('Quote saved! (Feature in progress)');
+}
+
+function editAIQuote() {
+  window.location.href = "{{ url_for('pos_multilayer') }}{% if job %}?job_id={{ job.id }}{% endif %}";
+}
+
+function regenerate() {
+  document.getElementById('quote-preview').style.display = 'none';
+  document.getElementById('ai-input').focus();
+}
+</script>
+
+<style>
+.builder-tabs {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 1rem;
+  margin-bottom: 2rem;
+}
+
+.builder-tab {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  padding: 1.5rem;
+  background: white;
+  border: 2px solid #e2e8f0;
+  border-radius: 12px;
+  text-decoration: none;
+  color: #2d3748;
+  transition: all 0.3s;
+}
+
+.builder-tab:hover {
+  border-color: #667eea;
+  box-shadow: 0 4px 12px rgba(102, 126, 234, 0.15);
+  transform: translateY(-2px);
+}
+
+.builder-tab.active {
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  color: white;
+  border-color: #667eea;
+}
+
+.tab-icon {
+  font-size: 2rem;
+}
+
+.tab-text {
+  display: flex;
+  flex-direction: column;
+  gap: 0.25rem;
+}
+
+.tab-text strong {
+  font-size: 1.1rem;
+}
+
+.tab-text small {
+  font-size: 0.875rem;
+  opacity: 0.8;
+}
+
+.builder-content {
+  background: white;
+  border: 1px solid #e2e8f0;
+  border-radius: 12px;
+  padding: 2rem;
+}
+
+.ai-quote-section {
+  max-width: 900px;
+  margin: 0 auto;
+}
+
+.selected-job-info {
+  background: #e6fffa;
+  border-left: 4px solid #38b2ac;
+  padding: 1rem 1.5rem;
+  margin: 1.5rem 0;
+  border-radius: 8px;
+}
+
+.selected-job-info h3 {
+  margin: 0 0 0.5rem;
+  color: #234e52;
+}
+
+.ai-chat-container {
+  margin-top: 2rem;
+}
+
+.ai-chat-header {
+  text-align: center;
+  margin-bottom: 2rem;
+}
+
+.ai-chat-header h3 {
+  margin: 0 0 0.5rem;
+  color: #2d3748;
+}
+
+.ai-messages {
+  background: #f7fafc;
+  border: 1px solid #e2e8f0;
+  border-radius: 8px;
+  padding: 1.5rem;
+  max-height: 400px;
+  overflow-y: auto;
+  margin-bottom: 1rem;
+}
+
+.ai-message {
+  margin-bottom: 1rem;
+  padding: 1rem;
+  border-radius: 8px;
+}
+
+.ai-message.user {
+  background: #667eea;
+  color: white;
+  margin-left: 20%;
+}
+
+.ai-message.assistant {
+  background: white;
+  border: 1px solid #e2e8f0;
+  margin-right: 20%;
+}
+
+.suggestion-chips {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+  margin-top: 1rem;
+}
+
+.chip {
+  padding: 0.5rem 1rem;
+  background: #edf2f7;
+  border: 1px solid #cbd5e0;
+  border-radius: 20px;
+  font-size: 0.875rem;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+
+.chip:hover {
+  background: #667eea;
+  color: white;
+  border-color: #667eea;
+}
+
+.ai-input-form {
+  display: flex;
+  gap: 1rem;
+  align-items: flex-end;
+}
+
+.ai-input-form textarea {
+  flex: 1;
+  padding: 1rem;
+  border: 1px solid #cbd5e0;
+  border-radius: 8px;
+  font-family: inherit;
+  resize: vertical;
+}
+
+.quote-preview {
+  margin-top: 2rem;
+  border: 2px solid #667eea;
+  border-radius: 12px;
+  padding: 2rem;
+}
+
+.preview-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 1.5rem;
+  padding-bottom: 1rem;
+  border-bottom: 2px solid #e2e8f0;
+}
+
+.quote-total {
+  font-size: 1.5rem;
+  color: #27ae60;
+}
+
+.quote-items {
+  margin: 1rem 0;
+}
+
+.quote-item {
+  display: flex;
+  justify-content: space-between;
+  padding: 0.75rem;
+  border-bottom: 1px solid #e2e8f0;
+}
+
+.preview-actions {
+  margin-top: 1.5rem;
+  display: flex;
+  gap: 1rem;
+}
+
+.redirect-message {
+  text-align: center;
+  padding: 3rem;
+  color: #718096;
+  font-style: italic;
+}
+
+@media (max-width: 768px) {
+  .builder-tabs {
+    grid-template-columns: 1fr;
+  }
+}
+</style>
+
+{% endblock %}

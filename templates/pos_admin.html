@@ -1,0 +1,88 @@
+{% extends "base.html" %}
+
+{% block content %}
+<div class="container" style="max-width: 1200px; margin: 40px auto; padding: 0 20px;">
+  <div style="margin-bottom: 30px;">
+    <h1 style="font-size: 2.5em; margin-bottom: 10px;">🛠️ POS System Management</h1>
+    <p style="color: #7f8c8d; font-size: 1.1em;">Manage your Point of Sale categories, activities, and options</p>
+  </div>
+
+  <div style="margin-bottom: 20px;">
+    <a href="{{ url_for('new_pos_category') }}" class="btn" style="background: #27ae60; color: white; padding: 12px 25px; text-decoration: none; border-radius: 4px; display: inline-block; margin-right: 10px;">
+      ➕ Add New Category
+    </a>
+    <a href="{{ url_for('pos_interface') }}" class="btn" style="background: #3498db; color: white; padding: 12px 25px; text-decoration: none; border-radius: 4px; display: inline-block;">
+      🛒 Go to POS Interface
+    </a>
+  </div>
+
+  {% if categories %}
+    <div style="display: grid; gap: 25px;">
+      {% for category in categories %}
+        <div style="background: white; border-radius: 8px; padding: 25px; box-shadow: 0 2px 10px rgba(0,0,0,0.1);">
+          <div style="display: flex; justify-content: space-between; align-items: start; margin-bottom: 15px;">
+            <div>
+              <h2 style="margin: 0 0 10px 0; color: #2c3e50; font-size: 1.8em;">
+                {{ category.icon or '📦' }} {{ category.name }}
+              </h2>
+              <p style="color: #7f8c8d; margin: 0;">{{ category.description }}</p>
+              <p style="color: #95a5a6; font-size: 0.9em; margin: 5px 0 0 0;">
+                <strong>Keywords:</strong> {{ category.keywords }}
+              </p>
+            </div>
+            <div style="display: flex; gap: 10px;">
+              <a href="{{ url_for('new_pos_activity', category_id=category.id) }}"
+                 style="background: #3498db; color: white; padding: 8px 15px; border-radius: 4px; text-decoration: none; font-size: 0.9em;">
+                + Add Activity
+              </a>
+            </div>
+          </div>
+
+          {% if category.activities %}
+            <div style="margin-top: 20px; border-top: 2px solid #ecf0f1; padding-top: 20px;">
+              <h3 style="margin: 0 0 15px 0; color: #34495e; font-size: 1.2em;">Activities ({{ category.activities|length }})</h3>
+              <div style="display: grid; grid-template-columns: repeat(auto-fill, minmax(250px, 1fr)); gap: 15px;">
+                {% for activity in category.activities %}
+                  <div style="background: #f8f9fa; border: 1px solid #e0e0e0; border-radius: 6px; padding: 15px;">
+                    <div style="font-weight: bold; color: #2c3e50; margin-bottom: 5px;">{{ activity.name }}</div>
+                    <div style="color: #27ae60; font-size: 1.1em; font-weight: bold; margin-bottom: 5px;">
+                      ${{ activity.base_cost }} / {{ activity.unit }}
+                    </div>
+                    {% if activity.has_subitems %}
+                      <div style="color: #3498db; font-size: 0.9em; margin-bottom: 8px;">
+                        ⚙️ {{ activity.subitems|length }} sub-options
+                      </div>
+                      <a href="{{ url_for('new_pos_subitem', activity_id=activity.id) }}"
+                         style="background: #95a5a6; color: white; padding: 5px 10px; border-radius: 3px; text-decoration: none; font-size: 0.85em; display: inline-block;">
+                        + Add Sub-option
+                      </a>
+                    {% endif %}
+                  </div>
+                {% endfor %}
+              </div>
+            </div>
+          {% else %}
+            <div style="text-align: center; padding: 20px; color: #95a5a6; font-style: italic;">
+              No activities yet. Click "Add Activity" to get started.
+            </div>
+          {% endif %}
+        </div>
+      {% endfor %}
+    </div>
+  {% else %}
+    <div style="background: white; border-radius: 8px; padding: 50px; text-align: center; box-shadow: 0 2px 10px rgba(0,0,0,0.1);">
+      <div style="font-size: 4em; margin-bottom: 20px;">📦</div>
+      <h2 style="color: #2c3e50; margin-bottom: 10px;">No Categories Yet</h2>
+      <p style="color: #7f8c8d; margin-bottom: 25px;">Get started by creating your first POS category</p>
+      <a href="{{ url_for('new_pos_category') }}" class="btn" style="background: #27ae60; color: white; padding: 15px 30px; text-decoration: none; border-radius: 4px; display: inline-block; font-size: 1.1em;">
+        ➕ Create First Category
+      </a>
+    </div>
+  {% endif %}
+
+  <div style="margin-top: 40px; padding: 20px; background: #ecf0f1; border-radius: 8px;">
+    <h3 style="margin-top: 0;">💡 Quick Tip</h3>
+    <p style="margin-bottom: 0;">To quickly populate your POS system with sample data, run: <code style="background: white; padding: 5px 10px; border-radius: 3px; font-family: monospace;">python seed_pos_data.py</code></p>
+  </div>
+</div>
+{% endblock %}

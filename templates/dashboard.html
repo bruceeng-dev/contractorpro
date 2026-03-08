@@ -9,21 +9,122 @@
   </div>
 </section>
 
+<!-- VISUAL PIPELINE -->
+<section class="pipeline-section">
+  <div class="container">
+    <div class="pipeline-wrapper">
+      <a href="{{ url_for('leads_list') }}" class="pipeline-stage pipeline-stage--leads">
+        <div class="pipeline-icon">👥</div>
+        <div class="pipeline-content">
+          <div class="pipeline-count">{{ total_leads }}</div>
+          <div class="pipeline-label">Leads</div>
+        </div>
+      </a>
+
+      <div class="pipeline-arrow">→</div>
+
+      <a href="{{ url_for('pos_quotes_list') }}" class="pipeline-stage pipeline-stage--quoted">
+        <div class="pipeline-icon">📊</div>
+        <div class="pipeline-content">
+          <div class="pipeline-count">{{ total_quotes }}</div>
+          <div class="pipeline-label">Quotes</div>
+        </div>
+      </a>
+
+      <div class="pipeline-arrow">→</div>
+
+      <a href="{{ url_for('jobs_list') }}" class="pipeline-stage pipeline-stage--active">
+        <div class="pipeline-icon">🔨</div>
+        <div class="pipeline-content">
+          <div class="pipeline-count">{{ active_jobs }}</div>
+          <div class="pipeline-label">Active Jobs</div>
+        </div>
+      </a>
+
+      <div class="pipeline-arrow">→</div>
+
+      <div class="pipeline-stage pipeline-stage--complete">
+        <div class="pipeline-icon">✅</div>
+        <div class="pipeline-content">
+          <div class="pipeline-count">{{ total_jobs - active_jobs }}</div>
+          <div class="pipeline-label">Completed</div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- NEXT ACTIONS WIDGET -->
+<section class="next-actions-section">
+  <div class="container">
+    <div class="next-actions-widget">
+      <div class="widget-header">
+        <h2>Next Actions</h2>
+        <p class="muted">Prioritized tasks that need your attention</p>
+      </div>
+      <div class="action-items">
+        {% if recent_leads %}
+        <div class="action-item action-item--important">
+          <div class="action-icon-badge action-icon-badge--yellow">👤</div>
+          <div class="action-content">
+            <h4>Follow up with {{ recent_leads|length }} new lead{{ 's' if recent_leads|length != 1 else '' }}</h4>
+            <p>{{ recent_leads[0].name }} and others are waiting for quotes</p>
+          </div>
+          <a href="{{ url_for('leads_list') }}" class="btn">View Leads</a>
+        </div>
+        {% endif %}
+
+        {% if active_jobs > 0 %}
+        <div class="action-item action-item--success">
+          <div class="action-icon-badge action-icon-badge--green">📸</div>
+          <div class="action-content">
+            <h4>Update progress on {{ active_jobs }} active job{{ 's' if active_jobs != 1 else '' }}</h4>
+            <p>Keep clients informed with photos and status updates</p>
+          </div>
+          <a href="{{ url_for('jobs_list') }}" class="btn">View Jobs</a>
+        </div>
+        {% endif %}
+
+        {% if total_leads == 0 and active_jobs == 0 %}
+        <div class="action-item action-item--urgent">
+          <div class="action-icon-badge action-icon-badge--red">💰</div>
+          <div class="action-content">
+            <h4>Generate revenue - Create your first estimate</h4>
+            <p>Use Quick Quote to send professional estimates in minutes</p>
+          </div>
+          <a href="{{ url_for('new_estimate') }}" class="btn">Quick Quote</a>
+        </div>
+        {% endif %}
+
+        <div class="action-item">
+          <div class="action-icon-badge action-icon-badge--green">📊</div>
+          <div class="action-content">
+            <h4>Review your business performance</h4>
+            <p>Check analytics and identify growth opportunities</p>
+          </div>
+          <a href="{{ url_for('reports') }}" class="btn btn--sm">View Reports</a>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
 <!-- METRICS -->
 <section class="metrics-section">
   <div class="container">
+    <h2>Business Overview</h2>
     <div class="metrics-grid">
-      <div class="metric-card">
+      <div class="metric-card metric-card--primary">
         <span class="metric-number">{{ total_jobs }}</span>
         <span class="metric-label">Total Jobs</span>
         <a href="{{ url_for('jobs_list') }}" class="metric-link">View All</a>
       </div>
-      <div class="metric-card">
+      <div class="metric-card metric-card--success">
         <span class="metric-number">{{ active_jobs }}</span>
         <span class="metric-label">Active Jobs</span>
         <a href="{{ url_for('jobs_list') }}" class="metric-link">Manage</a>
       </div>
-      <div class="metric-card">
+      <div class="metric-card metric-card--info">
         <span class="metric-number">{{ total_leads }}</span>
         <span class="metric-label">New Leads</span>
         <a href="{{ url_for('leads_list') }}" class="metric-link">View All</a>

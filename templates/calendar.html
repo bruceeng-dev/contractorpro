@@ -5,16 +5,43 @@
   <div class="page-header">
     <h1>Project Calendar</h1>
     <div class="header-actions">
-      <a href="{{ url_for('gantt_chart') }}" class="btn btn--primary">📊 Gantt Chart</a>
-      <a href="{{ url_for('task_list') }}" class="btn btn--sm">← Task List</a>
+      <a href="{{ url_for('gantt_chart', job_id=job_id_filter) if job_id_filter else url_for('gantt_chart') }}" class="btn btn--primary">📊 Gantt Chart</a>
+      <a href="{{ url_for('task_list', job_id=job_id_filter) if job_id_filter else url_for('task_list') }}" class="btn btn--sm">← Task List</a>
+    </div>
+  </div>
+
+  <!-- Job Filter Notice -->
+  {% if filtered_job %}
+  <div style="background: #e8f4f8; border-left: 4px solid #3498db; padding: 1rem 1.5rem; border-radius: 4px; margin-bottom: 1.5rem; display: flex; justify-content: space-between; align-items: center;">
+    <div>
+      <strong>📅 Viewing calendar for:</strong> {{ filtered_job.client_name }} - {{ filtered_job.project_type }}
+    </div>
+    <div style="display: flex; gap: 10px;">
+      <a href="{{ url_for('job_detail', job_id=filtered_job.id) }}" class="btn btn--sm">← Back to Job</a>
+      <a href="{{ url_for('calendar_view') }}" class="btn btn--sm">View All Jobs</a>
+    </div>
+  </div>
+  {% endif %}
+
+  <!-- Trade Category Legend -->
+  <div class="trade-legend">
+    <h3>Trade Categories</h3>
+    <div class="legend-items">
+      {% for trade in trade_categories %}
+      <div class="legend-item">
+        <div class="legend-color" style="background-color: {{ trade.color }};"></div>
+        <span class="legend-icon">{{ trade.icon }}</span>
+        <span class="legend-label">{{ trade.name }}</span>
+      </div>
+      {% endfor %}
     </div>
   </div>
 
   <!-- Month Navigation -->
   <div class="calendar-nav">
-    <a href="{{ url_for('calendar_view', month=prev_month, year=prev_year) }}" class="nav-btn">← Previous</a>
+    <a href="{{ url_for('calendar_view', month=prev_month, year=prev_year, job_id=job_id_filter) if job_id_filter else url_for('calendar_view', month=prev_month, year=prev_year) }}" class="nav-btn">← Previous</a>
     <h2>{{ month_name }} {{ current_year }}</h2>
-    <a href="{{ url_for('calendar_view', month=next_month, year=next_year) }}" class="nav-btn">Next →</a>
+    <a href="{{ url_for('calendar_view', month=next_month, year=next_year, job_id=job_id_filter) if job_id_filter else url_for('calendar_view', month=next_month, year=next_year) }}" class="nav-btn">Next →</a>
   </div>
 
   <div class="calendar-container">
@@ -30,36 +57,93 @@
         <div class="day-header">Sat</div>
       </div>
       
-      <div class="calendar-grid" id="calendar-grid">
-        <!-- Generate calendar days -->
-        {% set start_day = (current_year ~ '-' ~ '%02d'|format(current_month) ~ '-01') | strptime('%Y-%m-%d') | weekday %}
-        
-        <!-- Empty cells for days before month starts -->
-        {% for i in range(start_day) %}
-        <div class="calendar-day empty"></div>
-        {% endfor %}
-        
-        <!-- Days of the month -->
-        {% for day in range(1, num_days + 1) %}
-        {% set date_str = current_year ~ '-' ~ '%02d'|format(current_month) ~ '-' ~ '%02d'|format(day) %}
-        {% set day_tasks = scheduled_tasks | selectattr('scheduled_start_date') | selectattr('scheduled_start_date', 'equalto', date_str | strptime('%Y-%m-%d') | date) | list %}
-        
-        <div class="calendar-day" data-date="{{ date_str }}" ondrop="drop(event)" ondragover="allowDrop(event)">
-          <div class="day-number">{{ day }}</div>
-          <div class="day-tasks">
-            {% for task in day_tasks %}
-            <div class="task-pill" 
-                 data-task-id="{{ task.id }}"
-                 title="{{ task.task_name }} - {{ task.job.client_name }}">
-              <span class="task-name">{{ task.task_name[:20] }}{% if task.task_name|length > 20 %}...{% endif %}</span>
-              {% if task.is_critical_path %}
-              <span class="critical-marker">🔥</span>
-              {% endif %}
-            </div>
-            {% endfor %}
+      <div class="calendar-wrapper">
+        <div class="calendar-grid" id="calendar-grid">
+          <!-- Generate calendar days -->
+          <!-- Empty cells for days before month starts -->
+          {% for i in range(start_day) %}
+          <div class="calendar-day empty"></div>
+          {% endfor %}
+
+          <!-- Days of the month -->
+          {% for day in range(1, num_days + 1) %}
+          {% set date_str = '%04d-%02d-%02d'|format(current_year, current_month, day) %}
+          <div class="calendar-day"
+               data-date="{{ date_str }}"
+               data-day-index="{{ start_day + day - 1 }}"
+               ondrop="drop(event)"
+               ondragover="allowDrop(event)">
+            <div class="day-number">{{ day }}</div>
           </div>
+          {% endfor %}
         </div>
-        {% endfor %}
+
+        <!-- Outlook-style task bars overlay -->
+        <div class="task-bars-overlay">
+          {% for task in scheduled_tasks %}
+          {% if task.scheduled_start_date and task.scheduled_end_date %}
+            {# Calculate position and width #}
+            {% set task_start_day = task.scheduled_start_date.day %}
+            {% set task_end_day = task.scheduled_end_date.day %}
+            {% set duration_days = (task.scheduled_end_date - task.scheduled_start_date).days + 1 %}
+
+            {# Calculate grid position (accounting for empty cells at start) #}
+            {% set grid_start = start_day + task_start_day %}
+            {% set grid_column = ((grid_start - 1) % 7) + 1 %}
+            {% set grid_row = ((grid_start - 1) // 7) + 2 %}
+
+            {# Get track number for vertical positioning #}
+            {% set track_number = task_tracks.get(task.id, 0) %}
+            {% set track_offset = 30 + (track_number * 32) %}
+
+            {# Determine color based on trade category #}
+            {% if task.trade_category %}
+              {% set bar_color = task.trade_category.color %}
+              {% set trade_name = task.trade_category.name %}
+              {% set trade_icon = task.trade_category.icon %}
+              {# Lighter background version of the trade color #}
+              {% set bar_bg = bar_color + '33' %}
+            {% else %}
+              {% set bar_color = '#808080' %}
+              {% set bar_bg = '#e0e0e0' %}
+              {% set trade_name = 'General' %}
+              {% set trade_icon = '🔧' %}
+            {% endif %}
+
+            <div class="task-bar {{ 'critical-path-task' if task.is_critical_path else '' }}"
+                 draggable="true"
+                 ondragstart="dragTaskBar(event)"
+                 ondragend="dragEndTaskBar(event)"
+                 data-task-id="{{ task.id }}"
+                 data-track="{{ track_number }}"
+                 data-estimated-days="{{ duration_days }}"
+                 style="
+                   grid-column: {{ grid_column }} / span {{ [duration_days, 8 - grid_column]|min }};
+                   grid-row: {{ grid_row }};
+                   background: {{ bar_bg }};
+                   border-left: 4px solid {{ bar_color }};
+                   margin-top: {{ track_offset }}px;
+                   {% if task.is_critical_path %}box-shadow: 0 0 10px rgba(220, 53, 69, 0.6);{% endif %}
+                 "
+                 title="{{ trade_icon }} {{ trade_name }}&#10;{{ task.task_name }}&#10;{{ task.scheduled_start_date.strftime('%m/%d') }} - {{ task.scheduled_end_date.strftime('%m/%d') }}&#10;{{ task.job.client_name }}{% if task.estimated_labor_hours %}&#10;Labor: {{ task.estimated_labor_hours }}hrs{% if task.number_of_workers > 1 %} ({{ task.number_of_workers }} workers){% endif %}{% endif %}">
+              <div class="task-bar-content">
+                <span class="trade-icon-small">{{ trade_icon }}</span>
+                <span class="task-bar-name">{{ task.task_name }}</span>
+                {% if task.is_critical_path %}
+                <span class="task-bar-badge critical">CRITICAL</span>
+                {% endif %}
+                {% if task.estimated_labor_hours %}
+                <span class="task-bar-labor" title="Labor hours">{{ task.estimated_labor_hours }}h</span>
+                {% endif %}
+                {% if task.number_of_workers and task.number_of_workers > 1 %}
+                <span class="task-bar-workers" title="Number of workers">{{ task.number_of_workers }}w</span>
+                {% endif %}
+                <span class="task-bar-duration">{{ duration_days }}d</span>
+              </div>
+            </div>
+          {% endif %}
+          {% endfor %}
+        </div>
       </div>
     </div>
 
@@ -69,10 +153,12 @@
         <h3>📋 Unscheduled Tasks</h3>
         <div class="unscheduled-tasks">
           {% for task in unscheduled_tasks %}
-          <div class="task-item" 
-               draggable="true" 
-               ondragstart="drag(event)" 
-               data-task-id="{{ task.id }}">
+          <div class="task-item"
+               draggable="true"
+               ondragstart="drag(event)"
+               ondragend="dragEnd(event)"
+               data-task-id="{{ task.id }}"
+               data-estimated-days="{{ task.estimated_days or 1 }}">
             <div class="task-header">
               <strong>{{ task.task_name }}</strong>
               {% if task.is_critical_path %}
@@ -81,11 +167,11 @@
             </div>
             <div class="task-job">{{ task.job.client_name }} - {{ task.job.project_type }}</div>
             {% if task.estimated_days %}
-            <div class="task-duration">Duration: {{ task.estimated_days }} day{{ 's' if task.estimated_days != 1 else '' }}</div>
+            <div class="task-duration">⏱️ {{ task.estimated_days }} day{{ 's' if task.estimated_days != 1 else '' }}</div>
             {% endif %}
           </div>
           {% endfor %}
-          
+
           {% if not unscheduled_tasks %}
           <div class="empty-sidebar">
             <p>All tasks are scheduled!</p>
@@ -134,6 +220,112 @@
 </div>
 
 <style>
+/* Trade Legend Styles */
+.trade-legend {
+  background: white;
+  border: 1px solid #e2e8f0;
+  border-radius: 8px;
+  padding: 1.5rem;
+  margin-bottom: 2rem;
+}
+
+.trade-legend h3 {
+  margin: 0 0 1.5rem 0;
+  color: #2d3748;
+  font-size: 1.1rem;
+  font-weight: 600;
+}
+
+.legend-tiers {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+  gap: 1.5rem;
+}
+
+.legend-tier {
+  border: 1px solid #e2e8f0;
+  border-radius: 6px;
+  overflow: hidden;
+}
+
+.tier-header {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 10px 12px;
+  font-weight: 600;
+  font-size: 0.875rem;
+  border-bottom: 2px solid;
+}
+
+.tier-header.tier-1 {
+  background: #fff5f5;
+  border-bottom-color: #fc8181;
+  color: #c53030;
+}
+
+.tier-header.tier-2 {
+  background: #fffaf0;
+  border-bottom-color: #f6ad55;
+  color: #c05621;
+}
+
+.tier-header.tier-3 {
+  background: #fefcbf;
+  border-bottom-color: #f6e05e;
+  color: #744210;
+}
+
+.tier-header.tier-4 {
+  background: #f0fff4;
+  border-bottom-color: #68d391;
+  color: #22543d;
+}
+
+.tier-icon {
+  font-size: 1rem;
+}
+
+.tier-title {
+  flex: 1;
+  font-size: 0.8rem;
+}
+
+.tier-items {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  padding: 12px;
+  background: #fafafa;
+}
+
+.legend-item {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  padding: 6px 10px;
+  background: white;
+  border-radius: 4px;
+  font-size: 0.8rem;
+  border: 1px solid #e2e8f0;
+}
+
+.legend-color {
+  width: 16px;
+  height: 16px;
+  border-radius: 3px;
+  border: 1px solid rgba(0, 0, 0, 0.15);
+}
+
+.legend-icon {
+  font-size: 0.9rem;
+}
+
+.legend-label {
+  color: #2d3748;
+  font-weight: 500;
+}
+
 .calendar-container {
   display: grid;
   grid-template-columns: 1fr 300px;
@@ -192,6 +384,12 @@
   font-size: 0.875rem;
 }
 
+/* Calendar Wrapper - contains both grid and overlay */
+.calendar-wrapper {
+  position: relative;
+  min-height: 600px;
+}
+
 .calendar-grid {
   display: grid;
   grid-template-columns: repeat(7, 1fr);
@@ -201,9 +399,10 @@
 .calendar-day {
   border: 1px solid #e2e8f0;
   padding: 0.5rem;
-  min-height: 120px;
+  min-height: 150px;
   background: white;
   transition: all 0.2s;
+  position: relative;
 }
 
 .calendar-day.empty {
@@ -219,33 +418,171 @@
   border-color: #3182ce;
 }
 
+.calendar-day.duration-preview {
+  background: #e6fffa;
+  border-color: #38b2ac;
+}
+
+.calendar-day.duration-start {
+  background: #b2f5ea;
+  border-color: #319795;
+}
+
 .day-number {
   font-weight: 600;
   color: #2d3748;
   margin-bottom: 0.5rem;
+  font-size: 0.875rem;
 }
 
-.day-tasks {
-  display: flex;
-  flex-direction: column;
-  gap: 0.25rem;
+/* Outlook-style Task Bars */
+.task-bars-overlay {
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  display: grid;
+  grid-template-columns: repeat(7, 1fr);
+  pointer-events: none;
+  z-index: 10;
 }
 
-.task-pill {
-  background: #bee3f8;
-  color: #2c5282;
-  border: 1px solid #90cdf4;
+.task-bar {
+  margin-left: 4px;
+  margin-right: 4px;
+  margin-bottom: 2px;
+  padding: 6px 8px;
   border-radius: 4px;
-  padding: 0.25rem 0.5rem;
-  font-size: 0.75rem;
-  cursor: pointer;
+  cursor: move;
+  pointer-events: all;
+  transition: all 0.2s ease;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+  font-size: 0.8rem;
+  overflow: hidden;
+  height: fit-content;
+  max-height: 28px;
+}
+
+.task-bar.dragging {
+  opacity: 0.5;
+  cursor: grabbing;
+  transform: scale(0.95);
+}
+
+.task-bar:hover {
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+  transform: translateY(-1px);
+  z-index: 100;
+  max-height: none;
+}
+
+/* Tier 1 tasks - Critical Path / Schedule Killers */
+.task-bar.tier-1-task {
+  font-weight: 600;
+  border-left-width: 6px;
+}
+
+.task-bar.tier-1-task:hover {
+  box-shadow: 0 4px 16px rgba(139, 0, 0, 0.4);
+}
+
+.task-bar-content {
   display: flex;
   align-items: center;
-  justify-content: space-between;
+  gap: 6px;
+  white-space: nowrap;
+  overflow: hidden;
 }
 
-.task-pill:hover {
-  background: #90cdf4;
+.task-bar:hover .task-bar-content {
+  white-space: normal;
+  flex-wrap: wrap;
+}
+
+.task-bar-name {
+  font-weight: 600;
+  flex: 1;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  color: #2d3748;
+  font-size: 0.75rem;
+}
+
+.task-bar:hover .task-bar-name {
+  overflow: visible;
+  white-space: normal;
+}
+
+.task-bar-badge {
+  background: #dc3545;
+  color: white;
+  padding: 2px 6px;
+  border-radius: 3px;
+  font-size: 0.65rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+.task-bar-badge.critical {
+  background: #dc3545;
+  animation: pulse 2s infinite;
+}
+
+@keyframes pulse {
+  0%, 100% { opacity: 1; }
+  50% { opacity: 0.7; }
+}
+
+.task-bar-duration {
+  background: rgba(0, 0, 0, 0.1);
+  color: #2d3748;
+  padding: 2px 6px;
+  border-radius: 3px;
+  font-size: 0.65rem;
+  font-weight: 600;
+}
+
+.task-bar-labor {
+  background: #17a2b8;
+  color: white;
+  padding: 2px 6px;
+  border-radius: 3px;
+  font-size: 0.65rem;
+  font-weight: 600;
+  margin-left: 4px;
+}
+
+.task-bar-workers {
+  background: #6c757d;
+  color: white;
+  padding: 2px 6px;
+  border-radius: 3px;
+  font-size: 0.65rem;
+  font-weight: 600;
+  margin-left: 4px;
+}
+
+.trade-icon-small {
+  font-size: 0.9rem;
+  margin-right: 4px;
+}
+
+.critical-path-task {
+  border: 2px solid #dc3545 !important;
+}
+
+/* Legacy styles for compatibility */
+.task-pill.task-continuation {
+  background: #e6fffa;
+  color: #234e52;
+  border: 1px dashed #81e6d9;
+  font-size: 0.7rem;
+}
+
+.task-pill.task-continuation:hover {
+  background: #b2f5ea;
 }
 
 .critical-marker {
@@ -327,6 +664,66 @@
   font-size: 0.75rem;
 }
 
+/* Tier grouping for unscheduled tasks */
+.tier-group {
+  margin-bottom: 1rem;
+}
+
+.tier-group-header {
+  font-size: 0.75rem;
+  font-weight: 600;
+  padding: 6px 10px;
+  margin-bottom: 8px;
+  border-radius: 4px;
+  background: #f7fafc;
+  border-left: 3px solid #cbd5e0;
+}
+
+.tier-1-group .tier-group-header {
+  background: #fff5f5;
+  border-left-color: #fc8181;
+  color: #c53030;
+}
+
+.tier-2-group .tier-group-header {
+  background: #fffaf0;
+  border-left-color: #f6ad55;
+  color: #c05621;
+}
+
+.tier-3-group .tier-group-header {
+  background: #fefcbf;
+  border-left-color: #f6e05e;
+  color: #744210;
+}
+
+.tier-4-group .tier-group-header {
+  background: #f0fff4;
+  border-left-color: #68d391;
+  color: #22543d;
+}
+
+.tier-group .task-item {
+  margin-bottom: 8px;
+}
+
+.task-item.tier-1-item {
+  background: #fff5f5;
+  border-color: #fc8181;
+  font-weight: 500;
+}
+
+.task-item.tier-1-item:hover {
+  background: #fed7d7;
+  border-color: #fc8181;
+  box-shadow: 0 2px 8px rgba(139, 0, 0, 0.2);
+}
+
+.trade-icon-task {
+  margin-right: 4px;
+  font-size: 1rem;
+}
+
 .stats-list {
   display: flex;
   flex-direction: column;
@@ -406,33 +803,107 @@
 </style>
 
 <script>
+// Store task duration during drag
+let currentDragDays = 1;
+
 // Drag and drop functionality
 function allowDrop(ev) {
   ev.preventDefault();
-  ev.currentTarget.classList.add('drag-over');
+  const targetDay = ev.currentTarget;
+
+  // Clear all previous highlights
+  clearDurationHighlights();
+
+  // Highlight the duration span
+  highlightDuration(targetDay, currentDragDays);
 }
 
 function drag(ev) {
-  ev.dataTransfer.setData("taskId", ev.target.dataset.taskId);
-  ev.target.classList.add('dragging');
+  const taskElement = ev.target;
+  currentDragDays = parseInt(taskElement.dataset.estimatedDays) || 1;
+
+  ev.dataTransfer.setData("taskId", taskElement.dataset.taskId);
+  ev.dataTransfer.setData("estimatedDays", currentDragDays);
+  taskElement.classList.add('dragging');
+}
+
+function dragEnd(ev) {
+  ev.target.classList.remove('dragging');
+  clearDurationHighlights();
+}
+
+// Drag functions for scheduled task bars
+function dragTaskBar(ev) {
+  const taskBarElement = ev.target.closest('.task-bar');
+  if (!taskBarElement) return;
+
+  currentDragDays = parseInt(taskBarElement.dataset.estimatedDays) || 1;
+
+  ev.dataTransfer.setData("taskId", taskBarElement.dataset.taskId);
+  ev.dataTransfer.setData("estimatedDays", currentDragDays);
+
+  // Add visual feedback
+  taskBarElement.style.opacity = '0.5';
+  taskBarElement.classList.add('dragging');
+}
+
+function dragEndTaskBar(ev) {
+  const taskBarElement = ev.target.closest('.task-bar');
+  if (taskBarElement) {
+    taskBarElement.style.opacity = '1';
+    taskBarElement.classList.remove('dragging');
+  }
+  clearDurationHighlights();
 }
 
 function drop(ev) {
   ev.preventDefault();
-  ev.currentTarget.classList.remove('drag-over');
-  
+  clearDurationHighlights();
+
   const taskId = ev.dataTransfer.getData("taskId");
   const targetDate = ev.currentTarget.dataset.date;
-  
+
   if (taskId && targetDate) {
     scheduleTask(taskId, targetDate);
+  }
+}
+
+function clearDurationHighlights() {
+  document.querySelectorAll('.calendar-day').forEach(day => {
+    day.classList.remove('drag-over', 'duration-preview', 'duration-start');
+  });
+}
+
+function highlightDuration(startDay, durationDays) {
+  if (!startDay.dataset.date) return;
+
+  const allDays = Array.from(document.querySelectorAll('.calendar-day[data-date]'));
+  const startIndex = allDays.indexOf(startDay);
+
+  if (startIndex === -1) return;
+
+  // Highlight the start day differently
+  startDay.classList.add('duration-start');
+
+  // Highlight the following days for the duration
+  for (let i = 1; i < durationDays; i++) {
+    const dayIndex = startIndex + i;
+    if (dayIndex < allDays.length) {
+      allDays[dayIndex].classList.add('duration-preview');
+    }
   }
 }
 
 // Remove drag-over class when dragging leaves
 document.querySelectorAll('.calendar-day').forEach(day => {
   day.addEventListener('dragleave', function(ev) {
-    ev.currentTarget.classList.remove('drag-over');
+    // Small delay to allow dragenter on next element
+    setTimeout(() => {
+      const draggingOver = document.querySelector('.calendar-day.drag-over, .calendar-day.duration-preview, .calendar-day.duration-start');
+      if (!draggingOver || !ev.currentTarget.classList.contains('duration-preview')) {
+        // Don't clear if we're still dragging
+      }
+    }, 10);
   });
 });
 
@@ -440,10 +911,18 @@ document.querySelectorAll('.calendar-day').forEach(day => {
 document.querySelectorAll('.task-item').forEach(task => {
   task.addEventListener('dragend', function(ev) {
     ev.target.classList.remove('dragging');
+    clearDurationHighlights();
   });
 });
 
 function scheduleTask(taskId, startDate) {
+  // Show loading indicator
+  const targetDay = document.querySelector(`[data-date="${startDate}"]`);
+  if (targetDay) {
+    targetDay.style.backgroundColor = '#fff3cd';
+    targetDay.style.border = '2px solid #ffc107';
+  }
+
   fetch(`/api/tasks/${taskId}/schedule`, {
     method: 'POST',
     headers: {
@@ -454,15 +933,38 @@ function scheduleTask(taskId, startDate) {
   .then(response => response.json())
   .then(data => {
     if (data.success) {
-      // Refresh the page to show updated calendar
-      location.reload();
+      console.log('Task scheduled successfully:', {
+        taskId: taskId,
+        startDate: data.start_date,
+        endDate: data.end_date
+      });
+
+      // Show success message briefly before reload
+      if (targetDay) {
+        targetDay.style.backgroundColor = '#d4edda';
+        targetDay.style.border = '2px solid #28a745';
+      }
+
+      // Preserve current URL parameters when reloading
+      // This ensures job_id, month, and year are maintained
+      setTimeout(() => {
+        location.reload();
+      }, 300);
     } else {
       alert('Failed to schedule task');
+      if (targetDay) {
+        targetDay.style.backgroundColor = '';
+        targetDay.style.border = '';
+      }
     }
   })
   .catch(error => {
-    console.error('Error:', error);
-    alert('Failed to schedule task');
+    console.error('Error scheduling task:', error);
+    alert('Failed to schedule task: ' + error.message);
+    if (targetDay) {
+      targetDay.style.backgroundColor = '';
+      targetDay.style.border = '';
+    }
   });
 }
 

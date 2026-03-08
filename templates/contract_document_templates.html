@@ -1,0 +1,569 @@
+{% extends "base.html" %}
+{% block content %}
+
+<div class="container">
+  <div class="page-header" style="margin-bottom: 2rem;">
+    <h1>Document Templates - Room Specifications</h1>
+    <div style="display: flex; gap: 0.5rem; flex-wrap: wrap;">
+      <a href="{{ url_for('contract_view', job_id=job.id) }}" class="btn btn--sm">← Back to Contract</a>
+      <a href="{{ url_for('job_detail', job_id=job.id) }}" class="btn btn--sm">Job Details</a>
+    </div>
+  </div>
+
+  <div class="info-box" style="margin-bottom: 2rem;">
+    <p style="margin: 0;"><strong>Job:</strong> {{ job.client_name }} - {{ job.project_type }}</p>
+    <p style="margin: 0.5rem 0 0 0;"><strong>Contract:</strong> {{ contract.contract_number }}</p>
+  </div>
+
+  <p class="subtitle" style="margin-bottom: 2rem;">
+    Select POS items for each room to generate detailed specification documents. These templates will be available after contract generation for client delivery.
+  </p>
+
+  <!-- Rooms/Locations Grid -->
+  <div class="rooms-grid">
+    {% for location in locations %}
+    <div class="room-card" id="room-{{ location.id }}">
+      <div class="room-header">
+        <h3>{{ location.icon or '📍' }} {{ location.name }}</h3>
+        {% if location.square_footage %}
+        <span class="room-size">{{ location.square_footage }} sq ft</span>
+        {% endif %}
+      </div>
+
+      {% if location.description %}
+      <p class="room-description">{{ location.description }}</p>
+      {% endif %}
+
+      <!-- Check if template already exists -->
+      {% set existing_template = existing_templates|selectattr('location_id', 'equalto', location.id)|first %}
+
+      {% if existing_template %}
+      <div class="template-status template-status--saved">
+        ✓ Template Saved - {{ existing_template.template_name }}
+      </div>
+      {% else %}
+      <div class="template-status template-status--draft">
+        📝 No template yet
+      </div>
+      {% endif %}
+
+      <button class="btn btn--primary btn--full" onclick="openPOSModal({{ location.id }}, '{{ location.name }}')">
+        {% if existing_template %}
+        ✏️ Edit Specifications
+        {% else %}
+        ➕ Add Specifications
+        {% endif %}
+      </button>
+
+      <!-- View existing template -->
+      {% if existing_template %}
+      <button class="btn btn--sm btn--full" style="margin-top: 0.5rem;" onclick="viewTemplate({{ existing_template.id }})">
+        👁️ View Template
+      </button>
+      {% endif %}
+    </div>
+    {% endfor %}
+
+    {% if not locations %}
+    <div class="empty-state">
+      <p>No rooms/locations found for this job.</p>
+      <a href="{{ url_for('contract_generator', job_id=job.id) }}" class="btn">Add Locations</a>
+    </div>
+    {% endif %}
+  </div>
+</div>
+
+<!-- POS Selection Modal -->
+<div id="posModal" class="modal" style="display: none;">
+  <div class="modal-content" style="max-width: 900px; max-height: 90vh; overflow-y: auto;">
+    <div class="modal-header">
+      <h2 id="modalTitle">Select Specifications</h2>
+      <button class="modal-close" onclick="closePOSModal()">×</button>
+    </div>
+
+    <div class="modal-body">
+      <!-- Template Name -->
+      <div class="form-group">
+        <label for="templateName">Template Name</label>
+        <input type="text" id="templateName" class="form-control" placeholder="e.g., Kitchen Specifications">
+      </div>
+
+      <!-- POS Categories -->
+      <div id="posCategoriesContainer">
+        <h3>Select Categories & Items</h3>
+        <div id="categoriesList"></div>
+      </div>
+
+      <!-- Custom Notes -->
+      <div class="form-group" style="margin-top: 2rem;">
+        <label for="customNotes">Additional Notes</label>
+        <textarea id="customNotes" class="form-control" rows="4" placeholder="Add any custom notes or special requirements..."></textarea>
+      </div>
+    </div>
+
+    <div class="modal-footer">
+      <button class="btn" onclick="closePOSModal()">Cancel</button>
+      <button class="btn btn--success" onclick="saveTemplate()">💾 Save Template</button>
+    </div>
+  </div>
+</div>
+
+<!-- Template Viewer Modal -->
+<div id="viewerModal" class="modal" style="display: none;">
+  <div class="modal-content" style="max-width: 800px;">
+    <div class="modal-header">
+      <h2 id="viewerTitle">Template Preview</h2>
+      <button class="modal-close" onclick="closeViewerModal()">×</button>
+    </div>
+    <div class="modal-body">
+      <div id="viewerContent" style="white-space: pre-wrap; line-height: 1.8;"></div>
+    </div>
+    <div class="modal-footer">
+      <button class="btn" onclick="closeViewerModal()">Close</button>
+    </div>
+  </div>
+</div>
+
+<style>
+.rooms-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+  gap: 1.5rem;
+  margin-top: 2rem;
+}
+
+.room-card {
+  background: white;
+  border: 1px solid #ddd;
+  border-radius: 8px;
+  padding: 1.5rem;
+  box-shadow: 0 2px 4px rgba(0,0,0,0.05);
+  transition: box-shadow 0.2s;
+}
+
+.room-card:hover {
+  box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+}
+
+.room-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 1rem;
+}
+
+.room-header h3 {
+  margin: 0;
+  font-size: 1.3rem;
+  color: #333;
+}
+
+.room-size {
+  background: #e8f4f8;
+  color: #0066cc;
+  padding: 0.25rem 0.5rem;
+  border-radius: 4px;
+  font-size: 0.85rem;
+  font-weight: 600;
+}
+
+.room-description {
+  color: #666;
+  margin-bottom: 1rem;
+  font-size: 0.9rem;
+}
+
+.template-status {
+  padding: 0.75rem;
+  border-radius: 6px;
+  margin-bottom: 1rem;
+  font-weight: 500;
+  text-align: center;
+}
+
+.template-status--saved {
+  background: #d4edda;
+  color: #155724;
+  border: 1px solid #c3e6cb;
+}
+
+.template-status--draft {
+  background: #fff3cd;
+  color: #856404;
+  border: 1px solid #ffeaa7;
+}
+
+.modal {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: rgba(0,0,0,0.5);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 1000;
+}
+
+.modal-content {
+  background: white;
+  border-radius: 8px;
+  width: 90%;
+  max-width: 600px;
+  box-shadow: 0 10px 40px rgba(0,0,0,0.2);
+}
+
+.modal-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 1.5rem;
+  border-bottom: 1px solid #ddd;
+}
+
+.modal-header h2 {
+  margin: 0;
+  font-size: 1.5rem;
+}
+
+.modal-close {
+  background: none;
+  border: none;
+  font-size: 2rem;
+  cursor: pointer;
+  color: #999;
+  line-height: 1;
+  padding: 0;
+  width: 30px;
+  height: 30px;
+}
+
+.modal-close:hover {
+  color: #333;
+}
+
+.modal-body {
+  padding: 1.5rem;
+}
+
+.modal-footer {
+  display: flex;
+  justify-content: flex-end;
+  gap: 0.5rem;
+  padding: 1.5rem;
+  border-top: 1px solid #ddd;
+}
+
+.category-section {
+  margin-bottom: 2rem;
+  border: 1px solid #ddd;
+  border-radius: 6px;
+  overflow: hidden;
+}
+
+.category-header {
+  background: #f8f9fa;
+  padding: 1rem;
+  cursor: pointer;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  font-weight: 600;
+}
+
+.category-header:hover {
+  background: #e9ecef;
+}
+
+.category-activities {
+  padding: 1rem;
+  display: none;
+}
+
+.category-activities.active {
+  display: block;
+}
+
+.activity-item {
+  padding: 0.75rem;
+  margin-bottom: 0.5rem;
+  border: 1px solid #ddd;
+  border-radius: 4px;
+  background: #fafafa;
+}
+
+.activity-item label {
+  display: flex;
+  align-items: center;
+  cursor: pointer;
+  margin: 0;
+}
+
+.activity-item input[type="checkbox"] {
+  margin-right: 0.75rem;
+  width: 18px;
+  height: 18px;
+  cursor: pointer;
+}
+
+.subitem-container {
+  margin-left: 2rem;
+  margin-top: 0.5rem;
+  display: none;
+}
+
+.subitem-container.active {
+  display: block;
+}
+
+.subitem-item {
+  padding: 0.5rem;
+  margin-bottom: 0.25rem;
+  font-size: 0.9rem;
+}
+
+.subitem-item label {
+  display: flex;
+  align-items: center;
+  margin: 0;
+  cursor: pointer;
+}
+
+.subitem-item input[type="checkbox"] {
+  margin-right: 0.5rem;
+  width: 16px;
+  height: 16px;
+}
+
+.empty-state {
+  grid-column: 1 / -1;
+  text-align: center;
+  padding: 3rem;
+  background: #f8f9fa;
+  border-radius: 8px;
+}
+
+.btn--full {
+  width: 100%;
+}
+</style>
+
+<script>
+let currentLocationId = null;
+let posData = {};
+
+function openPOSModal(locationId, locationName) {
+  currentLocationId = locationId;
+  document.getElementById('modalTitle').textContent = `${locationName} - Specifications`;
+  document.getElementById('templateName').value = `${locationName} Specifications`;
+  document.getElementById('posModal').style.display = 'flex';
+
+  loadPOSCategories(locationId);
+}
+
+function closePOSModal() {
+  document.getElementById('posModal').style.display = 'none';
+  currentLocationId = null;
+}
+
+async function loadPOSCategories(locationId) {
+  const mapping = {{ location_pos_mapping|tojson }};
+  const categories = mapping[locationId] || {{ pos_categories|tojson }};
+
+  const container = document.getElementById('categoriesList');
+  container.innerHTML = '';
+
+  for (const category of categories) {
+    const categoryDiv = document.createElement('div');
+    categoryDiv.className = 'category-section';
+    categoryDiv.innerHTML = `
+      <div class="category-header" onclick="toggleCategory(${category.id})">
+        <span>${category.icon || ''} ${category.name}</span>
+        <span id="category-arrow-${category.id}">▼</span>
+      </div>
+      <div id="category-${category.id}" class="category-activities">
+        <p style="text-align: center; color: #999;">Loading...</p>
+      </div>
+    `;
+    container.appendChild(categoryDiv);
+  }
+}
+
+async function toggleCategory(categoryId) {
+  const container = document.getElementById(`category-${categoryId}`);
+  const arrow = document.getElementById(`category-arrow-${categoryId}`);
+
+  if (container.classList.contains('active')) {
+    container.classList.remove('active');
+    arrow.textContent = '▼';
+  } else {
+    container.classList.add('active');
+    arrow.textContent = '▲';
+
+    // Load activities if not already loaded
+    if (container.querySelector('p')) {
+      await loadActivities(categoryId);
+    }
+  }
+}
+
+async function loadActivities(categoryId) {
+  try {
+    const response = await fetch(`/api/pos/activities/${categoryId}`);
+    const data = await response.json();
+
+    if (data.success) {
+      const container = document.getElementById(`category-${categoryId}`);
+      container.innerHTML = '';
+
+      if (data.activities.length === 0) {
+        container.innerHTML = '<p style="text-align: center; color: #999;">No activities available</p>';
+        return;
+      }
+
+      for (const activity of data.activities) {
+        const activityDiv = document.createElement('div');
+        activityDiv.className = 'activity-item';
+        activityDiv.innerHTML = `
+          <label>
+            <input type="checkbox"
+                   id="activity-${activity.id}"
+                   value="${activity.id}"
+                   onchange="toggleActivity(${activity.id})">
+            <strong>${activity.name}</strong>
+            ${activity.description ? `<br><small style="margin-left: 1.5rem;">${activity.description}</small>` : ''}
+          </label>
+          ${activity.subitems.length > 0 ? `
+            <div id="subitems-${activity.id}" class="subitem-container">
+              ${activity.subitems.map(sub => `
+                <div class="subitem-item">
+                  <label>
+                    <input type="checkbox"
+                           class="subitem-check"
+                           data-activity="${activity.id}"
+                           value="${sub.id}">
+                    ${sub.name}
+                    ${sub.description ? `<small> - ${sub.description}</small>` : ''}
+                  </label>
+                </div>
+              `).join('')}
+            </div>
+          ` : ''}
+        `;
+        container.appendChild(activityDiv);
+      }
+    }
+  } catch (error) {
+    console.error('Error loading activities:', error);
+  }
+}
+
+function toggleActivity(activityId) {
+  const checkbox = document.getElementById(`activity-${activityId}`);
+  const subitemContainer = document.getElementById(`subitems-${activityId}`);
+
+  if (subitemContainer) {
+    if (checkbox.checked) {
+      subitemContainer.classList.add('active');
+    } else {
+      subitemContainer.classList.remove('active');
+      // Uncheck all subitems
+      subitemContainer.querySelectorAll('input[type="checkbox"]').forEach(cb => {
+        cb.checked = false;
+      });
+    }
+  }
+}
+
+async function saveTemplate() {
+  if (!currentLocationId) return;
+
+  const templateName = document.getElementById('templateName').value;
+  const customNotes = document.getElementById('customNotes').value;
+
+  if (!templateName) {
+    alert('Please enter a template name');
+    return;
+  }
+
+  // Collect POS selections
+  const posSelections = {};
+  document.querySelectorAll('input[id^="activity-"]:checked').forEach(checkbox => {
+    const activityId = checkbox.value;
+    const subitemChecks = document.querySelectorAll(`input.subitem-check[data-activity="${activityId}"]:checked`);
+    posSelections[activityId] = Array.from(subitemChecks).map(cb => parseInt(cb.value));
+  });
+
+  try {
+    const response = await fetch(`/api/jobs/{{ job.id }}/contract/document-templates`, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json'
+      },
+      body: JSON.stringify({
+        location_id: currentLocationId,
+        template_name: templateName,
+        pos_selections: posSelections,
+        custom_notes: customNotes
+      })
+    });
+
+    const data = await response.json();
+
+    if (data.success) {
+      alert('Template saved successfully!');
+      closePOSModal();
+      location.reload();
+    } else {
+      alert('Error: ' + data.error);
+    }
+  } catch (error) {
+    alert('Error saving template: ' + error.message);
+  }
+}
+
+async function viewTemplate(templateId) {
+  try {
+    const response = await fetch(`/api/document-templates/${templateId}`);
+    const data = await response.json();
+
+    if (data.success) {
+      const template = data.template;
+      document.getElementById('viewerTitle').textContent = template.name;
+
+      let content = `<div style="margin-bottom: 1rem;">
+        <p><strong>Location:</strong> ${template.location_name}</p>
+        <p><strong>Status:</strong> ${template.status}</p>
+        <p><strong>Created:</strong> ${template.created_date}</p>
+      </div>
+      <hr style="margin: 1.5rem 0;">
+      <div style="background: #f8f9fa; padding: 1.5rem; border-radius: 6px;">
+        ${template.content ? template.content.replace(/\n/g, '<br>') : '<em>No content generated yet</em>'}
+      </div>`;
+
+      if (template.custom_notes) {
+        content += `
+          <hr style="margin: 1.5rem 0;">
+          <div style="background: #fff3cd; padding: 1.5rem; border-radius: 6px; border: 1px solid #ffc107;">
+            <strong>Custom Notes:</strong><br>
+            ${template.custom_notes}
+          </div>`;
+      }
+
+      document.getElementById('viewerContent').innerHTML = content;
+      document.getElementById('viewerModal').style.display = 'flex';
+    } else {
+      alert('Error loading template: ' + data.error);
+    }
+  } catch (error) {
+    alert('Error loading template: ' + error.message);
+  }
+}
+
+function closeViewerModal() {
+  document.getElementById('viewerModal').style.display = 'none';
+}
+</script>
+
+{% endblock %}

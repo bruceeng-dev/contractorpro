@@ -66,3 +66,28 @@ node_modules/
 # Temporary files
 *.tmp
 *.temp
+
+# Project-specific files
+cookies.txt
+ngrok.exe
+ngrok.zip
+ngrok-config.yml
+nul
+app_log.txt
+circle_anim.mp4
+*.ipynb
+*.csv
+
+# Test/Debug scripts (optional - you may want to include these)
+# check_*.py
+# test_*.py
+# verify_*.py
+# debug_*.py
+# seed_*.py
+# setup_*.py
+
+# Social media automation (if sensitive)
+social_media_automation/
+
+# Scope to contract (if contains sensitive data)
+scope_to_contract/

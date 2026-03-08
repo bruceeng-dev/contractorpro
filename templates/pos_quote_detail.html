@@ -1,0 +1,213 @@
+{% extends "base.html" %}
+
+{% block content %}
+<div class="container" style="max-width: 900px; margin: 40px auto; padding: 0 20px;">
+  <div style="margin-bottom: 30px;">
+    <a href="{{ url_for('pos_quotes_list') }}" style="color: #3498db; text-decoration: none; font-size: 1.1em;">
+      ← Back to Quotes
+    </a>
+  </div>
+
+  <div style="background: white; border-radius: 8px; padding: 40px; box-shadow: 0 2px 10px rgba(0,0,0,0.1);">
+    <div style="display: flex; justify-content: space-between; align-items: start; margin-bottom: 30px; padding-bottom: 20px; border-bottom: 3px solid #e0e0e0;">
+      <div>
+        <h1 style="margin: 0 0 10px 0; font-size: 2.5em; color: #2c3e50;">Quote #{{ quote.id }}</h1>
+        <div style="color: #7f8c8d; font-size: 1.1em;">
+          Created: {{ quote.created_date.strftime('%B %d, %Y at %I:%M %p') }}
+        </div>
+      </div>
+      <div>
+        <span style="padding: 8px 16px; border-radius: 12px; font-size: 1em; font-weight: bold;
+             {% if quote.status == 'draft' %}background: #f39c12; color: white;
+             {% elif quote.status == 'sent' %}background: #3498db; color: white;
+             {% elif quote.status == 'accepted' %}background: #27ae60; color: white;
+             {% else %}background: #95a5a6; color: white;{% endif %}">
+          {{ quote.status|upper }}
+        </span>
+      </div>
+    </div>
+
+    {% if quote.scope_of_work %}
+      <div style="margin-bottom: 30px;">
+        <h3 style="margin: 0 0 10px 0; color: #2c3e50;">📝 Scope of Work</h3>
+        <div style="background: #f8f9fa; padding: 15px; border-radius: 4px; border-left: 4px solid #3498db;">
+          {{ quote.scope_of_work }}
+        </div>
+      </div>
+    {% endif %}
+
+    <div style="margin-bottom: 30px;">
+      <h3 style="margin: 0 0 15px 0; color: #2c3e50;">🛒 Quote Items</h3>
+      <div style="border: 1px solid #e0e0e0; border-radius: 4px; overflow: hidden;">
+        <table style="width: 100%; border-collapse: collapse;">
+          <thead>
+            <tr style="background: #f8f9fa;">
+              <th style="padding: 12px; text-align: left; border-bottom: 2px solid #e0e0e0;">Item</th>
+              <th style="padding: 12px; text-align: center; border-bottom: 2px solid #e0e0e0;">Qty</th>
+              <th style="padding: 12px; text-align: right; border-bottom: 2px solid #e0e0e0;">Unit Cost</th>
+              <th style="padding: 12px; text-align: right; border-bottom: 2px solid #e0e0e0;">Total</th>
+            </tr>
+          </thead>
+          <tbody>
+            {% for item in quote.items %}
+              <tr style="border-bottom: 1px solid #e0e0e0;">
+                <td style="padding: 12px;">
+                  <div style="font-weight: bold; margin-bottom: 3px;">{{ item.activity.name }}</div>
+                  {% if item.notes %}
+                    <div style="font-size: 0.9em; color: #7f8c8d;">{{ item.notes }}</div>
+                  {% endif %}
+                </td>
+                <td style="padding: 12px; text-align: center;">{{ item.quantity }}</td>
+                <td style="padding: 12px; text-align: right;">${{ '{:,.2f}'.format(item.unit_cost) }}</td>
+                <td style="padding: 12px; text-align: right; font-weight: bold; color: #27ae60;">
+                  ${{ '{:,.2f}'.format(item.total_cost) }}
+                </td>
+              </tr>
+            {% endfor %}
+          </tbody>
+          <tfoot>
+            <tr style="background: #f8f9fa; font-weight: bold;">
+              <td colspan="3" style="padding: 15px; text-align: right; font-size: 1.2em;">TOTAL:</td>
+              <td style="padding: 15px; text-align: right; font-size: 1.5em; color: #27ae60;">
+                ${{ '{:,.2f}'.format(quote.total_amount) }}
+              </td>
+            </tr>
+          </tfoot>
+        </table>
+      </div>
+    </div>
+
+    <div style="margin-top: 30px; padding-top: 30px; border-top: 2px solid #e0e0e0;">
+      <h3 style="margin: 0 0 15px 0; color: #2c3e50;">⚡ Quick Actions</h3>
+
+      {% if quote.job_id %}
+      <div style="background: #e8f8f5; padding: 12px; margin-bottom: 15px; border-radius: 4px; border-left: 4px solid #27ae60;">
+        <strong>📋 Linked to Job:</strong> <a href="{{ url_for('job_detail', job_id=quote.job_id) }}" style="color: #667eea; text-decoration: none;">{{ quote.client_name }}</a>
+      </div>
+      {% endif %}
+
+      <div style="display: grid; gap: 10px;">
+        <!-- Send to Client Button -->
+        {% if quote.job_id and quote.status not in ['sent', 'accepted', 'rejected'] %}
+        <button onclick="sendToClient({{ quote.id }})"
+                style="width: 100%; padding: 12px; background: #3498db; color: white; border: none; border-radius: 4px; font-size: 1em; cursor: pointer; font-weight: bold;">
+          📧 Send to Client
+        </button>
+        {% endif %}
+
+        <!-- Accept/Reject Buttons (for demo - simulates client response) -->
+        {% if quote.status not in ['accepted', 'rejected'] %}
+        <div style="display: grid; gap: 10px;">
+          <button onclick="acceptAndGenerateContract({{ quote.id }})"
+                  style="padding: 14px; background: #27ae60; color: white; border: none; border-radius: 4px; font-size: 1.05em; cursor: pointer; font-weight: bold;">
+            ✓ Accept & Generate Contract
+          </button>
+          <button onclick="rejectQuote({{ quote.id }})"
+                  style="padding: 12px; background: #e74c3c; color: white; border: none; border-radius: 4px; font-size: 1em; cursor: pointer; font-weight: bold;">
+            ✗ Reject Quote
+          </button>
+        </div>
+        {% endif %}
+
+        <!-- Print Button -->
+        <button onclick="window.print()"
+                style="width: 100%; padding: 12px; background: #3498db; color: white; border: none; border-radius: 4px; font-size: 1em; cursor: pointer;">
+          🖨️ Print Quote
+        </button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<style>
+@media print {
+  header, .nav, footer, button, form { display: none !important; }
+  .container { max-width: 100% !important; margin: 0 !important; }
+}
+</style>
+
+<script>
+async function sendToClient(quoteId) {
+  if (!confirm('Send this quote to the client via email?')) {
+    return;
+  }
+
+  try {
+    const response = await fetch(`/api/pos/quotes/${quoteId}/send-to-client`, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json'
+      }
+    });
+
+    const data = await response.json();
+
+    if (data.success) {
+      alert(data.message);
+      location.reload();
+    } else {
+      alert(`Error: ${data.message}`);
+    }
+  } catch (error) {
+    alert('Failed to send quote: ' + error.message);
+  }
+}
+
+async function acceptAndGenerateContract(quoteId) {
+  if (!confirm('Accept this quote and generate contract with AI?\n\nThis will:\n✓ Mark quote as accepted\n✓ Generate detailed contract\n✓ Create project tasks\n✓ Update job status')) {
+    return;
+  }
+
+  try {
+    const response = await fetch(`/api/pos/quotes/${quoteId}/accept-and-contract`, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json'
+      }
+    });
+
+    const data = await response.json();
+
+    if (data.success) {
+      alert(data.message);
+      // Redirect to contract view
+      if (data.redirect_url) {
+        window.location.href = data.redirect_url;
+      } else {
+        location.reload();
+      }
+    } else {
+      alert(`Error: ${data.message}`);
+    }
+  } catch (error) {
+    alert('Failed to accept quote and generate contract: ' + error.message);
+  }
+}
+
+async function rejectQuote(quoteId) {
+  if (!confirm('Reject this quote?')) {
+    return;
+  }
+
+  try {
+    const response = await fetch(`/api/pos/quotes/${quoteId}/reject`, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json'
+      }
+    });
+
+    const data = await response.json();
+
+    if (data.success) {
+      alert(data.message);
+      location.reload();
+    } else {
+      alert(`Error: ${data.message}`);
+    }
+  } catch (error) {
+    alert('Failed to reject quote: ' + error.message);
+  }
+}
+</script>
+{% endblock %}

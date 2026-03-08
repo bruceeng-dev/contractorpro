@@ -1,0 +1,143 @@
+{% extends "base.html" %}
+{% block content %}
+
+<div class="container">
+  <div class="page-header">
+    <h1>Job Overview</h1>
+    <p class="muted">Select a category to view or create jobs</p>
+  </div>
+
+  <div class="jobs-overview-grid">
+    <!-- Completed Jobs -->
+    <div class="overview-card overview-card--completed">
+      <div class="overview-card-icon">✓</div>
+      <h2>Completed Jobs</h2>
+      <p class="overview-count">{{ completed_count }} Job{{ 's' if completed_count != 1 else '' }}</p>
+      <p class="overview-description">View all finished projects and their final documentation</p>
+      <a href="{{ url_for('jobs_completed') }}" class="btn btn--full">View Completed Jobs</a>
+    </div>
+
+    <!-- Current Jobs -->
+    <div class="overview-card overview-card--current">
+      <div class="overview-card-icon">⚙</div>
+      <h2>Current Jobs</h2>
+      <p class="overview-count">{{ current_count }} Job{{ 's' if current_count != 1 else '' }}</p>
+      <p class="overview-description">Active projects currently in progress</p>
+      <a href="{{ url_for('jobs_current') }}" class="btn btn--full">View Current Jobs</a>
+    </div>
+
+    <!-- New Jobs -->
+    <div class="overview-card overview-card--new">
+      <div class="overview-card-icon">+</div>
+      <h2>New Job</h2>
+      <p class="overview-count">Create</p>
+      <p class="overview-description">Start a new construction or renovation project</p>
+      <a href="{{ url_for('job_type_selector') }}" class="btn btn--full">Create New Job</a>
+    </div>
+  </div>
+</div>
+
+<style>
+.jobs-overview-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+  gap: 2rem;
+  margin-top: 2rem;
+}
+
+.overview-card {
+  background: white;
+  border-radius: 12px;
+  padding: 2rem;
+  text-align: center;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+  transition: transform 0.2s, box-shadow 0.2s;
+  border-top: 4px solid #667eea;
+}
+
+.overview-card:hover {
+  transform: translateY(-4px);
+  box-shadow: 0 4px 16px rgba(0,0,0,0.15);
+}
+
+.overview-card--completed {
+  border-top-color: #48bb78;
+}
+
+.overview-card--current {
+  border-top-color: #4299e1;
+}
+
+.overview-card--new {
+  border-top-color: #ed8936;
+}
+
+.overview-card-icon {
+  font-size: 3rem;
+  margin-bottom: 1rem;
+  opacity: 0.8;
+}
+
+.overview-card--completed .overview-card-icon {
+  color: #48bb78;
+}
+
+.overview-card--current .overview-card-icon {
+  color: #4299e1;
+}
+
+.overview-card--new .overview-card-icon {
+  color: #ed8936;
+}
+
+.overview-card h2 {
+  margin: 0 0 0.5rem 0;
+  font-size: 1.5rem;
+  color: #2d3748;
+}
+
+.overview-count {
+  font-size: 2rem;
+  font-weight: bold;
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+  margin: 0.5rem 0;
+}
+
+.overview-card--completed .overview-count {
+  background: linear-gradient(135deg, #48bb78 0%, #38a169 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+}
+
+.overview-card--current .overview-count {
+  background: linear-gradient(135deg, #4299e1 0%, #3182ce 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+}
+
+.overview-card--new .overview-count {
+  background: linear-gradient(135deg, #ed8936 0%, #dd6b20 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+}
+
+.overview-description {
+  color: #718096;
+  font-size: 0.95rem;
+  margin: 1rem 0 1.5rem 0;
+  line-height: 1.5;
+}
+
+.btn--full {
+  width: 100%;
+  margin-top: auto;
+}
+</style>
+
+{% endblock %}

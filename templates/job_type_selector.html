@@ -1,0 +1,152 @@
+{% extends "base.html" %}
+{% block content %}
+
+<div class="container">
+  <div class="page-header">
+    <h1>Select Job Type</h1>
+    <a href="{{ url_for('jobs_overview') }}" class="btn btn--sm">Back to Overview</a>
+  </div>
+
+  <div class="job-type-grid">
+    <!-- New Build -->
+    <div class="job-type-card job-type-card--new-build">
+      <div class="job-type-icon">🏗️</div>
+      <h2>New Construction</h2>
+      <p class="job-type-description">
+        Ground-up construction projects including new homes, commercial buildings, and additions
+      </p>
+      <ul class="job-type-features">
+        <li>New residential construction</li>
+        <li>Commercial build-outs</li>
+        <li>Home additions</li>
+        <li>New garages & structures</li>
+      </ul>
+      <a href="{{ url_for('new_job', build_type='new_build') }}" class="btn btn--full btn--primary">Create New Build Job</a>
+    </div>
+
+    <!-- Renovation -->
+    <div class="job-type-card job-type-card--renovation">
+      <div class="job-type-icon">🔨</div>
+      <h2>Renovation</h2>
+      <p class="job-type-description">
+        Remodeling and renovation projects for existing structures and spaces
+      </p>
+      <ul class="job-type-features">
+        <li>Kitchen remodels</li>
+        <li>Bathroom renovations</li>
+        <li>Basement finishing</li>
+        <li>Interior updates & repairs</li>
+      </ul>
+      <a href="{{ url_for('new_job', build_type='remodel') }}" class="btn btn--full btn--secondary">Create Renovation Job</a>
+    </div>
+  </div>
+</div>
+
+<style>
+.job-type-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+  gap: 2.5rem;
+  margin-top: 2rem;
+  max-width: 900px;
+  margin-left: auto;
+  margin-right: auto;
+}
+
+.job-type-card {
+  background: white;
+  border-radius: 12px;
+  padding: 2.5rem;
+  text-align: center;
+  box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+  transition: transform 0.2s, box-shadow 0.2s;
+  border: 2px solid transparent;
+}
+
+.job-type-card:hover {
+  transform: translateY(-6px);
+  box-shadow: 0 8px 24px rgba(0,0,0,0.15);
+}
+
+.job-type-card--new-build {
+  border-color: #667eea;
+}
+
+.job-type-card--new-build:hover {
+  border-color: #764ba2;
+}
+
+.job-type-card--renovation {
+  border-color: #ed8936;
+}
+
+.job-type-card--renovation:hover {
+  border-color: #dd6b20;
+}
+
+.job-type-icon {
+  font-size: 4rem;
+  margin-bottom: 1rem;
+}
+
+.job-type-card h2 {
+  margin: 0 0 1rem 0;
+  font-size: 1.75rem;
+  color: #2d3748;
+}
+
+.job-type-description {
+  color: #4a5568;
+  font-size: 1rem;
+  line-height: 1.6;
+  margin-bottom: 1.5rem;
+}
+
+.job-type-features {
+  list-style: none;
+  padding: 0;
+  margin: 0 0 2rem 0;
+  text-align: left;
+}
+
+.job-type-features li {
+  padding: 0.5rem 0;
+  color: #718096;
+  position: relative;
+  padding-left: 1.5rem;
+}
+
+.job-type-features li:before {
+  content: "✓";
+  position: absolute;
+  left: 0;
+  color: #48bb78;
+  font-weight: bold;
+}
+
+.btn--primary {
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  color: white;
+  border: none;
+}
+
+.btn--primary:hover {
+  background: linear-gradient(135deg, #5568d3 0%, #6a3f8f 100%);
+}
+
+.btn--secondary {
+  background: linear-gradient(135deg, #ed8936 0%, #dd6b20 100%);
+  color: white;
+  border: none;
+}
+
+.btn--secondary:hover {
+  background: linear-gradient(135deg, #dc7624 0%, #c55d1a 100%);
+}
+
+.btn--full {
+  width: 100%;
+}
+</style>
+
+{% endblock %}
