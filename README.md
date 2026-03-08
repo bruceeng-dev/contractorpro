@@ -8,6 +8,14 @@ A comprehensive web application designed for general contractors to automate and
 [![Python 3.8+](https://img.shields.io/badge/python-3.8+-blue.svg)](https://www.python.org/downloads/)
 [![Flask](https://img.shields.io/badge/flask-3.0+-green.svg)](https://flask.palletsprojects.com/)
 
+## 🚀 Quick Deploy
+
+Deploy ContractorPro to the cloud in one click:
+
+[![Deploy on Railway](https://railway.app/button.svg)](https://railway.app/template/contractorpro?referralCode=bruceeng-dev)
+
+[![Deploy to Render](https://render.com/images/deploy-to-render-button.svg)](https://render.com/deploy?repo=https://github.com/bruceeng-dev/contractorpro)
+
 ---
 
 ## ✨ Features
