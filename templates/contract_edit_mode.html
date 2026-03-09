@@ -1,4 +1,4 @@
-<!-- Edit Mode: Location & Task Management (from original contract_generator.html) -->
+<!-- Edit Mode: Contract Text & Location/Task Management -->
 <div class="contract-info">
   <div class="info-row">
     <div class="info-col">
@@ -13,7 +13,60 @@
   </div>
 </div>
 
-<div class="contract-sections">
+<!-- Edit Mode Tabs -->
+<div class="edit-tabs">
+  <button class="tab-btn active" onclick="switchTab('contract-text')">📝 Edit Contract Text</button>
+  <button class="tab-btn" onclick="switchTab('locations-tasks')">📍 Locations & Tasks</button>
+</div>
+
+<!-- Contract Text Editor Tab -->
+<div id="contract-text-tab" class="tab-content active">
+  <form id="contract-text-form" onsubmit="saveContract(event)">
+    <div class="contract-editor">
+      <div class="editor-section">
+        <label for="introduction_text">
+          <h3>📋 Introduction</h3>
+          <span class="help-text">Contract opening, parties identification, and project overview</span>
+        </label>
+        <textarea id="introduction_text" name="introduction_text" rows="8" class="contract-textarea">{{ contract.introduction_text or '' }}</textarea>
+      </div>
+
+      <div class="editor-section">
+        <label for="scope_of_work">
+          <h3>🔨 Scope of Work</h3>
+          <span class="help-text">Detailed description of all work to be performed</span>
+        </label>
+        <textarea id="scope_of_work" name="scope_of_work" rows="20" class="contract-textarea">{{ contract.scope_of_work or '' }}</textarea>
+      </div>
+
+      <div class="editor-section">
+        <label for="payment_terms">
+          <h3>💰 Payment Terms</h3>
+          <span class="help-text">Payment schedule, milestones, and financial terms</span>
+        </label>
+        <textarea id="payment_terms" name="payment_terms" rows="12" class="contract-textarea">{{ contract.payment_terms or '' }}</textarea>
+      </div>
+
+      <div class="editor-section">
+        <label for="terms_and_conditions">
+          <h3>📜 Terms & Conditions</h3>
+          <span class="help-text">Legal provisions, warranties, liabilities, and general terms</span>
+        </label>
+        <textarea id="terms_and_conditions" name="terms_and_conditions" rows="20" class="contract-textarea">{{ contract.terms_and_conditions or '' }}</textarea>
+      </div>
+
+      <div class="editor-actions">
+        <button type="button" onclick="previewContract()" class="btn btn--secondary">👁️ Preview</button>
+        <button type="submit" class="btn btn--primary">💾 Save Contract</button>
+        <a href="{{ url_for('unified_contract', job_id=job.id) }}?mode=view" class="btn">View Final Contract</a>
+      </div>
+    </div>
+  </form>
+</div>
+
+<!-- Locations & Tasks Tab -->
+<div id="locations-tasks-tab" class="tab-content" style="display: none;">
+  <div class="contract-sections">
   <!-- Location Management -->
   <div class="section">
     <div class="section-header">
@@ -103,6 +156,8 @@
     </div>
   </div>
 </div>
+</div>
+</div>
 
 <!-- Contract Summary -->
 <div class="contract-summary">
@@ -183,6 +238,140 @@
 </div>
 
 <script>
+// Save contract via AJAX
+async function saveContract(event) {
+  event.preventDefault();
+
+  const intro = document.getElementById('introduction_text').value;
+  const scope = document.getElementById('scope_of_work').value;
+  const payment = document.getElementById('payment_terms').value;
+  const terms = document.getElementById('terms_and_conditions').value;
+
+  const saveBtn = event.target.querySelector('button[type="submit"]');
+  const originalText = saveBtn.textContent;
+  saveBtn.textContent = '💾 Saving...';
+  saveBtn.disabled = true;
+
+  try {
+    const response = await fetch('/jobs/{{ job.id }}/contract/save-inline', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json'
+      },
+      body: JSON.stringify({
+        introduction_text: intro,
+        scope_of_work: scope,
+        payment_terms: payment,
+        terms_and_conditions: terms
+      })
+    });
+
+    const result = await response.json();
+
+    if (result.success) {
+      saveBtn.textContent = '✅ Saved!';
+      setTimeout(() => {
+        saveBtn.textContent = originalText;
+        saveBtn.disabled = false;
+      }, 2000);
+
+      // Show success message
+      showNotification('Contract saved successfully!', 'success');
+    } else {
+      throw new Error(result.message || 'Failed to save contract');
+    }
+  } catch (error) {
+    saveBtn.textContent = '❌ Error';
+    setTimeout(() => {
+      saveBtn.textContent = originalText;
+      saveBtn.disabled = false;
+    }, 2000);
+
+    showNotification('Error saving contract: ' + error.message, 'error');
+  }
+}
+
+// Show notification
+function showNotification(message, type) {
+  const notification = document.createElement('div');
+  notification.className = `notification notification-${type}`;
+  notification.textContent = message;
+  notification.style.cssText = `
+    position: fixed;
+    top: 20px;
+    right: 20px;
+    padding: 1rem 1.5rem;
+    background: ${type === 'success' ? '#48bb78' : '#f56565'};
+    color: white;
+    border-radius: 6px;
+    box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+    z-index: 10000;
+    animation: slideIn 0.3s ease;
+  `;
+  document.body.appendChild(notification);
+
+  setTimeout(() => {
+    notification.style.animation = 'slideOut 0.3s ease';
+    setTimeout(() => notification.remove(), 300);
+  }, 3000);
+}
+
+// Tab switching
+function switchTab(tabName) {
+  // Hide all tabs
+  document.querySelectorAll('.tab-content').forEach(tab => {
+    tab.style.display = 'none';
+  });
+  document.querySelectorAll('.tab-btn').forEach(btn => {
+    btn.classList.remove('active');
+  });
+
+  // Show selected tab
+  if (tabName === 'contract-text') {
+    document.getElementById('contract-text-tab').style.display = 'block';
+    event.target.classList.add('active');
+  } else if (tabName === 'locations-tasks') {
+    document.getElementById('locations-tasks-tab').style.display = 'block';
+    event.target.classList.add('active');
+  }
+}
+
+// Preview contract in new window
+function previewContract() {
+  const intro = document.getElementById('introduction_text').value;
+  const scope = document.getElementById('scope_of_work').value;
+  const payment = document.getElementById('payment_terms').value;
+  const terms = document.getElementById('terms_and_conditions').value;
+
+  const previewWindow = window.open('', 'Contract Preview', 'width=900,height=800');
+  previewWindow.document.write(`
+    <!DOCTYPE html>
+    <html>
+    <head>
+      <title>Contract Preview</title>
+      <style>
+        body { font-family: 'Courier New', monospace; padding: 40px; max-width: 900px; margin: 0 auto; }
+        pre { white-space: pre-wrap; word-wrap: break-word; line-height: 1.5; }
+        h2 { color: #2c3e50; border-bottom: 2px solid #3498db; padding-bottom: 10px; margin-top: 30px; }
+      </style>
+    </head>
+    <body>
+      <h2>Introduction</h2>
+      <pre>${intro || '(No introduction text)'}</pre>
+
+      <h2>Scope of Work</h2>
+      <pre>${scope || '(No scope defined)'}</pre>
+
+      <h2>Payment Terms</h2>
+      <pre>${payment || '(No payment terms)'}</pre>
+
+      <h2>Terms & Conditions</h2>
+      <pre>${terms || '(No terms & conditions)'}</pre>
+    </body>
+    </html>
+  `);
+}
+
 function toggleForm(formId) {
   const form = document.getElementById(formId);
   form.style.display = form.style.display === 'none' ? 'block' : 'none';
@@ -212,6 +401,109 @@ document.getElementById('task-modal').addEventListener('click', function(e) {
 </script>
 
 <style>
+/* Tabs */
+.edit-tabs {
+  display: flex;
+  gap: 0;
+  margin-bottom: 2rem;
+  border-bottom: 2px solid #e2e8f0;
+}
+
+.tab-btn {
+  background: none;
+  border: none;
+  padding: 1rem 2rem;
+  font-size: 1rem;
+  font-weight: 500;
+  color: #718096;
+  cursor: pointer;
+  border-bottom: 3px solid transparent;
+  transition: all 0.2s;
+}
+
+.tab-btn:hover {
+  color: #2d3748;
+  background: #f7fafc;
+}
+
+.tab-btn.active {
+  color: #667eea;
+  border-bottom-color: #667eea;
+  background: white;
+}
+
+.tab-content {
+  display: none;
+}
+
+.tab-content.active {
+  display: block;
+}
+
+/* Contract Text Editor */
+.contract-editor {
+  background: white;
+  border: 1px solid #e2e8f0;
+  border-radius: 8px;
+  padding: 2rem;
+}
+
+.editor-section {
+  margin-bottom: 2rem;
+  padding-bottom: 2rem;
+  border-bottom: 1px solid #e2e8f0;
+}
+
+.editor-section:last-of-type {
+  border-bottom: none;
+}
+
+.editor-section label {
+  display: block;
+  margin-bottom: 0.75rem;
+}
+
+.editor-section h3 {
+  margin: 0 0 0.5rem 0;
+  color: #2d3748;
+  font-size: 1.25rem;
+}
+
+.help-text {
+  display: block;
+  font-size: 0.875rem;
+  color: #718096;
+  font-weight: normal;
+  margin-top: 0.25rem;
+}
+
+.contract-textarea {
+  width: 100%;
+  padding: 1rem;
+  font-family: 'Courier New', Courier, monospace;
+  font-size: 0.9rem;
+  line-height: 1.6;
+  border: 2px solid #cbd5e0;
+  border-radius: 6px;
+  resize: vertical;
+  transition: border-color 0.2s;
+}
+
+.contract-textarea:focus {
+  outline: none;
+  border-color: #667eea;
+  box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
+}
+
+.editor-actions {
+  display: flex;
+  gap: 1rem;
+  justify-content: flex-end;
+  margin-top: 2rem;
+  padding-top: 2rem;
+  border-top: 2px solid #e2e8f0;
+}
+
 .contract-info {
   background: #f8f9fa;
   padding: 1.5rem;

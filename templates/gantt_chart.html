@@ -1,35 +1,37 @@
 {% extends "base.html" %}
 {% block content %}
 
-<div class="container">
-  <div class="page-header">
-    <h1>Project Gantt Chart</h1>
-    <div class="header-actions">
-      <a href="{{ url_for('calendar_view', job_id=job_id_filter) if job_id_filter else url_for('calendar_view') }}" class="btn btn--primary">📅 Calendar View</a>
-      <a href="{{ url_for('task_list', job_id=job_id_filter) if job_id_filter else url_for('task_list') }}" class="btn btn--sm">← Task List</a>
+<div class="modern-gantt-wrapper">
+  <!-- Top Bar -->
+  <div class="top-bar">
+    <div class="top-bar-left">
+      <h1 class="page-title">Gantt Chart</h1>
+      {% if filtered_job %}
+      <div class="filter-chip">
+        <span class="filter-icon">📁</span>
+        <span class="filter-text">{{ filtered_job.client_name }}</span>
+        <a href="{{ url_for('gantt_chart') }}" class="filter-clear" title="Clear filter">×</a>
+      </div>
+      {% endif %}
+    </div>
+    <div class="top-bar-right">
+      <a href="{{ url_for('calendar_view', job_id=job_id_filter) if job_id_filter else url_for('calendar_view') }}" class="btn-secondary">
+        <span class="btn-icon">📅</span>
+        <span>Calendar</span>
+      </a>
+      <a href="{{ url_for('task_list', job_id=job_id_filter) if job_id_filter else url_for('task_list') }}" class="btn-secondary">
+        <span class="btn-icon">📋</span>
+        <span>Tasks</span>
+      </a>
     </div>
   </div>
 
-  <!-- Job Filter Notice -->
-  {% if filtered_job %}
-  <div style="background: #e8f4f8; border-left: 4px solid #3498db; padding: 1rem 1.5rem; border-radius: 4px; margin-bottom: 1.5rem; display: flex; justify-content: space-between; align-items: center;">
-    <div>
-      <strong>📊 Viewing Gantt chart for:</strong> {{ filtered_job.client_name }} - {{ filtered_job.project_type }}
-    </div>
-    <div style="display: flex; gap: 10px;">
-      <a href="{{ url_for('job_detail', job_id=filtered_job.id) }}" class="btn btn--sm">← Back to Job</a>
-      <a href="{{ url_for('gantt_chart') }}" class="btn btn--sm">View All Jobs</a>
-    </div>
-  </div>
-  {% endif %}
-
-  <!-- Trade Category Legend -->
-  <div class="trade-legend">
-    <h3>Trade Categories</h3>
+  <!-- Legend Bar -->
+  <div class="legend-bar">
     <div class="legend-items">
       {% for trade in trade_categories %}
       <div class="legend-item">
-        <div class="legend-color" style="background-color: {{ trade.color }};"></div>
+        <span class="legend-dot" style="background: {{ trade.color }};"></span>
         <span class="legend-icon">{{ trade.icon }}</span>
         <span class="legend-label">{{ trade.name }}</span>
       </div>
@@ -37,637 +39,1008 @@
     </div>
   </div>
 
-  <!-- Gantt Chart Container -->
-  <div class="gantt-container">
-    {% for project in project_data %}
-    <div class="project-section">
-      <div class="project-header">
-        <h2>{{ project.job.project_type }} - {{ project.job.client_name }}</h2>
+  <!-- Projects -->
+  {% for project in project_data %}
+  <div class="project-card">
+    <div class="project-header">
+      <div class="project-info">
+        <h2 class="project-title">{{ project.job.client_name }}</h2>
         <div class="project-meta">
+          <span class="meta-item">{{ project.job.project_type }}</span>
           {% if project.project_start and project.project_end %}
-          <span class="date-range">
-            {{ project.project_start.strftime('%m/%d/%Y') }} - {{ project.project_end.strftime('%m/%d/%Y') }}
-          </span>
-          <span class="duration">{{ project.duration }} days</span>
-          {% else %}
-          <span class="unscheduled">Not fully scheduled</span>
+          <span class="meta-divider">·</span>
+          <span class="meta-item">{{ project.project_start.strftime('%b %d') }} - {{ project.project_end.strftime('%b %d, %Y') }}</span>
+          <span class="meta-divider">·</span>
+          <span class="meta-item">{{ project.duration }} days</span>
           {% endif %}
         </div>
       </div>
-
-      <!-- Timeline Header -->
       {% if project.project_start and project.project_end %}
-      <div class="timeline-container">
-        <div class="timeline-header">
-          {% set timeline_days = (project.project_end - project.project_start).days + 1 %}
-          {% for day_offset in range(timeline_days) %}
-          {% set current_date = project.project_start + timedelta(days=day_offset) %}
-          <div class="timeline-day">
-            <div class="day-number">{{ current_date.strftime('%d') }}</div>
-            <div class="day-month">{{ current_date.strftime('%b') }}</div>
-          </div>
-          {% endfor %}
+      <div class="project-stats">
+        <div class="stat-pill">
+          <span class="stat-value">{{ project.tasks|length }}</span>
+          <span class="stat-label">tasks</span>
         </div>
-
-        <!-- Task Rows -->
-        <div class="tasks-timeline">
-          {% for task in project.tasks %}
-          {% if task.scheduled_start_date and task.scheduled_end_date %}
-          {# Determine task bar color based on trade category #}
-          {% if task.trade_category %}
-            {% set task_color = task.trade_category.color %}
-            {% set task_icon = task.trade_category.icon %}
-            {% set task_trade = task.trade_category.name %}
-          {% else %}
-            {% set task_color = '#808080' %}
-            {% set task_icon = '🔧' %}
-            {% set task_trade = 'General' %}
-          {% endif %}
-
-          <div class="task-row">
-            <div class="task-info">
-              <div class="task-name">
-                <span class="trade-icon" style="margin-right: 6px;">{{ task_icon }}</span>
-                {{ task.task_name }}
-                {% if task.is_critical_path %}
-                <span class="critical-indicator">🔥</span>
-                {% endif %}
-              </div>
-              <div class="task-details">
-                <span class="trade-label" style="background: {{ task_color }}; color: white; padding: 2px 6px; border-radius: 3px; font-size: 0.7rem; margin-right: 6px;">{{ task_trade }}</span>
-                {% if task.location %}{{ task.location.name }} • {% endif %}
-                {{ task.estimated_days or 1 }} day{{ 's' if (task.estimated_days or 1) != 1 else '' }}
-                {% if task.assigned_to %} • {{ task.assigned_to }}{% endif %}
-              </div>
-            </div>
-            
-            <div class="task-timeline">
-              {% set task_start_offset = (task.scheduled_start_date - project.project_start).days %}
-              {% set task_duration = (task.scheduled_end_date - task.scheduled_start_date).days + 1 %}
-              
-              <!-- Empty space before task starts -->
-              {% for i in range(task_start_offset) %}
-              <div class="timeline-cell empty"></div>
-              {% endfor %}
-              
-              <!-- Task duration cells -->
-              {% for i in range(task_duration) %}
-              <div class="timeline-cell task-cell {{ 'critical' if task.is_critical_path else '' }} {{ task.status }}"
-                   style="background: {{ task_color }}; border-color: {{ task_color }}; {% if task.is_critical_path %}border: 2px solid #dc3545; box-shadow: 0 0 8px rgba(220, 53, 69, 0.5);{% endif %}">
-                {% if i == 0 %}
-                <span class="task-start" style="color: white; font-weight: 600;">{{ task.task_name[:10] }}{% if task.task_name|length > 10 %}...{% endif %}</span>
-                {% endif %}
-              </div>
-              {% endfor %}
-              
-              <!-- Empty space after task ends -->
-              {% set remaining_days = timeline_days - task_start_offset - task_duration %}
-              {% for i in range(remaining_days) %}
-              <div class="timeline-cell empty"></div>
-              {% endfor %}
-            </div>
-          </div>
-          {% endif %}
-          {% endfor %}
-          
-          <!-- Unscheduled tasks -->
-          {% set unscheduled = project.tasks | rejectattr('scheduled_start_date') | list %}
-          {% if unscheduled %}
-          <div class="unscheduled-section">
-            <h4>⚠️ Unscheduled Tasks</h4>
-            {% for task in unscheduled %}
-            <div class="unscheduled-task">
-              <span class="task-name">{{ task.task_name }}</span>
-              <span class="task-duration">{{ task.estimated_days or 1 }} day{{ 's' if (task.estimated_days or 1) != 1 else '' }}</span>
-              {% if task.is_critical_path %}
-              <span class="critical-badge">CRITICAL</span>
-              {% endif %}
-            </div>
-            {% endfor %}
-          </div>
-          {% endif %}
+        <div class="stat-pill stat-pill-critical">
+          <span class="stat-value">{{ project.tasks|selectattr('is_critical_path')|list|length }}</span>
+          <span class="stat-label">critical</span>
         </div>
-      </div>
-      {% else %}
-      <div class="no-timeline">
-        <p>Project timeline cannot be displayed - tasks need to be scheduled.</p>
-        <a href="{{ url_for('calendar_view') }}" class="btn btn--sm">Schedule Tasks</a>
       </div>
       {% endif %}
     </div>
-    {% endfor %}
 
-    {% if not project_data %}
-    <div class="empty-state">
-      <h2>No Projects with Tasks</h2>
-      <p>Create jobs and add tasks using the Contract Generator to see Gantt charts.</p>
-      <div class="empty-actions">
-        <a href="{{ url_for('new_job') }}" class="btn btn--primary">Create New Job</a>
-        <a href="{{ url_for('task_templates') }}" class="btn btn--sm">Manage Templates</a>
+    {% if project.project_start and project.project_end %}
+    <!-- Timeline Container -->
+    <div class="timeline-wrapper">
+      <!-- Sticky Task Names Column -->
+      <div class="tasks-column">
+        <div class="tasks-column-header">
+          <span>Task</span>
+        </div>
+        <div class="tasks-column-body">
+          {% for task in project.tasks %}
+          {% if task.scheduled_start_date and task.scheduled_end_date %}
+          <div class="task-name-row {{ 'is-critical' if task.is_critical_path else '' }}">
+            <div class="task-name-content">
+              {% if task.trade_category %}
+              <span class="task-icon">{{ task.trade_category.icon }}</span>
+              {% else %}
+              <span class="task-icon">🔧</span>
+              {% endif %}
+              <span class="task-name-text">{{ task.task_name }}</span>
+              {% if task.is_critical_path %}
+              <span class="critical-indicator">!</span>
+              {% endif %}
+            </div>
+            <div class="task-name-meta">
+              {% if task.location %}
+              <span>{{ task.location.name }}</span>
+              <span class="meta-divider">·</span>
+              {% endif %}
+              <span>{{ (task.scheduled_end_date - task.scheduled_start_date).days + 1 }}d</span>
+            </div>
+          </div>
+          {% endif %}
+          {% endfor %}
+        </div>
+      </div>
+
+      <!-- Timeline Grid -->
+      <div class="timeline-scroll">
+        <div class="timeline-grid">
+          <!-- Timeline Header -->
+          <div class="timeline-header">
+            {% set timeline_days = (project.project_end - project.project_start).days + 1 %}
+            {% for day_offset in range(timeline_days) %}
+            {% set current_date = project.project_start + timedelta(days=day_offset) %}
+            {% set is_weekend = current_date.weekday() >= 5 %}
+            {% set day_of_week = current_date.strftime('%a') %}
+            <div class="timeline-day {{ 'is-weekend' if is_weekend else '' }}">
+              <div class="day-of-week">{{ day_of_week }}</div>
+              <div class="day-number">{{ current_date.strftime('%d') }}</div>
+              <div class="day-month">{{ current_date.strftime('%b') }}</div>
+            </div>
+            {% endfor %}
+          </div>
+
+          <!-- Task Bars -->
+          <div class="timeline-body">
+            {% for task in project.tasks %}
+            {% if task.scheduled_start_date and task.scheduled_end_date %}
+            {% set task_start_offset = (task.scheduled_start_date - project.project_start).days %}
+            {% set task_duration = (task.scheduled_end_date - task.scheduled_start_date).days + 1 %}
+
+            {% if task.trade_category %}
+              {% set task_color = task.trade_category.color %}
+            {% else %}
+              {% set task_color = '#8B5CF6' %}
+            {% endif %}
+
+            <div class="task-bar-row {{ 'is-critical' if task.is_critical_path else '' }}">
+              {% for day in range(timeline_days) %}
+              {% set is_weekend = (project.project_start + timedelta(days=day)).weekday() >= 5 %}
+              {% set current_cell_date = (project.project_start + timedelta(days=day)).strftime('%Y-%m-%d') %}
+              <div class="timeline-cell {{ 'is-weekend' if is_weekend else '' }}"
+                   data-date="{{ current_cell_date }}"
+                   ondrop="drop(event)"
+                   ondragover="allowDrop(event)">
+                {% if day >= task_start_offset and day < task_start_offset + task_duration %}
+                {% set progress_percent = 0 %}
+                {% if task.status == 'in_progress' %}
+                  {% set progress_percent = 50 %}
+                {% elif task.status == 'completed' %}
+                  {% set progress_percent = 100 %}
+                {% endif %}
+
+                {% if day == task_start_offset %}
+                {% set pos_item = task.get_pos_line_item() %}
+                <div class="task-bar status-{{ task.status or 'not_started' }} {{ 'is-critical' if task.is_critical_path else '' }}"
+                     draggable="true"
+                     ondragstart="dragTaskBar(event)"
+                     ondragend="dragEndTaskBar(event)"
+                     data-task-id="{{ task.id }}"
+                     data-estimated-days="{{ task_duration }}"
+                     style="--bar-color: {{ task_color }}; --duration: {{ task_duration }}; --progress: {{ progress_percent }}%;"
+                     title="{{ task.task_name }}{% if pos_item %}&#10;POS: {{ pos_item.get('description', '') }}&#10;Qty: {{ pos_item.get('quantity', '') }} {{ pos_item.get('unit', '') }}&#10;Cost: ${{ pos_item.get('total_price', 0) }}{% endif %}">
+                  <div class="task-bar-progress" style="width: {{ progress_percent }}%;"></div>
+                  <div class="task-bar-content">
+                    <span class="task-bar-label">{{ task.task_name }}</span>
+                    {% if pos_item %}
+                    <span class="pos-badge" title="Linked to POS Quote">💰</span>
+                    {% endif %}
+                  </div>
+                </div>
+                {% endif %}
+                {% endif %}
+              </div>
+              {% endfor %}
+            </div>
+            {% endif %}
+            {% endfor %}
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Unscheduled Tasks -->
+    {% set unscheduled = project.tasks | rejectattr('scheduled_start_date') | list %}
+    {% if unscheduled %}
+    <div class="unscheduled-section">
+      <div class="unscheduled-header">
+        <span class="unscheduled-icon">⚠️</span>
+        <span class="unscheduled-title">Unscheduled Tasks</span>
+        <span class="unscheduled-count">{{ unscheduled|length }}</span>
+      </div>
+      <div class="unscheduled-list">
+        {% for task in unscheduled %}
+        <div class="unscheduled-task {{ 'is-critical' if task.is_critical_path else '' }}"
+             draggable="true"
+             ondragstart="drag(event)"
+             ondragend="dragEnd(event)"
+             data-task-id="{{ task.id }}"
+             data-estimated-days="{{ task.estimated_days or 1 }}">
+          <span class="unscheduled-task-name">{{ task.task_name }}</span>
+          <div class="unscheduled-task-meta">
+            <span>{{ task.estimated_days or 1 }}d</span>
+            {% if task.is_critical_path %}
+            <span class="critical-badge">Critical</span>
+            {% endif %}
+          </div>
+        </div>
+        {% endfor %}
       </div>
     </div>
     {% endif %}
-  </div>
 
-  <!-- Legend -->
-  <div class="gantt-legend">
-    <h3>Legend</h3>
-    <div class="legend-items">
-      <div class="legend-item">
-        <div class="legend-color not_started"></div>
-        <span>Not Started</span>
-      </div>
-      <div class="legend-item">
-        <div class="legend-color in_progress"></div>
-        <span>In Progress</span>
-      </div>
-      <div class="legend-item">
-        <div class="legend-color completed"></div>
-        <span>Completed</span>
-      </div>
-      <div class="legend-item">
-        <div class="legend-color critical"></div>
-        <span>Critical Path</span>
-      </div>
+    {% else %}
+    <!-- No Timeline -->
+    <div class="no-timeline">
+      <div class="no-timeline-icon">📅</div>
+      <p class="no-timeline-text">Tasks need to be scheduled to display timeline</p>
+      <a href="{{ url_for('calendar_view', job_id=project.job.id) }}" class="btn-secondary">
+        <span>Schedule Tasks</span>
+      </a>
+    </div>
+    {% endif %}
+  </div>
+  {% endfor %}
+
+  <!-- Empty State -->
+  {% if not project_data %}
+  <div class="empty-state">
+    <div class="empty-icon">📊</div>
+    <h2 class="empty-title">No Projects to Display</h2>
+    <p class="empty-text">Create jobs and add tasks to see Gantt charts</p>
+    <div class="empty-actions">
+      <a href="{{ url_for('new_job') }}" class="btn-primary">Create Job</a>
+      <a href="{{ url_for('task_list') }}" class="btn-secondary">View Tasks</a>
     </div>
   </div>
+  {% endif %}
 </div>
 
 <style>
-/* Trade Legend Styles */
-.trade-legend {
-  background: white;
-  border: 1px solid #e2e8f0;
-  border-radius: 8px;
-  padding: 1.5rem;
-  margin-bottom: 2rem;
+/* Modern SaaS Gantt Chart Styling - Linear/Notion/Monday inspired */
+
+:root {
+  --bg-primary: #FAFAFA;
+  --bg-secondary: #FFFFFF;
+  --bg-tertiary: #F5F5F5;
+  --bg-weekend: #F9FAFB;
+  --border-primary: #E5E7EB;
+  --border-secondary: #F3F4F6;
+  --text-primary: #111827;
+  --text-secondary: #6B7280;
+  --text-tertiary: #9CA3AF;
+  --accent-primary: #3B82F6;
+  --accent-hover: #2563EB;
+  --critical-color: #EF4444;
+  --success-color: #10B981;
+  --warning-color: #F59E0B;
+  --progress-bg: rgba(255, 255, 255, 0.3);
+  --shadow-sm: 0 1px 2px 0 rgba(0, 0, 0, 0.05);
+  --shadow-md: 0 4px 6px -1px rgba(0, 0, 0, 0.08);
+  --shadow-lg: 0 10px 15px -3px rgba(0, 0, 0, 0.08);
+  --radius-sm: 4px;
+  --radius-md: 6px;
+  --radius-lg: 8px;
+  --spacing-unit: 4px;
 }
 
-.trade-legend h3 {
-  margin: 0 0 1.5rem 0;
-  color: #2d3748;
-  font-size: 1.1rem;
-  font-weight: 600;
+.modern-gantt-wrapper {
+  background: var(--bg-primary);
+  min-height: 100vh;
+  padding: calc(var(--spacing-unit) * 6);
 }
 
-.legend-tiers {
-  display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
-  gap: 1.5rem;
+/* Top Bar (reuse from calendar) */
+.top-bar {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: calc(var(--spacing-unit) * 6);
 }
 
-.legend-tier {
-  border: 1px solid #e2e8f0;
-  border-radius: 6px;
-  overflow: hidden;
-}
-
-.tier-header {
+.top-bar-left {
   display: flex;
   align-items: center;
-  gap: 8px;
-  padding: 10px 12px;
+  gap: calc(var(--spacing-unit) * 3);
+}
+
+.page-title {
+  font-size: 24px;
   font-weight: 600;
-  font-size: 0.875rem;
-  border-bottom: 2px solid;
+  color: var(--text-primary);
+  margin: 0;
+  letter-spacing: -0.02em;
 }
 
-.tier-header.tier-1 {
-  background: #fff5f5;
-  border-bottom-color: #fc8181;
-  color: #c53030;
+.filter-chip {
+  display: inline-flex;
+  align-items: center;
+  gap: calc(var(--spacing-unit) * 2);
+  padding: calc(var(--spacing-unit) * 1.5) calc(var(--spacing-unit) * 3);
+  background: var(--bg-secondary);
+  border: 1px solid var(--border-primary);
+  border-radius: calc(var(--radius-lg) * 2);
+  font-size: 13px;
+  color: var(--text-secondary);
 }
 
-.tier-header.tier-2 {
-  background: #fffaf0;
-  border-bottom-color: #f6ad55;
-  color: #c05621;
+.filter-icon {
+  font-size: 14px;
 }
 
-.tier-header.tier-3 {
-  background: #fefcbf;
-  border-bottom-color: #f6e05e;
-  color: #744210;
+.filter-clear {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 16px;
+  height: 16px;
+  color: var(--text-tertiary);
+  text-decoration: none;
+  font-size: 18px;
+  line-height: 1;
+  margin-left: calc(var(--spacing-unit) * 1);
+  transition: color 0.15s;
 }
 
-.tier-header.tier-4 {
-  background: #f0fff4;
-  border-bottom-color: #68d391;
-  color: #22543d;
+.filter-clear:hover {
+  color: var(--text-primary);
 }
 
-.tier-icon {
-  font-size: 1rem;
+.top-bar-right {
+  display: flex;
+  gap: calc(var(--spacing-unit) * 2);
 }
 
-.tier-title {
-  flex: 1;
-  font-size: 0.8rem;
+.btn-secondary, .btn-primary {
+  display: inline-flex;
+  align-items: center;
+  gap: calc(var(--spacing-unit) * 2);
+  padding: calc(var(--spacing-unit) * 2) calc(var(--spacing-unit) * 4);
+  background: var(--bg-secondary);
+  border: 1px solid var(--border-primary);
+  border-radius: var(--radius-md);
+  font-size: 14px;
+  font-weight: 500;
+  color: var(--text-primary);
+  text-decoration: none;
+  transition: all 0.15s;
+  cursor: pointer;
 }
 
-.tier-items {
+.btn-primary {
+  background: var(--accent-primary);
+  border-color: var(--accent-primary);
+  color: white;
+}
+
+.btn-secondary:hover {
+  background: var(--bg-tertiary);
+  border-color: var(--border-primary);
+}
+
+.btn-primary:hover {
+  background: var(--accent-hover);
+  border-color: var(--accent-hover);
+}
+
+.btn-icon {
+  font-size: 16px;
+  line-height: 1;
+}
+
+/* Legend Bar */
+.legend-bar {
+  background: var(--bg-secondary);
+  border: 1px solid var(--border-primary);
+  border-radius: var(--radius-lg);
+  padding: calc(var(--spacing-unit) * 4);
+  margin-bottom: calc(var(--spacing-unit) * 6);
+}
+
+.legend-items {
   display: flex;
   flex-wrap: wrap;
-  gap: 8px;
-  padding: 12px;
-  background: #fafafa;
+  gap: calc(var(--spacing-unit) * 4);
 }
 
 .legend-item {
   display: flex;
   align-items: center;
-  gap: 6px;
-  padding: 6px 10px;
-  background: white;
-  border-radius: 4px;
-  font-size: 0.8rem;
-  border: 1px solid #e2e8f0;
+  gap: calc(var(--spacing-unit) * 2);
 }
 
-.legend-color {
-  width: 16px;
-  height: 16px;
-  border-radius: 3px;
-  border: 1px solid rgba(0, 0, 0, 0.15);
+.legend-dot {
+  width: 10px;
+  height: 10px;
+  border-radius: 50%;
+  flex-shrink: 0;
 }
 
 .legend-icon {
-  font-size: 0.9rem;
+  font-size: 14px;
+  line-height: 1;
 }
 
 .legend-label {
-  color: #2d3748;
-  font-weight: 500;
+  font-size: 13px;
+  color: var(--text-secondary);
+  font-weight: 400;
 }
 
-.gantt-container {
-  display: flex;
-  flex-direction: column;
-  gap: 3rem;
-  margin: 2rem 0;
-}
-
-.project-section {
-  background: white;
-  border: 1px solid #e2e8f0;
-  border-radius: 8px;
-  padding: 1.5rem;
+/* Project Card */
+.project-card {
+  background: var(--bg-secondary);
+  border: 1px solid var(--border-primary);
+  border-radius: var(--radius-lg);
+  margin-bottom: calc(var(--spacing-unit) * 6);
+  overflow: hidden;
 }
 
 .project-header {
   display: flex;
   justify-content: space-between;
-  align-items: center;
-  margin-bottom: 2rem;
-  padding-bottom: 1rem;
-  border-bottom: 2px solid #e2e8f0;
+  align-items: flex-start;
+  padding: calc(var(--spacing-unit) * 6);
+  border-bottom: 1px solid var(--border-secondary);
 }
 
-.project-header h2 {
-  margin: 0;
-  color: #2d3748;
+.project-title {
+  font-size: 18px;
+  font-weight: 600;
+  color: var(--text-primary);
+  margin: 0 0 calc(var(--spacing-unit) * 2) 0;
+  letter-spacing: -0.01em;
 }
 
 .project-meta {
   display: flex;
-  gap: 1rem;
   align-items: center;
-  color: #718096;
-  font-size: 0.9rem;
+  gap: calc(var(--spacing-unit) * 2);
+  font-size: 13px;
+  color: var(--text-tertiary);
 }
 
-.date-range {
-  background: #edf2f7;
-  padding: 0.25rem 0.75rem;
-  border-radius: 12px;
+.meta-divider {
+  color: var(--border-primary);
+}
+
+.project-stats {
+  display: flex;
+  gap: calc(var(--spacing-unit) * 2);
+}
+
+.stat-pill {
+  display: inline-flex;
+  align-items: center;
+  gap: calc(var(--spacing-unit) * 1.5);
+  padding: calc(var(--spacing-unit) * 2) calc(var(--spacing-unit) * 3);
+  background: var(--bg-tertiary);
+  border-radius: calc(var(--radius-lg) * 2);
+  font-size: 12px;
+}
+
+.stat-pill-critical {
+  background: #FEF2F2;
+  color: var(--critical-color);
+}
+
+.stat-value {
+  font-weight: 600;
+}
+
+.stat-label {
+  color: var(--text-tertiary);
+}
+
+/* Timeline Wrapper */
+.timeline-wrapper {
+  display: flex;
+  overflow: hidden;
+}
+
+/* Sticky Tasks Column */
+.tasks-column {
+  flex-shrink: 0;
+  width: 280px;
+  border-right: 1px solid var(--border-primary);
+  background: var(--bg-tertiary);
+}
+
+.tasks-column-header {
+  position: sticky;
+  top: 0;
+  z-index: 20;
+  padding: calc(var(--spacing-unit) * 3) calc(var(--spacing-unit) * 4);
+  background: var(--bg-tertiary);
+  border-bottom: 1px solid var(--border-primary);
+  font-size: 11px;
+  font-weight: 600;
+  color: var(--text-secondary);
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+}
+
+.tasks-column-body {
+  background: var(--bg-secondary);
+}
+
+.task-name-row {
+  padding: calc(var(--spacing-unit) * 4);
+  border-bottom: 1px solid var(--border-secondary);
+  min-height: 56px;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  gap: calc(var(--spacing-unit) * 1.5);
+  transition: background 0.15s;
+}
+
+.task-name-row:hover {
+  background: var(--bg-tertiary);
+}
+
+.task-name-row.is-critical {
+  background: #FFFBEB;
+  border-left: 3px solid var(--critical-color);
+}
+
+.task-name-content {
+  display: flex;
+  align-items: center;
+  gap: calc(var(--spacing-unit) * 2);
+}
+
+.task-icon {
+  font-size: 14px;
+  line-height: 1;
+  flex-shrink: 0;
+}
+
+.task-name-text {
+  font-size: 13px;
   font-weight: 500;
+  color: var(--text-primary);
+  line-height: 1.4;
 }
 
-.duration {
-  background: #bee3f8;
-  color: #2c5282;
-  padding: 0.25rem 0.75rem;
-  border-radius: 12px;
-  font-weight: 500;
+.critical-indicator {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 16px;
+  height: 16px;
+  background: var(--critical-color);
+  color: white;
+  border-radius: 50%;
+  font-size: 10px;
+  font-weight: 700;
+  margin-left: auto;
 }
 
-.unscheduled {
-  background: #fed7d7;
-  color: #c53030;
-  padding: 0.25rem 0.75rem;
-  border-radius: 12px;
-  font-weight: 500;
+.task-name-meta {
+  display: flex;
+  align-items: center;
+  gap: calc(var(--spacing-unit) * 1.5);
+  font-size: 12px;
+  color: var(--text-tertiary);
 }
 
-.timeline-container {
+/* Timeline Scroll */
+.timeline-scroll {
+  flex: 1;
   overflow-x: auto;
+  overflow-y: hidden;
+}
+
+.timeline-grid {
+  min-width: max-content;
 }
 
 .timeline-header {
-  display: flex;
-  background: #2d3748;
-  color: white;
-  border-radius: 4px 4px 0 0;
   position: sticky;
   top: 0;
-  z-index: 10;
+  z-index: 15;
+  display: flex;
+  background: var(--bg-tertiary);
+  border-bottom: 1px solid var(--border-primary);
 }
 
 .timeline-day {
   min-width: 40px;
-  padding: 0.5rem;
+  padding: calc(var(--spacing-unit) * 3);
   text-align: center;
-  border-right: 1px solid #4a5568;
-  font-size: 0.75rem;
+  border-right: 1px solid var(--border-secondary);
+  font-size: 11px;
 }
 
-.timeline-day:last-child {
-  border-right: none;
+.timeline-day.is-weekend {
+  background: var(--bg-weekend);
+}
+
+.day-of-week {
+  font-size: 10px;
+  font-weight: 600;
+  color: var(--text-secondary);
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  margin-bottom: calc(var(--spacing-unit) * 1);
+}
+
+.timeline-day.is-weekend .day-of-week {
+  color: var(--accent-primary);
 }
 
 .day-number {
   font-weight: 600;
-  margin-bottom: 0.125rem;
+  color: var(--text-primary);
+  margin-bottom: calc(var(--spacing-unit) * 0.5);
 }
 
 .day-month {
-  font-size: 0.7rem;
-  opacity: 0.8;
+  font-size: 10px;
+  color: var(--text-tertiary);
+  text-transform: uppercase;
+  letter-spacing: 0.03em;
 }
 
-.tasks-timeline {
-  background: #f7fafc;
-  border: 1px solid #e2e8f0;
-  border-top: none;
-  border-radius: 0 0 4px 4px;
+/* Timeline Body */
+.timeline-body {
+  background: var(--bg-secondary);
 }
 
-.task-row {
+.task-bar-row {
   display: flex;
+  border-bottom: 1px solid var(--border-secondary);
+  min-height: 56px;
   align-items: center;
-  border-bottom: 1px solid #e2e8f0;
-  min-height: 60px;
 }
 
-.task-row:last-child {
-  border-bottom: none;
-}
-
-.task-info {
-  min-width: 250px;
-  padding: 1rem;
-  background: white;
-  border-right: 1px solid #e2e8f0;
-}
-
-.task-name {
-  font-weight: 600;
-  color: #2d3748;
-  margin-bottom: 0.25rem;
-  display: flex;
-  align-items: center;
-  gap: 0.5rem;
-}
-
-.task-details {
-  font-size: 0.8rem;
-  color: #718096;
-}
-
-.critical-indicator {
-  font-size: 0.8rem;
-}
-
-.task-timeline {
-  display: flex;
-  flex: 1;
-  min-height: 60px;
+.task-bar-row.is-critical {
+  background: #FFFBEB;
 }
 
 .timeline-cell {
   min-width: 40px;
-  border-right: 1px solid #e2e8f0;
+  height: 56px;
+  border-right: 1px solid var(--border-secondary);
+  position: relative;
+  transition: background 0.15s;
+}
+
+.timeline-cell.is-weekend {
+  background: var(--bg-weekend);
+}
+
+.timeline-cell.drag-over {
+  background: #DBEAFE;
+  border-color: var(--accent-primary);
+}
+
+/* Task Bars */
+.task-bar {
+  position: absolute;
+  top: 12px;
+  left: 4px;
+  right: 4px;
+  height: 32px;
+  background: var(--bar-color);
+  border-radius: var(--radius-sm);
+  overflow: hidden;
+  width: calc(var(--duration) * 40px - 8px);
   display: flex;
   align-items: center;
-  justify-content: center;
+  filter: brightness(1.1) saturate(0.9);
+  transition: all 0.15s;
+  box-shadow: var(--shadow-sm);
+  cursor: grab;
+}
+
+.task-bar:active {
+  cursor: grabbing;
+}
+
+.task-bar.dragging {
+  opacity: 0.4;
+}
+
+.task-bar:hover {
+  filter: brightness(1.05) saturate(1);
+  box-shadow: var(--shadow-md);
+  transform: translateY(-1px);
+  z-index: 10;
+}
+
+.task-bar.is-critical {
+  border: 2px solid var(--critical-color);
+}
+
+.task-bar-progress {
+  position: absolute;
+  top: 0;
+  left: 0;
+  bottom: 0;
+  background: var(--progress-bg);
+  border-right: 1px solid rgba(255, 255, 255, 0.4);
+  transition: width 0.3s;
+}
+
+.task-bar.status-completed {
+  filter: brightness(1.2) saturate(0.7);
+}
+
+.task-bar.status-in_progress {
+  animation: pulse 2s infinite;
+}
+
+@keyframes pulse {
+  0%, 100% {
+    opacity: 1;
+  }
+  50% {
+    opacity: 0.85;
+  }
+}
+
+.task-bar-content {
   position: relative;
+  z-index: 1;
+  padding: 0 calc(var(--spacing-unit) * 2);
+  width: 100%;
 }
 
-.timeline-cell:last-child {
-  border-right: none;
-}
-
-.timeline-cell.empty {
-  background: transparent;
-}
-
-.timeline-cell.task-cell {
-  background: #cbd5e0;
+.task-bar-label {
+  font-size: 11px;
+  font-weight: 500;
   color: white;
-  font-size: 0.7rem;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  text-shadow: 0 1px 1px rgba(0, 0, 0, 0.1);
+  flex: 1;
 }
 
-.timeline-cell.task-cell.not_started {
-  background: #a0aec0;
+.pos-badge {
+  font-size: 10px;
+  margin-left: calc(var(--spacing-unit) * 1);
+  flex-shrink: 0;
+  opacity: 0.9;
 }
 
-.timeline-cell.task-cell.in_progress {
-  background: #f6ad55;
-}
-
-.timeline-cell.task-cell.completed {
-  background: #68d391;
-}
-
-.timeline-cell.task-cell.critical {
-  background: #fc8181;
-  font-weight: bold;
-}
-
-.task-start {
-  font-size: 0.6rem;
-  font-weight: 600;
-  text-shadow: 1px 1px 1px rgba(0, 0, 0, 0.3);
-}
-
+/* Unscheduled Section */
 .unscheduled-section {
-  padding: 1rem;
-  background: #fef5e7;
-  border-top: 1px solid #e2e8f0;
-  border-radius: 0 0 4px 4px;
+  padding: calc(var(--spacing-unit) * 4);
+  background: #FFFBEB;
+  border-top: 1px solid #FEF3C7;
 }
 
-.unscheduled-section h4 {
-  margin: 0 0 1rem 0;
-  color: #c53030;
-  font-size: 0.9rem;
+.unscheduled-header {
+  display: flex;
+  align-items: center;
+  gap: calc(var(--spacing-unit) * 2);
+  margin-bottom: calc(var(--spacing-unit) * 3);
+  font-size: 13px;
+  font-weight: 600;
+  color: var(--text-primary);
+}
+
+.unscheduled-icon {
+  font-size: 16px;
+}
+
+.unscheduled-count {
+  margin-left: auto;
+  padding: calc(var(--spacing-unit) * 1) calc(var(--spacing-unit) * 2);
+  background: #FEF3C7;
+  border-radius: calc(var(--radius-lg) * 2);
+  font-size: 11px;
+}
+
+.unscheduled-list {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+  gap: calc(var(--spacing-unit) * 2);
 }
 
 .unscheduled-task {
+  padding: calc(var(--spacing-unit) * 3);
+  background: white;
+  border: 1px solid #FEF3C7;
+  border-radius: var(--radius-md);
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  gap: calc(var(--spacing-unit) * 2);
+  cursor: grab;
+  transition: all 0.15s;
+}
+
+.unscheduled-task:hover {
+  background: var(--bg-tertiary);
+  border-color: var(--border-primary);
+  box-shadow: var(--shadow-sm);
+}
+
+.unscheduled-task:active {
+  cursor: grabbing;
+}
+
+.unscheduled-task.dragging {
+  opacity: 0.4;
+}
+
+.unscheduled-task.is-critical {
+  border-color: #FED7AA;
+  background: #FFF7ED;
+}
+
+.unscheduled-task.is-critical:hover {
+  background: #FFEDD5;
+}
+
+.unscheduled-task-name {
+  font-size: 13px;
+  font-weight: 500;
+  color: var(--text-primary);
+  line-height: 1.4;
+}
+
+.unscheduled-task-meta {
   display: flex;
   align-items: center;
-  gap: 1rem;
-  padding: 0.5rem;
-  background: white;
-  border: 1px solid #e2e8f0;
-  border-radius: 4px;
-  margin-bottom: 0.5rem;
-}
-
-.unscheduled-task:last-child {
-  margin-bottom: 0;
-}
-
-.unscheduled-task .task-name {
-  flex: 1;
-  font-weight: 500;
-  color: #2d3748;
-}
-
-.unscheduled-task .task-duration {
-  font-size: 0.8rem;
-  color: #718096;
+  gap: calc(var(--spacing-unit) * 2);
+  font-size: 12px;
+  color: var(--text-tertiary);
+  white-space: nowrap;
 }
 
 .critical-badge {
-  background: #fed7d7;
-  color: #c53030;
-  padding: 0.125rem 0.5rem;
-  border-radius: 4px;
-  font-size: 0.7rem;
-  font-weight: bold;
+  padding: calc(var(--spacing-unit) * 1) calc(var(--spacing-unit) * 2);
+  background: var(--critical-color);
+  color: white;
+  border-radius: var(--radius-sm);
+  font-size: 10px;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.03em;
 }
 
+/* No Timeline */
 .no-timeline {
+  padding: calc(var(--spacing-unit) * 12);
   text-align: center;
-  padding: 3rem;
-  color: #718096;
-}
-
-.no-timeline p {
-  margin-bottom: 1rem;
-}
-
-.gantt-legend {
-  background: white;
-  border: 1px solid #e2e8f0;
-  border-radius: 8px;
-  padding: 1.5rem;
-  margin-top: 2rem;
-}
-
-.gantt-legend h3 {
-  margin: 0 0 1rem 0;
-  color: #2d3748;
-  font-size: 1rem;
-}
-
-.legend-items {
   display: flex;
-  gap: 2rem;
-  flex-wrap: wrap;
-}
-
-.legend-item {
-  display: flex;
+  flex-direction: column;
   align-items: center;
-  gap: 0.5rem;
+  gap: calc(var(--spacing-unit) * 4);
 }
 
-.legend-color {
-  width: 20px;
-  height: 20px;
-  border-radius: 4px;
-  border: 1px solid #e2e8f0;
+.no-timeline-icon {
+  font-size: 48px;
+  opacity: 0.5;
 }
 
-.legend-color.not_started {
-  background: #a0aec0;
+.no-timeline-text {
+  font-size: 14px;
+  color: var(--text-tertiary);
+  margin: 0;
 }
 
-.legend-color.in_progress {
-  background: #f6ad55;
-}
-
-.legend-color.completed {
-  background: #68d391;
-}
-
-.legend-color.critical {
-  background: #fc8181;
-}
-
+/* Empty State */
 .empty-state {
+  background: var(--bg-secondary);
+  border: 1px solid var(--border-primary);
+  border-radius: var(--radius-lg);
+  padding: calc(var(--spacing-unit) * 16);
   text-align: center;
-  padding: 4rem 2rem;
-  color: #718096;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: calc(var(--spacing-unit) * 4);
 }
 
-.empty-state h2 {
-  color: #2d3748;
-  margin-bottom: 1rem;
+.empty-icon {
+  font-size: 64px;
+  opacity: 0.3;
 }
 
-.empty-state p {
-  margin-bottom: 2rem;
-  max-width: 500px;
-  margin-left: auto;
-  margin-right: auto;
+.empty-title {
+  font-size: 20px;
+  font-weight: 600;
+  color: var(--text-primary);
+  margin: 0;
+  letter-spacing: -0.01em;
+}
+
+.empty-text {
+  font-size: 14px;
+  color: var(--text-tertiary);
+  margin: 0;
 }
 
 .empty-actions {
   display: flex;
-  gap: 1rem;
-  justify-content: center;
+  gap: calc(var(--spacing-unit) * 3);
+  margin-top: calc(var(--spacing-unit) * 2);
 }
 
-.header-actions {
-  display: flex;
-  gap: 0.5rem;
-}
-
-/* Responsive design */
-@media (max-width: 768px) {
-  .project-header {
-    flex-direction: column;
-    align-items: flex-start;
-    gap: 1rem;
-  }
-  
-  .task-info {
-    min-width: 200px;
-  }
-  
+/* Responsive */
+@media (max-width: 1200px) {
   .legend-items {
+    grid-template-columns: repeat(2, 1fr);
+  }
+
+  .tasks-column {
+    width: 240px;
+  }
+}
+
+@media (max-width: 768px) {
+  .modern-gantt-wrapper {
+    padding: calc(var(--spacing-unit) * 4);
+  }
+
+  .top-bar {
     flex-direction: column;
-    gap: 0.5rem;
+    align-items: stretch;
+    gap: calc(var(--spacing-unit) * 4);
+  }
+
+  .top-bar-left,
+  .top-bar-right {
+    justify-content: space-between;
+  }
+
+  .tasks-column {
+    width: 180px;
+  }
+
+  .timeline-day {
+    min-width: 32px;
+    padding: calc(var(--spacing-unit) * 2);
+  }
+
+  .timeline-cell {
+    min-width: 32px;
+  }
+
+  .unscheduled-list {
+    grid-template-columns: 1fr;
   }
 }
 </style>
 
 <script>
-// Add hover effects for task cells
-document.querySelectorAll('.task-cell').forEach(cell => {
-  cell.addEventListener('mouseenter', function() {
-    const taskRow = this.closest('.task-row');
-    taskRow.style.backgroundColor = '#f1f5f9';
-  });
-  
-  cell.addEventListener('mouseleave', function() {
-    const taskRow = this.closest('.task-row');
-    taskRow.style.backgroundColor = '';
-  });
-});
+let currentDragDays = 1;
 
-// Add click handler for task cells to show details
-document.querySelectorAll('.task-cell').forEach(cell => {
-  cell.addEventListener('click', function() {
-    const taskRow = this.closest('.task-row');
-    const taskName = taskRow.querySelector('.task-name').textContent.trim();
-    // Could open a modal with task details
-    console.log('Task clicked:', taskName);
+function allowDrop(ev) {
+  ev.preventDefault();
+  const targetCell = ev.currentTarget;
+  clearDragHighlights();
+  targetCell.classList.add('drag-over');
+}
+
+function drag(ev) {
+  const taskElement = ev.target;
+  currentDragDays = parseInt(taskElement.dataset.estimatedDays) || 1;
+  ev.dataTransfer.setData("taskId", taskElement.dataset.taskId);
+  ev.dataTransfer.setData("estimatedDays", currentDragDays);
+  taskElement.classList.add('dragging');
+}
+
+function dragEnd(ev) {
+  ev.target.classList.remove('dragging');
+  clearDragHighlights();
+}
+
+function dragTaskBar(ev) {
+  const taskBarElement = ev.target.closest('.task-bar');
+  if (!taskBarElement) return;
+  currentDragDays = parseInt(taskBarElement.dataset.estimatedDays) || 1;
+  ev.dataTransfer.setData("taskId", taskBarElement.dataset.taskId);
+  ev.dataTransfer.setData("estimatedDays", currentDragDays);
+  taskBarElement.classList.add('dragging');
+}
+
+function dragEndTaskBar(ev) {
+  const taskBarElement = ev.target.closest('.task-bar');
+  if (taskBarElement) {
+    taskBarElement.classList.remove('dragging');
+  }
+  clearDragHighlights();
+}
+
+function drop(ev) {
+  ev.preventDefault();
+  clearDragHighlights();
+  const taskId = ev.dataTransfer.getData("taskId");
+  const targetDate = ev.currentTarget.dataset.date;
+  if (taskId && targetDate) {
+    scheduleTask(taskId, targetDate);
+  }
+}
+
+function clearDragHighlights() {
+  document.querySelectorAll('.timeline-cell').forEach(cell => {
+    cell.classList.remove('drag-over');
   });
-});
+}
+
+function scheduleTask(taskId, startDate) {
+  const targetCell = document.querySelector(`[data-date="${startDate}"]`);
+  if (targetCell) {
+    targetCell.style.background = '#FEF3C7';
+  }
+
+  fetch(`/api/tasks/${taskId}/schedule`, {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({ start_date: startDate })
+  })
+  .then(response => response.json())
+  .then(data => {
+    if (data.success) {
+      if (targetCell) {
+        targetCell.style.background = '#D1FAE5';
+      }
+      setTimeout(() => location.reload(), 300);
+    } else {
+      alert('Failed to schedule task');
+      if (targetCell) {
+        targetCell.style.background = '';
+      }
+    }
+  })
+  .catch(error => {
+    console.error('Error:', error);
+    alert('Failed to schedule task: ' + error.message);
+    if (targetCell) {
+      targetCell.style.background = '';
+    }
+  });
+}
 </script>
 
 {% endblock %}

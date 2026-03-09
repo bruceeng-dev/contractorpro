@@ -1,0 +1,159 @@
+{% extends "base.html" %}
+{% block content %}
+
+<div class="container" style="max-width: 1200px;">
+  <div class="page-header">
+    <div>
+      <h1>Compare Quotes</h1>
+      <p class="muted">{{ job.client_name }} • {{ job.project_type }}</p>
+    </div>
+    <a href="{{ url_for('job_detail', job_id=job.id) }}" class="btn btn--sm">← Back to Job</a>
+  </div>
+
+  {% if comparison_items|length == 0 %}
+    <div style="text-align: center; padding: 60px 20px; background: white; border-radius: 8px; border: 1px solid var(--border);">
+      <p style="font-size: 1.2em; color: var(--muted); margin-bottom: 20px;">No quotes or estimates found for this job.</p>
+      <div style="display: flex; gap: 12px; justify-content: center;">
+        <a href="{{ url_for('new_estimate') }}?job_id={{ job.id }}" class="btn btn--primary">Create Estimate</a>
+        <a href="{{ url_for('pos_multilayer', job_id=job.id) }}" class="btn btn--success">Create POS Quote</a>
+      </div>
+    </div>
+  {% else %}
+    <!-- Summary Stats -->
+    <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 20px; margin-bottom: 30px;">
+      <div style="background: #eff6ff; border: 1px solid #bfdbfe; border-radius: 8px; padding: 20px;">
+        <div style="font-size: 14px; color: #1e40af; font-weight: 600; margin-bottom: 8px;">Total Quotes</div>
+        <div style="font-size: 32px; font-weight: 700; color: #1e3a8a;">{{ comparison_items|length }}</div>
+      </div>
+
+      <div style="background: #f0fdf4; border: 1px solid #bbf7d0; border-radius: 8px; padding: 20px;">
+        <div style="font-size: 14px; color: #166534; font-weight: 600; margin-bottom: 8px;">Lowest Quote</div>
+        <div style="font-size: 32px; font-weight: 700; color: #14532d;">
+          ${{ '{:,.2f}'.format(comparison_items|map(attribute='total')|min) }}
+        </div>
+      </div>
+
+      <div style="background: #fef3c7; border: 1px solid #fde68a; border-radius: 8px; padding: 20px;">
+        <div style="font-size: 14px; color: #92400e; font-weight: 600; margin-bottom: 8px;">Highest Quote</div>
+        <div style="font-size: 32px; font-weight: 700; color: #78350f;">
+          ${{ '{:,.2f}'.format(comparison_items|map(attribute='total')|max) }}
+        </div>
+      </div>
+
+      <div style="background: #fce7f3; border: 1px solid #fbcfe8; border-radius: 8px; padding: 20px;">
+        <div style="font-size: 14px; color: #9f1239; font-weight: 600; margin-bottom: 8px;">Price Range</div>
+        <div style="font-size: 32px; font-weight: 700; color: #881337;">
+          ${{ '{:,.2f}'.format(comparison_items|map(attribute='total')|max - comparison_items|map(attribute='total')|min) }}
+        </div>
+      </div>
+    </div>
+
+    <!-- Comparison Table -->
+    <div style="background: white; border: 1px solid var(--border); border-radius: 8px; overflow: hidden;">
+      <table style="width: 100%; border-collapse: collapse;">
+        <thead>
+          <tr style="background: #f8fafc;">
+            <th style="padding: 16px; text-align: left; border-bottom: 2px solid var(--border); font-weight: 600;">Quote #</th>
+            <th style="padding: 16px; text-align: left; border-bottom: 2px solid var(--border); font-weight: 600;">Type</th>
+            <th style="padding: 16px; text-align: left; border-bottom: 2px solid var(--border); font-weight: 600;">Status</th>
+            <th style="padding: 16px; text-align: left; border-bottom: 2px solid var(--border); font-weight: 600;">Line Items</th>
+            <th style="padding: 16px; text-align: right; border-bottom: 2px solid var(--border); font-weight: 600;">Total Amount</th>
+            <th style="padding: 16px; text-align: left; border-bottom: 2px solid var(--border); font-weight: 600;">Created</th>
+            <th style="padding: 16px; text-align: center; border-bottom: 2px solid var(--border); font-weight: 600;">Actions</th>
+          </tr>
+        </thead>
+        <tbody>
+          {% for item in comparison_items %}
+          <tr style="border-bottom: 1px solid #f1f5f9; {% if loop.index == 1 %}background: #fffbeb;{% endif %}">
+            <td style="padding: 16px; font-family: monospace; font-weight: 600;">
+              {{ item.number }}
+              {% if loop.index == 1 %}<span style="background: #fbbf24; color: white; padding: 2px 8px; border-radius: 12px; font-size: 11px; margin-left: 8px;">LATEST</span>{% endif %}
+            </td>
+            <td style="padding: 16px;">
+              {% if item.type == 'estimate' %}
+                <span style="background: #dbeafe; color: #1e40af; padding: 4px 12px; border-radius: 12px; font-size: 12px; font-weight: 600;">Estimate</span>
+              {% else %}
+                <span style="background: #d1fae5; color: #065f46; padding: 4px 12px; border-radius: 12px; font-size: 12px; font-weight: 600;">POS Quote</span>
+              {% endif %}
+            </td>
+            <td style="padding: 16px;">
+              <span style="padding: 4px 12px; border-radius: 12px; font-size: 12px; font-weight: 600; text-transform: uppercase;
+                {% if item.status == 'draft' %}background: #fef3c7; color: #92400e;
+                {% elif item.status == 'sent' %}background: #dbeafe; color: #1e40af;
+                {% elif item.status == 'accepted' %}background: #d1fae5; color: #065f46;
+                {% else %}background: #f3f4f6; color: #374151;{% endif %}">
+                {{ item.status }}
+              </span>
+            </td>
+            <td style="padding: 16px; color: var(--muted);">{{ item.line_item_count }} items</td>
+            <td style="padding: 16px; text-align: right; font-size: 18px; font-weight: 700; color: #2d3748;">
+              ${{ '{:,.2f}'.format(item.total) }}
+              {% if item.total == comparison_items|map(attribute='total')|min %}
+                <span style="color: #16a34a; font-size: 12px; display: block; font-weight: 500;">LOWEST</span>
+              {% elif item.total == comparison_items|map(attribute='total')|max %}
+                <span style="color: #dc2626; font-size: 12px; display: block; font-weight: 500;">HIGHEST</span>
+              {% endif %}
+            </td>
+            <td style="padding: 16px; color: var(--muted); font-size: 14px;">
+              {{ item.created.strftime('%b %d, %Y') }}
+            </td>
+            <td style="padding: 16px; text-align: center;">
+              {% if item.type == 'estimate' %}
+                <a href="{{ url_for('estimate_detail', estimate_id=item.id) }}" class="btn btn--sm">View</a>
+              {% else %}
+                <a href="{{ url_for('pos_quote_detail', quote_id=item.id) }}" class="btn btn--sm">View</a>
+              {% endif %}
+            </td>
+          </tr>
+          {% endfor %}
+        </tbody>
+      </table>
+    </div>
+
+    <!-- Breakdown Comparison Chart -->
+    <div style="margin-top: 40px; background: white; border: 1px solid var(--border); border-radius: 8px; padding: 30px;">
+      <h3 style="margin: 0 0 20px 0; font-size: 20px;">Cost Breakdown Comparison</h3>
+      <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); gap: 24px;">
+        {% for item in comparison_items %}
+        <div style="border: 1px solid #e5e7eb; border-radius: 8px; padding: 20px;">
+          <div style="font-weight: 600; margin-bottom: 12px; font-size: 14px; color: #6b7280;">
+            {{ item.number }}
+            {% if item.type == 'estimate' %}<span style="color: #3b82f6;">(Estimate)</span>{% else %}<span style="color: #10b981;">(POS)</span>{% endif %}
+          </div>
+
+          {% if item.type == 'estimate' %}
+            <div style="margin-bottom: 8px;">
+              <div style="font-size: 12px; color: #6b7280; margin-bottom: 4px;">Labor</div>
+              <div style="font-weight: 600;">${{ '{:,.2f}'.format(item.breakdown.labor) }}</div>
+            </div>
+            <div style="margin-bottom: 8px;">
+              <div style="font-size: 12px; color: #6b7280; margin-bottom: 4px;">Materials</div>
+              <div style="font-weight: 600;">${{ '{:,.2f}'.format(item.breakdown.material) }}</div>
+            </div>
+            <div style="margin-bottom: 8px;">
+              <div style="font-size: 12px; color: #6b7280; margin-bottom: 4px;">Equipment</div>
+              <div style="font-weight: 600;">${{ '{:,.2f}'.format(item.breakdown.equipment) }}</div>
+            </div>
+          {% else %}
+            <div style="margin-bottom: 8px;">
+              <div style="font-size: 12px; color: #6b7280; margin-bottom: 4px;">Subtotal</div>
+              <div style="font-weight: 600;">${{ '{:,.2f}'.format(item.breakdown.subtotal) }}</div>
+            </div>
+            <div style="margin-bottom: 8px;">
+              <div style="font-size: 12px; color: #6b7280; margin-bottom: 4px;">Tax</div>
+              <div style="font-weight: 600;">${{ '{:,.2f}'.format(item.breakdown.tax) }}</div>
+            </div>
+          {% endif %}
+
+          <div style="margin-top: 12px; padding-top: 12px; border-top: 2px solid #e5e7eb;">
+            <div style="font-size: 12px; color: #6b7280; margin-bottom: 4px;">Total</div>
+            <div style="font-weight: 700; font-size: 18px; color: #2d3748;">${{ '{:,.2f}'.format(item.total) }}</div>
+          </div>
+        </div>
+        {% endfor %}
+      </div>
+    </div>
+  {% endif %}
+</div>
+
+{% endblock %}

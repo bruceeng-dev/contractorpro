@@ -181,13 +181,44 @@ function applyTemplate(templateName) {
   calculateTotal();
 }
 
-function fillFromJob() {
+async function fillFromJob() {
   const jobSelect = document.getElementById('job_id');
+  const jobId = jobSelect.value;
+
+  if (!jobId) {
+    return;
+  }
+
   const selectedOption = jobSelect.options[jobSelect.selectedIndex];
-  
-  if (selectedOption.value) {
-    document.getElementById('client_name').value = selectedOption.getAttribute('data-client');
-    document.getElementById('project_description').value = selectedOption.getAttribute('data-desc');
+  document.getElementById('client_name').value = selectedOption.getAttribute('data-client');
+  document.getElementById('project_description').value = selectedOption.getAttribute('data-desc');
+
+  // Fetch job details and AI cost estimation
+  try {
+    const response = await fetch(`/api/jobs/${jobId}/estimate-costs`);
+    const data = await response.json();
+
+    if (data.success) {
+      // Auto-fill cost estimates from AI or defaults
+      if (data.labor_cost) {
+        document.getElementById('labor_cost').value = data.labor_cost;
+      }
+      if (data.material_cost) {
+        document.getElementById('material_cost').value = data.material_cost;
+      }
+      if (data.equipment_cost) {
+        document.getElementById('equipment_cost').value = data.equipment_cost;
+      }
+
+      calculateTotal();
+
+      // Show notification
+      if (data.ai_estimated) {
+        alert('💡 AI-powered cost estimation applied based on project type and size!');
+      }
+    }
+  } catch (error) {
+    console.log('Cost estimation not available, using manual entry');
   }
 }
 

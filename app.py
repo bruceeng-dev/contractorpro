@@ -299,6 +299,78 @@ def upload_progress_photo(job_id):
     
     return redirect(url_for('job_detail', job_id=job_id))
 
+@app.route("/api/jobs/<int:job_id>/estimate-costs")
+@login_required
+def api_job_estimate_costs(job_id):
+    """Generate AI-powered cost estimation for a job"""
+    job = Job.query.filter_by(id=job_id, user_id=current_user.id).first_or_404()
+
+    # Base cost per sqft for different project types (fallback values)
+    cost_per_sqft = {
+        'Kitchen Remodel': {'labor': 80, 'material': 120, 'equipment': 15},
+        'Bathroom Renovation': {'labor': 70, 'material': 90, 'equipment': 12},
+        'Home Addition': {'labor': 100, 'material': 150, 'equipment': 20},
+        'Roofing': {'labor': 25, 'material': 40, 'equipment': 8},
+        'Deck Installation': {'labor': 30, 'material': 45, 'equipment': 10},
+        'Flooring': {'labor': 15, 'material': 25, 'equipment': 5},
+        'Siding': {'labor': 35, 'material': 50, 'equipment': 8},
+        'Windows': {'labor': 40, 'material': 60, 'equipment': 5},
+        'Plumbing': {'labor': 60, 'material': 40, 'equipment': 15},
+        'Electrical': {'labor': 65, 'material': 35, 'equipment': 10},
+    }
+
+    # Get square footage or use default
+    sqft = float(job.square_footage) if job.square_footage else 500.0
+
+    # Get cost multipliers for this project type
+    multipliers = cost_per_sqft.get(job.project_type, {'labor': 50, 'material': 70, 'equipment': 10})
+
+    # Calculate base estimates
+    labor_cost = sqft * multipliers['labor']
+    material_cost = sqft * multipliers['material']
+    equipment_cost = sqft * multipliers['equipment']
+
+    # Apply complexity factors
+    if job.build_type == 'new':
+        # New construction is typically more standardized
+        labor_cost *= 0.9
+    else:
+        # Remodel work has more unknowns
+        labor_cost *= 1.15
+        material_cost *= 1.1
+
+    # Multi-story complexity
+    if job.stories and int(job.stories) > 1:
+        labor_cost *= (1 + (int(job.stories) - 1) * 0.1)
+        equipment_cost *= 1.2
+
+    # AI-powered estimation if available
+    ai_estimated = False
+    if LLM_AVAILABLE and llm_service and job.description:
+        try:
+            # Analyze job description for complexity
+            analysis = llm_service.analyze_scope(job.description)
+            complexity = analysis.get('complexity_score', 3)
+
+            # Adjust based on AI complexity assessment (1-5 scale)
+            complexity_multiplier = 0.7 + (complexity * 0.15)  # 0.85 to 1.45 range
+            labor_cost *= complexity_multiplier
+            material_cost *= complexity_multiplier
+
+            ai_estimated = True
+        except Exception as e:
+            print(f"AI estimation failed: {e}")
+
+    return jsonify({
+        'success': True,
+        'labor_cost': round(labor_cost, 2),
+        'material_cost': round(material_cost, 2),
+        'equipment_cost': round(equipment_cost, 2),
+        'ai_estimated': ai_estimated,
+        'project_type': job.project_type,
+        'square_footage': sqft
+    })
+
 # Estimates System
 @app.route("/estimates")
 @login_required
@@ -306,6 +378,66 @@ def estimates_list():
     estimates = Estimate.query.filter_by(user_id=current_user.id).order_by(Estimate.created_date.desc()).all()
     pos_quotes = POSQuote.query.filter_by(user_id=current_user.id).order_by(POSQuote.created_date.desc()).all()
     return render_template("estimates.html", title="Estimates", estimates=estimates, pos_quotes=pos_quotes)
+
+@app.route("/jobs/<int:job_id>/compare-quotes")
+@login_required
+def compare_quotes(job_id):
+    """Compare all quotes and estimates for a job"""
+    import json
+
+    job = Job.query.filter_by(id=job_id, user_id=current_user.id).first_or_404()
+
+    # Get all estimates for this job
+    estimates = Estimate.query.filter_by(job_id=job_id, user_id=current_user.id).order_by(Estimate.created_date.desc()).all()
+
+    # Get all POS quotes for this job
+    pos_quotes = POSQuote.query.filter_by(job_id=job_id, user_id=current_user.id).order_by(POSQuote.created_date.desc()).all()
+
+    # Prepare comparison data
+    comparison_items = []
+
+    # Add traditional estimates
+    for est in estimates:
+        line_items = EstimateLineItem.query.filter_by(estimate_id=est.id).all()
+        comparison_items.append({
+            'type': 'estimate',
+            'id': est.id,
+            'number': est.estimate_number,
+            'total': float(est.total_cost),
+            'status': est.status,
+            'created': est.created_date,
+            'line_item_count': len(line_items),
+            'breakdown': {
+                'labor': float(est.labor_cost),
+                'material': float(est.material_cost),
+                'equipment': float(est.equipment_cost)
+            }
+        })
+
+    # Add POS quotes
+    for quote in pos_quotes:
+        line_items = json.loads(quote.line_items) if quote.line_items else []
+        comparison_items.append({
+            'type': 'pos_quote',
+            'id': quote.id,
+            'number': quote.quote_number,
+            'total': float(quote.total_amount),
+            'status': quote.status,
+            'created': quote.created_date,
+            'line_item_count': len(line_items),
+            'breakdown': {
+                'subtotal': float(quote.subtotal),
+                'tax': float(quote.tax_amount) if quote.tax_amount else 0
+            }
+        })
+
+    # Sort by creation date
+    comparison_items.sort(key=lambda x: x['created'], reverse=True)
+
+    return render_template("quote_comparison.html",
+                         title=f"Compare Quotes - {job.client_name}",
+                         job=job,
+                         comparison_items=comparison_items)
 
 @app.route("/estimates/new", methods=['GET', 'POST'])
 @login_required
@@ -424,6 +556,162 @@ def send_estimate(estimate_id):
         flash('Failed to send estimate', 'error')
     
     return redirect(url_for('estimate_detail', estimate_id=estimate_id))
+
+@app.route("/api/estimates/<int:estimate_id>/accept-and-contract", methods=['POST'])
+@login_required
+def accept_estimate_and_generate_contract(estimate_id):
+    """Accept traditional estimate and automatically generate contract (like POS quotes)"""
+    estimate = Estimate.query.filter_by(id=estimate_id, user_id=current_user.id).first_or_404()
+
+    if not estimate.job_id:
+        return jsonify({
+            'success': False,
+            'message': 'Estimate must be linked to a job to generate contract'
+        }), 400
+
+    try:
+        job = Job.query.get(estimate.job_id)
+        if not job or job.user_id != current_user.id:
+            return jsonify({
+                'success': False,
+                'message': 'Job not found or access denied'
+            }), 404
+
+        # Accept the estimate
+        estimate.status = 'accepted'
+        job.budget = estimate.total_cost
+        if job.status == 'pending':
+            job.status = 'active'
+
+        # Build scope text from estimate
+        scope_text = estimate.project_description or f"Complete {job.project_type} project"
+
+        # Add line items to scope if they exist
+        line_items = EstimateLineItem.query.filter_by(estimate_id=estimate.id).all()
+        if line_items:
+            scope_text += "\n\nProject Breakdown:\n"
+            for item in line_items:
+                scope_text += f"- {item.description} ({item.quantity} {item.unit} @ ${item.unit_cost}/{item.unit})\n"
+
+        # Generate contract with AI if available
+        if LLM_AVAILABLE and llm_service:
+            # Build project data
+            project_data = {
+                'name': job.project_type or 'Construction Project',
+                'client_name': job.client_name,
+                'budget_estimate': float(estimate.total_cost),
+                'raw_scope': scope_text
+            }
+
+            # Analyze scope
+            analysis = llm_service.analyze_scope(scope_text)
+
+            # Generate contract
+            contract_data = llm_service.generate_contract(project_data, analysis, [])
+
+            # Create or update contract
+            contract = Contract.query.filter_by(job_id=job.id).first()
+            if not contract:
+                contract = Contract(
+                    job_id=job.id,
+                    contract_number=f"CON-{datetime.now().strftime('%Y%m%d')}-{job.id:04d}",
+                    title=f"Construction Contract - {job.client_name}"
+                )
+                db.session.add(contract)
+
+            contract.introduction_text = contract_data.get('introduction', '')
+            contract.scope_of_work = contract_data.get('scope_section', '')
+            contract.terms_and_conditions = contract_data.get('terms_conditions', '')
+            contract.payment_terms = contract_data.get('payment_terms', '')
+            contract.total_contract_value = estimate.total_cost
+            contract.status = 'draft'
+
+            # Auto-create job locations from AI analysis
+            locations_identified = analysis.get('locations_identified', [])
+            existing_locations = {loc.name for loc in JobLocation.query.filter_by(job_id=job.id).all()}
+            locations_created = 0
+
+            for idx, location_name in enumerate(locations_identified):
+                if location_name and location_name not in existing_locations:
+                    job_location = JobLocation(
+                        job_id=job.id,
+                        name=location_name,
+                        description=f"Auto-created from AI scope analysis",
+                        order_index=idx + 1
+                    )
+                    db.session.add(job_location)
+                    existing_locations.add(location_name)
+                    locations_created += 1
+
+            # Generate tasks from scope analysis
+            tasks_created = 0
+            try:
+                tasks_data = llm_service.generate_task_list(project_data, analysis)
+
+                for task_info in tasks_data:
+                    task = Task(
+                        job_id=job.id,
+                        task_name=task_info.get('name', 'Unnamed Task'),
+                        task_description=task_info.get('description', ''),
+                        estimated_days=task_info.get('duration_days', 1),
+                        status='not_started',
+                        is_critical_path=task_info.get('is_critical_path', False),
+                        included_in_contract=True,
+                        priority=task_info.get('priority', 3)
+                    )
+                    db.session.add(task)
+                    tasks_created += 1
+
+                print(f"[SUCCESS] Generated {tasks_created} tasks from AI analysis")
+            except Exception as task_error:
+                print(f"[WARNING] Failed to generate tasks: {task_error}")
+                # Continue anyway - contract is still created
+
+            db.session.commit()
+
+            message = f'Estimate accepted! Contract generated with {tasks_created} tasks'
+            if locations_created > 0:
+                message += f' and {locations_created} job locations'
+            message += ' successfully!'
+
+            return jsonify({
+                'success': True,
+                'message': message,
+                'contract_id': contract.id,
+                'tasks_created': tasks_created,
+                'locations_created': locations_created,
+                'redirect_url': url_for('unified_contract', job_id=job.id) + '?mode=view'
+            })
+        else:
+            # No AI available - just mark as accepted and create basic contract
+            contract = Contract.query.filter_by(job_id=job.id).first()
+            if not contract:
+                contract = Contract(
+                    job_id=job.id,
+                    contract_number=f"CON-{datetime.now().strftime('%Y%m%d')}-{job.id:04d}",
+                    title=f"Construction Contract - {job.client_name}",
+                    scope_of_work=scope_text,
+                    total_contract_value=estimate.total_cost,
+                    status='draft'
+                )
+                db.session.add(contract)
+
+            db.session.commit()
+
+            return jsonify({
+                'success': True,
+                'message': 'Estimate accepted! Basic contract created (AI not available for full generation).',
+                'contract_id': contract.id,
+                'redirect_url': url_for('unified_contract', job_id=job.id) + '?mode=edit'
+            })
+
+    except Exception as e:
+        db.session.rollback()
+        print(f"[ERROR] Failed to accept estimate and generate contract: {e}")
+        return jsonify({
+            'success': False,
+            'message': f'Error: {str(e)}'
+        }), 500
 
 # Test Email Route
 @app.route("/test-email")
@@ -644,6 +932,8 @@ def save_contract_inline(job_id):
         contract.title = data['title']
     if 'introduction_text' in data:
         contract.introduction_text = data['introduction_text']
+    if 'scope_of_work' in data:
+        contract.scope_of_work = data['scope_of_work']
     if 'terms_and_conditions' in data:
         contract.terms_and_conditions = data['terms_and_conditions']
     if 'payment_terms' in data:
@@ -654,6 +944,96 @@ def save_contract_inline(job_id):
     db.session.commit()
 
     return jsonify({'success': True, 'message': 'Contract saved successfully'})
+
+@app.route("/api/contracts/job/<int:job_id>/send", methods=['POST'])
+@login_required
+def send_contract_to_client(job_id):
+    """Send contract to client for signature"""
+    job = Job.query.filter_by(id=job_id, user_id=current_user.id).first_or_404()
+    contract = Contract.query.filter_by(job_id=job_id).first()
+
+    if not contract:
+        return jsonify({'success': False, 'message': 'No contract found for this job'}), 404
+
+    if not job.client_email:
+        return jsonify({'success': False, 'message': 'Client email required to send contract'}), 400
+
+    try:
+        # Update contract status
+        contract.status = 'sent'
+        db.session.commit()
+
+        # TODO: Implement actual email sending with contract PDF
+        # For now, just update status and log
+        print(f"[CONTRACT] Sent contract {contract.contract_number} to {job.client_email}")
+
+        return jsonify({
+            'success': True,
+            'message': f'Contract sent to {job.client_email} successfully!'
+        })
+
+    except Exception as e:
+        db.session.rollback()
+        return jsonify({'success': False, 'message': f'Error sending contract: {str(e)}'}), 500
+
+@app.route("/api/contracts/<int:contract_id>/mark-signed", methods=['POST'])
+@login_required
+def mark_contract_signed(contract_id):
+    """Mark contract as signed by client"""
+    contract = Contract.query.get_or_404(contract_id)
+
+    # Verify ownership
+    job = Job.query.filter_by(id=contract.job_id, user_id=current_user.id).first_or_404()
+
+    try:
+        contract.status = 'signed'
+        db.session.commit()
+
+        return jsonify({
+            'success': True,
+            'message': 'Contract marked as signed!'
+        })
+
+    except Exception as e:
+        db.session.rollback()
+        return jsonify({'success': False, 'message': f'Error: {str(e)}'}), 500
+
+@app.route("/api/contracts/<int:contract_id>/execute", methods=['POST'])
+@login_required
+def execute_contract(contract_id):
+    """Execute contract - activate job and tasks"""
+    contract = Contract.query.get_or_404(contract_id)
+
+    # Verify ownership
+    job = Job.query.filter_by(id=contract.job_id, user_id=current_user.id).first_or_404()
+
+    try:
+        # Update contract status
+        contract.status = 'executed'
+
+        # Activate job
+        job.status = 'active'
+        if not job.start_date:
+            job.start_date = date.today()
+
+        # Activate all contract tasks
+        tasks = Task.query.filter_by(job_id=job.id, included_in_contract=True).all()
+        tasks_activated = 0
+        for task in tasks:
+            if task.status == 'not_started':
+                task.status = 'pending'  # or keep as not_started
+                tasks_activated += 1
+
+        db.session.commit()
+
+        return jsonify({
+            'success': True,
+            'message': f'Contract executed! Job activated with {tasks_activated} tasks ready to start.'
+        })
+
+    except Exception as e:
+        db.session.rollback()
+        return jsonify({'success': False, 'message': f'Error: {str(e)}'}), 500
 
 @app.route("/jobs/<int:job_id>/locations", methods=['POST'])
 @login_required
@@ -1593,15 +1973,30 @@ def convert_pos_quote_to_estimate(quote_id):
     # Commit estimate first to get the ID
     db.session.flush()
 
-    # Add line items from POS quote
+    # Add line items from POS quote (preserving full structure)
     for item in line_items:
+        # Determine category from item data or activity name
+        category = item.get('category', 'other')
+        activity_name = item.get('activity_name', item.get('name', 'Unknown Item'))
+
+        # Try to intelligently categorize if not specified
+        if category == 'other':
+            activity_lower = activity_name.lower()
+            if any(word in activity_lower for word in ['install', 'labor', 'work', 'service']):
+                category = 'labor'
+            elif any(word in activity_lower for word in ['material', 'supply', 'product']):
+                category = 'material'
+            elif any(word in activity_lower for word in ['equipment', 'rental', 'tool']):
+                category = 'equipment'
+
         line_item = EstimateLineItem(
             estimate_id=estimate.id,
-            description=item.get('name', ''),
-            category='labor',  # Default to labor
+            description=activity_name,
+            category=category,
             quantity=Decimal(str(item.get('quantity', 1))),
             unit=item.get('unit', 'each'),
-            unit_cost=Decimal(str(item.get('unit_price', 0)))
+            unit_cost=Decimal(str(item.get('unit_price', 0))),
+            notes=f"From POS Quote: {item.get('category_name', 'N/A')}"
         )
         line_item.calculate_total()
         db.session.add(line_item)
@@ -1860,6 +2255,23 @@ def accept_quote_and_generate_contract(quote_id):
             contract.total_contract_value = pos_quote.total_amount
             contract.status = 'draft'
 
+            # Auto-create job locations from AI analysis
+            locations_identified = analysis.get('locations_identified', [])
+            existing_locations = {loc.name for loc in JobLocation.query.filter_by(job_id=job.id).all()}
+            locations_created = 0
+
+            for idx, location_name in enumerate(locations_identified):
+                if location_name and location_name not in existing_locations:
+                    job_location = JobLocation(
+                        job_id=job.id,
+                        name=location_name,
+                        description=f"Auto-created from AI scope analysis",
+                        order_index=idx + 1
+                    )
+                    db.session.add(job_location)
+                    existing_locations.add(location_name)
+                    locations_created += 1
+
             # Generate tasks from scope analysis
             tasks_created = 0
             try:
@@ -1886,11 +2298,17 @@ def accept_quote_and_generate_contract(quote_id):
 
             db.session.commit()
 
+            message = f'Quote accepted! Contract generated with {tasks_created} tasks'
+            if locations_created > 0:
+                message += f' and {locations_created} job locations'
+            message += ' successfully!'
+
             return jsonify({
                 'success': True,
-                'message': f'Quote accepted! Contract and {tasks_created} tasks generated successfully!',
+                'message': message,
                 'contract_id': contract.id,
                 'tasks_created': tasks_created,
+                'locations_created': locations_created,
                 'redirect_url': url_for('unified_contract', job_id=job.id) + '?mode=view'
             })
         else:

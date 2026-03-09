@@ -135,6 +135,333 @@
     });
   </script>
 
+  <!-- Interactive Tour System -->
+  <div id="tour-overlay" class="tour-overlay"></div>
+  <div id="tour-arrow" class="tour-arrow"></div>
+  <div id="tour-tooltip" class="tour-tooltip">
+    <div class="tour-tooltip-content">
+      <h3 class="tour-tooltip-title"></h3>
+      <p class="tour-tooltip-text"></p>
+      <div class="tour-tooltip-actions">
+        <button class="tour-btn tour-btn-skip" onclick="endTour()">Skip Tour</button>
+        <button class="tour-btn tour-btn-next" onclick="nextTourStep()">Next →</button>
+      </div>
+    </div>
+  </div>
+
+  <style>
+  /* Tour Overlay */
+  .tour-overlay {
+    display: none;
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: rgba(0, 0, 0, 0.6);
+    z-index: 9998;
+    backdrop-filter: blur(2px);
+  }
+
+  .tour-overlay.active {
+    display: block;
+  }
+
+  /* Animated Arrow */
+  .tour-arrow {
+    display: none;
+    position: fixed;
+    width: 60px;
+    height: 60px;
+    z-index: 10000;
+    pointer-events: none;
+  }
+
+  .tour-arrow.active {
+    display: block;
+    animation: pulse-arrow 1.5s ease-in-out infinite;
+  }
+
+  .tour-arrow::before {
+    content: '➤';
+    position: absolute;
+    font-size: 40px;
+    color: #EF4444;
+    text-shadow: 0 0 10px rgba(239, 68, 68, 0.8),
+                 0 0 20px rgba(239, 68, 68, 0.6),
+                 0 0 30px rgba(239, 68, 68, 0.4);
+    transform-origin: center;
+  }
+
+  @keyframes pulse-arrow {
+    0%, 100% {
+      transform: scale(1) translateX(0);
+      opacity: 1;
+    }
+    50% {
+      transform: scale(1.2) translateX(5px);
+      opacity: 0.8;
+    }
+  }
+
+  /* Tour Tooltip */
+  .tour-tooltip {
+    display: none;
+    position: fixed;
+    background: white;
+    border-radius: 12px;
+    box-shadow: 0 10px 40px rgba(0, 0, 0, 0.3);
+    z-index: 10001;
+    max-width: 320px;
+    animation: fadeIn 0.3s ease-out;
+  }
+
+  .tour-tooltip.active {
+    display: block;
+  }
+
+  @keyframes fadeIn {
+    from {
+      opacity: 0;
+      transform: translateY(-10px);
+    }
+    to {
+      opacity: 1;
+      transform: translateY(0);
+    }
+  }
+
+  .tour-tooltip-content {
+    padding: 20px;
+  }
+
+  .tour-tooltip-title {
+    margin: 0 0 8px 0;
+    font-size: 18px;
+    font-weight: 600;
+    color: #111827;
+  }
+
+  .tour-tooltip-text {
+    margin: 0 0 16px 0;
+    font-size: 14px;
+    line-height: 1.5;
+    color: #6B7280;
+  }
+
+  .tour-tooltip-actions {
+    display: flex;
+    gap: 8px;
+    justify-content: flex-end;
+  }
+
+  .tour-btn {
+    padding: 8px 16px;
+    border: none;
+    border-radius: 6px;
+    font-size: 14px;
+    font-weight: 500;
+    cursor: pointer;
+    transition: all 0.2s;
+  }
+
+  .tour-btn-skip {
+    background: #F3F4F6;
+    color: #6B7280;
+  }
+
+  .tour-btn-skip:hover {
+    background: #E5E7EB;
+  }
+
+  .tour-btn-next {
+    background: #3B82F6;
+    color: white;
+  }
+
+  .tour-btn-next:hover {
+    background: #2563EB;
+  }
+
+  /* Highlight target element */
+  .tour-highlight {
+    position: relative;
+    z-index: 9999 !important;
+    box-shadow: 0 0 0 4px #3B82F6, 0 0 0 99999px rgba(0, 0, 0, 0.6) !important;
+    border-radius: 8px;
+  }
+
+  /* Tour start button */
+  .tour-start-btn {
+    position: fixed;
+    bottom: 20px;
+    right: 20px;
+    background: #3B82F6;
+    color: white;
+    border: none;
+    padding: 12px 20px;
+    border-radius: 50px;
+    font-size: 14px;
+    font-weight: 600;
+    cursor: pointer;
+    box-shadow: 0 4px 12px rgba(59, 130, 246, 0.4);
+    z-index: 1000;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    transition: all 0.3s;
+  }
+
+  .tour-start-btn:hover {
+    background: #2563EB;
+    transform: translateY(-2px);
+    box-shadow: 0 6px 16px rgba(59, 130, 246, 0.5);
+  }
+
+  .tour-start-btn.hidden {
+    display: none;
+  }
+  </style>
+
+  <script>
+  // Simple cohesive workflow tour
+  const tourSteps = [
+    {
+      target: 'a[href*="quote_builder"]',
+      title: 'Step 1: Quote Builder 💰',
+      text: 'Start here! Create detailed quotes with material takeoffs and pricing. This is your project estimating system.',
+      position: 'right'
+    },
+    {
+      target: 'a[href*="jobs"]',
+      title: 'Step 2: Jobs 🔨',
+      text: 'Organize projects here. Link your quotes to jobs and manage all project details in one central place.',
+      position: 'right'
+    },
+    {
+      target: 'a[href*="contracts"]',
+      title: 'Step 3: AI Contracts ✨',
+      text: 'Magic happens! One-click converts your POS quote into a comprehensive legal contract using AI.',
+      position: 'right'
+    },
+    {
+      target: 'a[href*="calendar"]',
+      title: 'Step 4: Visual Scheduling 📅',
+      text: 'Drag & drop your tasks onto the calendar. Tasks auto-created from contracts show 💰 badges linking to POS costs.',
+      position: 'right'
+    },
+    {
+      target: 'a[href*="reports"]',
+      title: 'Step 5: Business Intelligence 📊',
+      text: 'Track everything! View job progress, revenue, and business performance all in one place.',
+      position: 'right'
+    }
+  ];
+
+  let currentTourStep = 0;
+  let tourActive = false;
+
+  function startTour() {
+    tourActive = true;
+    currentTourStep = 0;
+    document.getElementById('tour-overlay').classList.add('active');
+    document.querySelector('.tour-start-btn')?.classList.add('hidden');
+    showTourStep(0);
+  }
+
+  function showTourStep(stepIndex) {
+    if (stepIndex >= tourSteps.length) {
+      endTour();
+      return;
+    }
+
+    const step = tourSteps[stepIndex];
+    const targetElement = document.querySelector(step.target);
+
+    if (!targetElement) {
+      currentTourStep++;
+      showTourStep(currentTourStep);
+      return;
+    }
+
+    // Clear previous highlights
+    document.querySelectorAll('.tour-highlight').forEach(el => el.classList.remove('tour-highlight'));
+
+    // Highlight target
+    targetElement.classList.add('tour-highlight');
+
+    // Show arrow and tooltip
+    const arrow = document.getElementById('tour-arrow');
+    const tooltip = document.getElementById('tour-tooltip');
+    const rect = targetElement.getBoundingClientRect();
+
+    arrow.classList.add('active');
+    tooltip.classList.add('active');
+
+    // Position for sidebar (all steps point from left)
+    const arrowX = rect.left - 70;
+    const arrowY = rect.top + (rect.height / 2) - 30;
+    const tooltipX = Math.max(20, rect.left - 380);
+    const tooltipY = rect.top + (rect.height / 2) - 100;
+
+    arrow.style.left = arrowX + 'px';
+    arrow.style.top = arrowY + 'px';
+    arrow.style.transform = 'rotate(0deg)';
+
+    tooltip.style.left = tooltipX + 'px';
+    tooltip.style.top = tooltipY + 'px';
+
+    // Update content
+    document.querySelector('.tour-tooltip-title').textContent = step.title;
+    document.querySelector('.tour-tooltip-text').textContent = step.text;
+
+    const nextBtn = document.querySelector('.tour-btn-next');
+    nextBtn.textContent = stepIndex === tourSteps.length - 1 ? 'Finish ✓' : 'Next →';
+
+    // Smooth scroll
+    targetElement.scrollIntoView({ behavior: 'smooth', block: 'center' });
+  }
+
+  function nextTourStep() {
+    currentTourStep++;
+    showTourStep(currentTourStep);
+  }
+
+  function endTour() {
+    tourActive = false;
+    document.getElementById('tour-overlay').classList.remove('active');
+    document.getElementById('tour-arrow').classList.remove('active');
+    document.getElementById('tour-tooltip').classList.remove('active');
+    document.querySelectorAll('.tour-highlight').forEach(el => el.classList.remove('tour-highlight'));
+    document.querySelector('.tour-start-btn')?.classList.remove('hidden');
+    localStorage.setItem('tourCompleted', 'true');
+  }
+
+  // Global access
+  window.startTour = startTour;
+  window.resetTour = () => { localStorage.removeItem('tourCompleted'); location.reload(); };
+
+  // Auto-start on first visit
+  document.addEventListener('DOMContentLoaded', function() {
+    if (!window.location.pathname.includes('/login') && !window.location.pathname.includes('/register')) {
+      const startBtn = document.createElement('button');
+      startBtn.className = 'tour-start-btn';
+      startBtn.innerHTML = '🎯 Product Tour';
+      startBtn.onclick = startTour;
+      document.body.appendChild(startBtn);
+
+      const tourCompleted = localStorage.getItem('tourCompleted');
+      const isHome = window.location.pathname === '/' || window.location.pathname === '/dashboard';
+      if (!tourCompleted && isHome) {
+        setTimeout(startTour, 1000);
+      }
+    }
+  });
+
+  // ESC to exit
+  document.addEventListener('keydown', (e) => { if (e.key === 'Escape' && tourActive) endTour(); });
+  </script>
+
   {% block scripts %}{% endblock %}
 </body>
 </html>

@@ -875,8 +875,17 @@ Print Client Name"""
         return scheduled_tasks
 
     def _load_contract_template(self) -> str:
-        """Load contract template from file - prefers enhanced version"""
-        # Try enhanced template first
+        """Load contract template from file - prefers ultra-verbose version"""
+        # Try ultra-verbose template first
+        try:
+            template_path = os.path.join(os.path.dirname(__file__), 'contract_template_ultra_verbose.txt')
+            with open(template_path, 'r', encoding='utf-8') as f:
+                print("[OK] Loaded ULTRA-VERBOSE comprehensive contract template")
+                return f.read()
+        except FileNotFoundError:
+            pass
+
+        # Fall back to enhanced template
         try:
             template_path = os.path.join(os.path.dirname(__file__), 'contract_template_enhanced.txt')
             with open(template_path, 'r', encoding='utf-8') as f:

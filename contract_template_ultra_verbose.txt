@@ -1,0 +1,1580 @@
+═══════════════════════════════════════════════════════════════════════════════
+                    COMPREHENSIVE RESIDENTIAL CONSTRUCTION AGREEMENT
+                           PRIME CONTRACT FOR CONSTRUCTION SERVICES
+═══════════════════════════════════════════════════════════════════════════════
+
+CONTRACT IDENTIFICATION & EXECUTION DETAILS
+═══════════════════════════════════════════════════════════════════════════════
+
+Contract Number:           [CONTRACT_NUMBER]
+Original Execution Date:   [CONTRACT_DATE]
+Contract Effective Date:   [EFFECTIVE_DATE]
+Contract Revision:         [REVISION_NUMBER] (Original/Amended)
+Prepared By:               [PREPARER_NAME]
+Reviewed By:               [REVIEWER_NAME] (if applicable)
+
+This Agreement is executed between the parties identified below for the construction
+work described herein, subject to all terms, conditions, provisions, representations,
+warranties, and mutual covenants contained in this comprehensive Contract document.
+
+═══════════════════════════════════════════════════════════════════════════════
+ARTICLE 1: PARTIES TO THE AGREEMENT & PROJECT IDENTIFICATION
+═══════════════════════════════════════════════════════════════════════════════
+
+1.1 OWNER/CLIENT INFORMATION
+
+Full Legal Name:            [CLIENT_NAME]
+Doing Business As (DBA):    [CLIENT_DBA] (if applicable)
+Entity Type:                ☐ Individual  ☐ LLC  ☐ Corporation  ☐ Trust  ☐ Partnership
+Tax ID/SSN:                 [TAX_ID] (for 1099 purposes)
+
+Mailing Address:            [CLIENT_ADDRESS]
+                           [CLIENT_CITY], [CLIENT_STATE] [CLIENT_ZIP]
+Physical Address:           [CLIENT_PHYSICAL_ADDRESS] (if different from mailing)
+
+Primary Contact Person:     [CONTACT_NAME]
+Primary Phone:              [CLIENT_PHONE]
+Secondary Phone:            [CLIENT_PHONE_2]
+Primary Email:              [CLIENT_EMAIL]
+Secondary Email:            [CLIENT_EMAIL_2]
+Preferred Contact Method:   ☐ Phone  ☐ Email  ☐ Text  ☐ In-Person
+Best Time to Contact:       [CONTACT_HOURS]
+
+Emergency Contact:          [EMERGENCY_CONTACT_NAME]
+Emergency Phone:            [EMERGENCY_PHONE]
+Relationship:               [EMERGENCY_RELATIONSHIP]
+
+1.2 CONTRACTOR INFORMATION
+
+Legal Business Name:        [CONTRACTOR_NAME]
+Doing Business As (DBA):    [CONTRACTOR_DBA] (if applicable)
+Business Entity Type:       ☐ Sole Proprietor  ☐ LLC  ☐ Corporation  ☐ Partnership
+Federal Tax ID (EIN):       [CONTRACTOR_EIN]
+
+Business Address:           [CONTRACTOR_ADDRESS]
+                           [CONTRACTOR_CITY], [CONTRACTOR_STATE] [CONTRACTOR_ZIP]
+Business Phone:             [CONTRACTOR_PHONE]
+Business Fax:               [CONTRACTOR_FAX]
+Business Email:             [CONTRACTOR_EMAIL]
+Website:                    [CONTRACTOR_WEBSITE]
+
+Principal/Owner:            [PRINCIPAL_NAME]
+Project Manager:            [PROJECT_MANAGER_NAME]
+Project Manager Phone:      [PM_PHONE]
+Project Manager Email:      [PM_EMAIL]
+
+After-Hours Emergency:      [EMERGENCY_CONTACT]
+
+Licenses & Credentials:
+• General Contractor License:    [CONTRACTOR_LICENSE] (State: [STATE])
+• License Expiration:            [LICENSE_EXPIRATION]
+• Business License:              [BUSINESS_LICENSE]
+• Specialty Licenses:            [SPECIALTY_LICENSES]
+
+Professional Affiliations:
+• Better Business Bureau:        [BBB_RATING]
+• National Association of Home Builders: [NAHB_NUMBER]
+• Other Associations:            [OTHER_ASSOCIATIONS]
+
+Insurance Coverage Details:
+• General Liability Carrier:     [INSURANCE_CARRIER]
+• Policy Number:                 [POLICY_NUMBER]
+• Coverage Amount:               $[INSURANCE_AMOUNT] per occurrence /
+                                $[AGGREGATE_AMOUNT] aggregate
+• Policy Expiration:             [POLICY_EXPIRATION]
+• Workers' Compensation Carrier: [WC_CARRIER]
+• WC Policy Number:              [WC_POLICY]
+• Automobile Liability:          $[AUTO_COVERAGE]
+• Umbrella/Excess Liability:     $[UMBRELLA_AMOUNT] (if applicable)
+
+Bonding Information (if applicable):
+• Surety Company:                [SURETY_COMPANY]
+• Bond Amount:                   $[BOND_AMOUNT]
+• Bond Type:                     ☐ Performance  ☐ Payment  ☐ Both
+
+1.3 PROJECT SITE & LEGAL DESCRIPTION
+
+Project Site Address:       [PROJECT_ADDRESS]
+                           [PROJECT_CITY], [PROJECT_STATE] [PROJECT_ZIP]
+
+Legal Property Description:
+County:                     [COUNTY]
+Parcel Number (APN):        [PARCEL_ID]
+Lot Number:                 [LOT_NUMBER]
+Block Number:               [BLOCK_NUMBER]
+Subdivision:                [SUBDIVISION_NAME]
+Legal Description:          [LEGAL_DESCRIPTION]
+
+Zoning Classification:      [ZONING] (e.g., R-1 Residential Single Family)
+Current Use:                [CURRENT_USE]
+Proposed Use:               [PROPOSED_USE]
+
+Property Ownership:
+☐ Owner-Occupied Primary Residence
+☐ Owner-Occupied Secondary/Vacation Home
+☐ Investment/Rental Property
+☐ Property Under Purchase Contract (COE: [CLOSE_DATE])
+☐ Trust Property (Trustee: [TRUSTEE_NAME])
+
+Homeowners Association (if applicable):
+HOA Name:                   [HOA_NAME]
+Management Company:         [HOA_MANAGEMENT]
+HOA Phone:                  [HOA_PHONE]
+HOA Approval Required:      ☐ Yes  ☐ No
+HOA Approval Status:        ☐ Approved  ☐ Pending  ☐ Not Required
+Architectural Review Fee:   $[ARCH_REVIEW_FEE] (paid by ☐ Owner ☐ Contractor)
+
+Recorded Restrictions/Easements:
+☐ CC&Rs (Covenants, Conditions & Restrictions) - Recorded [CC&R_DATE]
+☐ Utility Easements: [EASEMENT_DESCRIPTION]
+☐ Access Easements: [ACCESS_EASEMENT]
+☐ Historic District Restrictions
+☐ Conservation Easements
+☐ Other Restrictions: [OTHER_RESTRICTIONS]
+
+1.4 COMPREHENSIVE PROJECT DESCRIPTION
+
+Project Type/Category:
+☐ New Construction (Ground-Up)
+☐ Addition/Expansion
+☐ Major Renovation/Remodel
+☐ Kitchen Remodel
+☐ Bathroom Remodel
+☐ Basement Finish
+☐ Garage Construction/Conversion
+☐ Exterior Improvements
+☐ Roofing Replacement
+☐ Siding/Envelope Upgrade
+☐ Structural Repairs
+☐ Multi-Trade Renovation
+☐ Accessibility Modifications (ADA/Universal Design)
+☐ Energy Efficiency Retrofit
+☐ Other: [PROJECT_TYPE_OTHER]
+
+Project Classification:
+Total Square Footage Affected:  [SQUARE_FOOTAGE] SF
+Stories Affected:               [STORIES]
+Number of Rooms Affected:       [ROOM_COUNT]
+
+Primary Project Objectives:
+[PROJECT_OBJECTIVES]
+
+Detailed Scope Summary:
+[SCOPE_SUMMARY]
+
+Project Complexity Assessment:
+☐ Simple (Single-trade, minimal coordination)
+☐ Moderate (Multi-trade, standard complexity)
+☐ Complex (Structural changes, extensive coordination)
+☐ Highly Complex (Custom design, specialty trades, technical challenges)
+
+Special Project Considerations:
+☐ Occupied During Construction
+☐ Historic Property/Preservation Requirements
+☐ Environmental Sensitivity (wetlands, protected areas)
+☐ Coastal Zone/Special Jurisdiction
+☐ Landmark Status
+☐ Green Building Certification Target (LEED/NGBS/Energy Star)
+☐ Accessibility Compliance Required (ADA/Fair Housing)
+☐ Special Inspections Required (structural, special systems)
+☐ Other: [SPECIAL_CONSIDERATIONS]
+
+═══════════════════════════════════════════════════════════════════════════════
+ARTICLE 2: COMPREHENSIVE SCOPE OF WORK & SPECIFICATIONS
+═══════════════════════════════════════════════════════════════════════════════
+
+2.1 GENERAL SCOPE OF WORK
+
+Contractor hereby agrees to furnish, provide, and complete all labor, materials,
+equipment, tools, machinery, transportation, supervision, administration, utilities,
+services, and all other items necessary or incidental to the satisfactory completion
+of the Work as described herein and shown on any attached plans, specifications,
+drawings, or exhibits incorporated by reference.
+
+All Work shall be performed in a thorough, complete, professional, and workmanlike
+manner, consistent with applicable industry standards, manufacturer specifications,
+building code requirements, and best practices for the construction industry.
+
+2.2 DETAILED SCOPE OF WORK BY TRADE/PHASE
+
+The following represents a comprehensive breakdown of all Work included in this
+Contract. This list is representative and not necessarily exhaustive; Contractor
+is responsible for all work reasonably inferable as necessary to complete the
+project as designed and described:
+
+DEMOLITION & SITE PREPARATION:
+[DEMOLITION_SCOPE]
+• Selective demolition of existing structures, finishes, and systems as required
+• Protection of adjacent areas and items to remain
+• Disconnection and capping of utilities in demolition areas
+• Removal and legal disposal of all demolition debris
+• Hazardous material testing coordination (if suspect materials present)
+• Asbestos/lead/mold abatement coordination (Owner's expense via Change Order)
+• Salvage and protection of materials designated for reuse
+• Site security and dust containment during demolition
+• Daily cleanup of demolition debris
+• Verification of concealed conditions and notification to Owner of discrepancies
+
+STRUCTURAL WORK:
+[STRUCTURAL_SCOPE]
+• Foundation work (footings, stem walls, slabs) per structural plans
+• Concrete placement, finishing, and curing
+• Structural framing (floor joists, walls, beams, rafters, trusses)
+• Structural modifications (beam installation, load-bearing wall removal)
+• Shear walls, hold-downs, and lateral bracing per engineering
+• Structural steel fabrication and installation (if applicable)
+• Engineered lumber installation (LVL, PSL, glulam beams)
+• Temporary shoring and bracing during construction
+• Building envelope framing (walls, roof structure)
+• Floor and roof sheathing
+• Structural inspections coordination
+
+ROUGH FRAMING & CARPENTRY:
+[FRAMING_SCOPE]
+• Wall framing (interior and exterior walls)
+• Ceiling and roof framing
+• Window and door rough openings with proper headers
+• Stair framing and installation
+• Blocking and backing for fixtures, cabinets, grab bars, hardware
+• Fire blocking and draft stopping per code
+• Soffit framing and bulkheads
+• Closet shelving structure and framing
+• Attic access framing
+• All rough carpentry required for installation of finishes
+
+EXTERIOR ENVELOPE:
+[EXTERIOR_SCOPE]
+• Weather-resistant barrier (WRB) / house wrap installation
+• Flashing at all penetrations, windows, doors, and transitions
+• Exterior insulation (if specified)
+• Siding installation per manufacturer specifications:
+  ☐ Fiber cement  ☐ Wood  ☐ Vinyl  ☐ Stucco  ☐ Stone/Veneer  ☐ Other: [SIDING_TYPE]
+• Trim and corner boards
+• Soffit and fascia installation
+• Gutter and downspout system
+• Exterior painting or staining (as specified)
+• Deck/patio construction (if in scope)
+• Railing installation
+• Exterior lighting installation
+• Address numbers and accessories
+
+ROOFING SYSTEM:
+[ROOFING_SCOPE]
+• Roof tear-off (if re-roof)
+• Roof deck inspection and repair
+• Ice and water shield in critical areas
+• Roofing underlayment (felt or synthetic)
+• Roofing material installation:
+  ☐ Asphalt Shingles (Brand: [SHINGLE_BRAND], Warranty: [SHINGLE_WARRANTY])
+  ☐ Metal Roofing  ☐ Tile  ☐ Slate  ☐ TPO/EPDM  ☐ Other: [ROOF_TYPE]
+• Ridge venting and attic ventilation
+• Flashing (valleys, chimneys, skylights, walls, penetrations)
+• Drip edge and rake trim
+• Skylight installation (if in scope)
+• Roof penetration flashing (plumbing vents, exhaust vents)
+• Gutter and downspout integration
+• Final roof inspection and warranty registration
+
+WINDOWS & EXTERIOR DOORS:
+[WINDOWS_DOORS_SCOPE]
+• Window installation (Manufacturer: [WINDOW_BRAND])
+  - Window Count: [WINDOW_COUNT]
+  - Window Types: [WINDOW_TYPES]
+  - Glass: ☐ Double-pane  ☐ Triple-pane  ☐ Low-E  ☐ Tempered (where required)
+• Proper flashing and air sealing of all window openings
+• Exterior door installation:
+  - Entry doors (count: [ENTRY_DOOR_COUNT])
+  - French/patio doors (count: [PATIO_DOOR_COUNT])
+  - Sliding glass doors (count: [SLIDER_COUNT])
+• Door hardware (locksets, deadbolts, handles)
+• Weather stripping and thresholds
+• Screen doors/windows (if specified)
+• Window treatments hardware blocking (Owner supplies treatments)
+
+PLUMBING SYSTEMS:
+[PLUMBING_SCOPE]
+• Rough-in plumbing for all fixtures
+• Waste and vent piping (ABS, PVC, cast iron as appropriate)
+• Water supply piping (Type: ☐ Copper  ☐ PEX  ☐ CPVC)
+• Gas piping (if applicable) - Black iron or CSST
+• Plumbing fixture installation:
+  - Toilets (count: [TOILET_COUNT])
+  - Sinks/lavatories (count: [SINK_COUNT])
+  - Bathtubs (count: [TUB_COUNT])
+  - Showers (count: [SHOWER_COUNT])
+  - Kitchen sink (count: [KITCHEN_SINK_COUNT])
+  - Utility/laundry sink (count: [UTILITY_SINK_COUNT])
+  - Washing machine connections
+• Fixture trim and accessories
+• Water heater installation (if in scope):
+  - Type: ☐ Tank  ☐ Tankless  ☐ Heat Pump  ☐ Solar
+  - Fuel: ☐ Gas  ☐ Electric  ☐ Propane
+  - Capacity: [WH_CAPACITY] gallons or [WH_GPM] GPM (tankless)
+• Pressure testing of systems
+• Drain cleaning and testing
+• Plumbing inspections coordination
+
+HVAC SYSTEMS:
+[HVAC_SCOPE]
+• Heating system installation/modification:
+  - Type: ☐ Forced Air  ☐ Radiant  ☐ Baseboard  ☐ Mini-Split  ☐ Other
+  - Fuel: ☐ Gas  ☐ Electric  ☐ Heat Pump  ☐ Oil  ☐ Propane
+  - Capacity: [HEATING_BTU] BTU
+• Cooling system installation/modification:
+  - Type: ☐ Central AC  ☐ Mini-Split  ☐ Heat Pump  ☐ Evaporative
+  - Capacity: [COOLING_TONS] tons / [COOLING_BTU] BTU
+  - SEER Rating: [SEER_RATING]
+• Ductwork (new and modifications):
+  - Material: ☐ Sheet Metal  ☐ Flex Duct  ☐ Duct Board
+  - Insulation: R-[DUCT_R_VALUE]
+  - Duct sealing with mastic
+• Air distribution (registers, grilles, diffusers)
+• Thermostat installation:
+  - Type: ☐ Programmable  ☐ Smart/WiFi  ☐ Manual
+  - Zones: [ZONE_COUNT]
+• Ventilation systems:
+  - Bath exhaust fans (count: [BATH_FAN_COUNT])
+  - Kitchen range hood
+  - Fresh air ventilation (ERV/HRV if applicable)
+• Air filtration system
+• System balancing and commissioning
+• HVAC inspections and permits
+
+ELECTRICAL SYSTEMS:
+[ELECTRICAL_SCOPE]
+• Electrical service upgrade/modification (if required):
+  - Service Size: [SERVICE_AMPS] amps
+  - Panel: [PANEL_TYPE]
+• Main panel and subpanel installation
+• Circuit wiring (NM cable/Romex or conduit as required by code)
+• Receptacle installation (per code requirements):
+  - Standard 15/20-amp receptacles
+  - GFCI receptacles (bathrooms, kitchen, exterior, garage)
+  - AFCI circuit protection (bedrooms and living areas)
+  - USB receptacles (if specified)
+  - Dedicated circuits (appliances, equipment)
+• Lighting installation:
+  - Recessed can lights (count: [CAN_LIGHT_COUNT])
+  - Surface-mount fixtures (Owner selection from allowance)
+  - Pendant lights (count: [PENDANT_COUNT])
+  - Under-cabinet lighting
+  - Exterior lighting (count: [EXTERIOR_LIGHT_COUNT])
+  - Landscape lighting (if in scope)
+• Switches and controls:
+  - Single-pole, 3-way, 4-way switches as required
+  - Dimmer switches (locations: [DIMMER_LOCATIONS])
+  - Timer switches
+  - Occupancy sensors (if specified)
+  - Smart home integration (if in scope)
+• Specialty electrical:
+  - Range/oven circuits
+  - Microwave circuit
+  - Dishwasher circuit
+  - Disposal circuit
+  - Refrigerator circuit
+  - Washer/dryer circuits
+  - EV charger circuit (if specified)
+  - Generator interlock/transfer switch (if applicable)
+• Low-voltage systems:
+  - Doorbell/intercom
+  - Data/network cabling (Cat6)
+  - Coax/cable TV
+  - Speaker wire (if specified)
+• Smoke and carbon monoxide detectors (per code - hardwired and interconnected)
+• Temporary construction power
+• Electrical inspections coordination
+
+INSULATION & ENERGY EFFICIENCY:
+[INSULATION_SCOPE]
+• Wall insulation:
+  - Type: ☐ Fiberglass Batt  ☐ Spray Foam  ☐ Cellulose  ☐ Mineral Wool
+  - R-Value: R-[WALL_R_VALUE]
+• Ceiling/attic insulation:
+  - Type: ☐ Blown-in  ☐ Batt  ☐ Spray Foam
+  - R-Value: R-[CEILING_R_VALUE]
+• Floor insulation (if applicable):
+  - R-Value: R-[FLOOR_R_VALUE]
+• Air sealing (caulking and foam sealing of penetrations)
+• Vapor barrier installation (where required)
+• Rim joist insulation and sealing
+• Attic access insulation and weather stripping
+• Energy code compliance verification
+• Blower door testing (if required)
+
+DRYWALL & INTERIOR SURFACES:
+[DRYWALL_SCOPE]
+• Drywall hanging (standard 1/2" or 5/8" fire-rated as required)
+• Type X fire-rated drywall (where code requires)
+• Moisture-resistant drywall (bathrooms, laundry)
+• Drywall finishing (tape, mud, and sand):
+  - Level: ☐ Level 3  ☐ Level 4  ☐ Level 5
+• Texture application (if specified):
+  - Type: ☐ Orange Peel  ☐ Knockdown  ☐ Skip Trowel  ☐ Smooth
+• Drywall repairs in existing adjacent areas (as needed for transitions)
+• Corner bead installation (metal or vinyl)
+• Ceiling finish (drywall or other as specified)
+• Acoustic ceiling removal/installation (if applicable)
+
+INTERIOR TRIM & MILLWORK:
+[TRIM_SCOPE]
+• Door casing and window casing:
+  - Style: [CASING_STYLE]
+  - Material: ☐ Paint-grade MDF  ☐ Stain-grade wood  ☐ Primed pine
+• Baseboard installation:
+  - Height: [BASEBOARD_HEIGHT]
+  - Style: [BASEBOARD_STYLE]
+• Crown molding (rooms: [CROWN_LOCATIONS])
+  - Size: [CROWN_SIZE]
+• Wainscoting/paneling (locations: [WAINSCOT_LOCATIONS])
+• Built-in shelving/cabinetry (locations: [BUILTIN_LOCATIONS])
+• Closet shelving and organizers:
+  - Type: ☐ Wire  ☐ Wood  ☐ Melamine  ☐ Custom
+• Window sills and aprons
+• Chair rail molding (if specified)
+• Coffered ceiling details (if applicable)
+• Fireplace mantel and surround (if in scope)
+• Stairway components:
+  - Handrails and balusters
+  - Newel posts
+  - Stair treads and risers
+  - Skirt boards
+
+INTERIOR DOORS & HARDWARE:
+[DOORS_SCOPE]
+• Interior door installation:
+  - Door count: [INT_DOOR_COUNT]
+  - Door style: ☐ Slab  ☐ Panel  ☐ French  ☐ Pocket  ☐ Barn Door
+  - Material: ☐ Hollow Core  ☐ Solid Core  ☐ Wood  ☐ MDF
+  - Finish: ☐ Paint-grade  ☐ Stain-grade  ☐ Primed
+• Door hardware:
+  - Locksets/passage sets (finish: [HARDWARE_FINISH])
+  - Privacy locksets (bathrooms, bedrooms)
+  - Dummy handles (closets)
+  - Hinges (finish: [HINGE_FINISH])
+• Door stops and bumpers
+• Closet doors:
+  - Type: ☐ Bi-fold  ☐ Sliding  ☐ Bypass  ☐ Standard swing
+
+FLOORING INSTALLATION:
+[FLOORING_SCOPE]
+
+Kitchen Flooring:
+• Material: ☐ Tile  ☐ LVP  ☐ Hardwood  ☐ Other: [KITCHEN_FLOOR]
+• Square Footage: [KITCHEN_SF] SF
+• Pattern: [KITCHEN_PATTERN]
+
+Bathroom Flooring:
+• Material: ☐ Tile  ☐ LVP  ☐ Vinyl Sheet  ☐ Other: [BATH_FLOOR]
+• Square Footage: [BATH_SF] SF
+
+Living Areas Flooring:
+• Material: ☐ Hardwood  ☐ Engineered Wood  ☐ Laminate  ☐ LVP  ☐ Carpet
+• Square Footage: [LIVING_SF] SF
+• Species (if wood): [WOOD_SPECIES]
+• Finish: ☐ Prefinished  ☐ Site-finished
+• Stain color (if applicable): [STAIN_COLOR]
+
+Bedroom Flooring:
+• Material: ☐ Carpet  ☐ Hardwood  ☐ Laminate  ☐ LVP
+• Square Footage: [BEDROOM_SF] SF
+• Carpet quality (if applicable): [CARPET_QUALITY]
+
+Flooring Details:
+• Subfloor preparation and leveling
+• Underlayment installation
+• Transition pieces and thresholds
+• Baseboards installed after flooring
+• Floor protection during remainder of construction
+
+TILE WORK:
+[TILE_SCOPE]
+• Shower tile installation:
+  - Walls: [SHOWER_WALL_SF] SF
+  - Floor: [SHOWER_FLOOR_SF] SF
+  - Tile size: [SHOWER_TILE_SIZE]
+  - Pattern: [SHOWER_PATTERN]
+• Tub surround tile:
+  - Square footage: [TUB_TILE_SF] SF
+  - Height: [TUB_TILE_HEIGHT]
+• Bathroom floor tile (details above)
+• Kitchen backsplash:
+  - Square footage: [BACKSPLASH_SF] SF
+  - Height: [BACKSPLASH_HEIGHT]
+  - Tile type: [BACKSPLASH_TILE]
+• Tile installation details:
+  - Waterproofing membrane (showers and wet areas)
+  - Schluter/Kerdi systems or equivalent
+  - Tile backer board (cement board or Kerdi board)
+  - Premium thin-set mortar
+  - Grout type: ☐ Standard  ☐ Epoxy  ☐ Urethane
+  - Grout color: [GROUT_COLOR]
+  - Sealing of grout and stone (if applicable)
+
+CABINETRY & COUNTERTOPS:
+[CABINETS_SCOPE]
+
+Kitchen Cabinets:
+• Cabinet style: [CABINET_STYLE]
+• Cabinet finish: ☐ Paint  ☐ Stain  ☐ Thermofoil  ☐ Laminate
+• Color/stain: [CABINET_COLOR]
+• Cabinet construction: ☐ Face Frame  ☐ Frameless/Euro
+• Linear footage: [CABINET_LF] LF
+• Cabinet features:
+  - ☐ Soft-close hinges and drawer glides
+  - ☐ Pull-out trash/recycling
+  - ☐ Lazy Susan corner cabinets
+  - ☐ Pull-out shelving
+  - ☐ Custom organizational inserts
+  - ☐ Under-cabinet lighting
+• Cabinet installation and leveling
+• Crown molding on cabinets (if specified)
+
+Kitchen Countertops:
+• Material: ☐ Granite  ☐ Quartz  ☐ Marble  ☐ Butcher Block  ☐ Laminate  ☐ Other
+• Color/pattern: [COUNTERTOP_COLOR]
+• Square footage: [COUNTER_SF] SF
+• Edge profile: [EDGE_PROFILE]
+• Backsplash: ☐ 4" integral  ☐ Full height tile (see Tile section)
+• Cutouts (sink, cooktop, etc.)
+• Undermount sink installation (if applicable)
+
+Bathroom Vanities:
+• Vanity count: [VANITY_COUNT]
+• Sizes: [VANITY_SIZES]
+• Style: [VANITY_STYLE]
+• Countertop material: [VANITY_COUNTER_MATERIAL]
+• Sink type: ☐ Undermount  ☐ Vessel  ☐ Drop-in  ☐ Integrated
+
+PAINTING & FINISHING:
+[PAINTING_SCOPE]
+• Interior painting:
+  - All walls and ceilings in affected areas
+  - Paint grade: ☐ Builder  ☐ Premium  ☐ Zero-VOC
+  - Finish: Walls - ☐ Flat  ☐ Eggshell  ☐ Satin
+           Trim - ☐ Semi-gloss  ☐ High-gloss
+           Ceiling - ☐ Flat
+  - Color selection: Owner to select from [PAINT_BRAND]
+  - Primer coat on all new drywall and wood
+  - Two finish coats
+  - Trim and door painting (2-3 coats as needed)
+  - Touch-up and final coat after punchlist
+• Staining/finishing (if applicable):
+  - Cabinets, trim, or doors requiring stain
+  - Clear coat/polyurethane application
+  - Number of coats: [STAIN_COATS]
+• Caulking:
+  - All trim joints
+  - Tub/shower/countertop edges
+  - Window and door perimeters
+  - Paintable caulk color-matched
+
+SPECIALTY ITEMS & SYSTEMS:
+[SPECIALTY_SCOPE]
+• Fireplace installation (if in scope):
+  - Type: ☐ Gas  ☐ Wood  ☐ Electric  ☐ Pellet
+  - Make/Model: [FIREPLACE_MODEL]
+• Home automation/smart home:
+  - Smart thermostat
+  - Smart lighting controls
+  - Smart locks
+  - Whole-home audio (if specified)
+  - Security system prewire
+• Built-in appliances (if in scope - see allowances)
+• Custom features: [CUSTOM_FEATURES]
+
+2.3 MATERIALS & PRODUCT QUALITY STANDARDS
+
+All materials incorporated into the Work shall be:
+• New (not used, refurbished, or reconditioned unless explicitly specified)
+• Of good quality and free from defects
+• Suitable for the intended purpose
+• Consistent with building code requirements
+• Installed per manufacturer specifications and recommendations
+• Covered by manufacturer warranties which pass through to Owner
+• Delivered and stored properly to prevent damage or deterioration
+• From reputable manufacturers with established industry presence
+
+Where specific brands, models, or manufacturers are specified in this Contract or
+any attached specifications, such specifications establish a quality standard.
+Contractor may propose equivalent substitutions of "equal or better" quality,
+subject to Owner's reasonable approval. Owner approval shall not be unreasonably
+withheld if substitution meets or exceeds specified quality, performance,
+aesthetics, warranty, and availability.
+
+Where materials are designated "Owner Selection" or covered by an allowance,
+Owner shall make selections in a timely manner per the selection schedule.
+Contractor will provide guidance on product specifications and installation
+requirements to ensure Owner selections are compatible with the Work.
+
+2.4 QUALITY OF WORKMANSHIP
+
+All Work shall be performed by qualified, skilled tradespeople with appropriate
+training, experience, and licenses/certifications for the work being performed.
+
+Contractor warrants that all Work will be:
+• Executed in a professional, workmanlike manner
+• Consistent with applicable industry standards including:
+  - Residential Construction Performance Guidelines (NAHB)
+  - ACI standards for concrete work
+  - AWI quality standards for architectural woodwork
+  - TCA standards for ceramic tile installation
+  - NWFA standards for wood flooring
+  - Manufacturer installation instructions for all products
+  - Local building official interpretations and requirements
+• Substantially free from defects in workmanship
+• Suitable and fit for its intended purpose
+• Aesthetically consistent with contract documents and accepted standards
+• Completed with reasonable care to minimize disruption to Owner and property
+
+2.5 CODES, STANDARDS & REGULATORY COMPLIANCE
+
+All Work shall comply with the current adopted editions of applicable codes and
+standards including but not limited to:
+
+Building Codes:
+• International Residential Code (IRC) or local residential code
+• International Building Code (IBC) for applicable portions
+• International Existing Building Code (IEBC) for remodel work
+
+Specialized Codes:
+• National Electrical Code (NEC) - current edition
+• Uniform Plumbing Code (UPC) or International Plumbing Code (IPC)
+• International Mechanical Code (IMC) or Uniform Mechanical Code (UMC)
+• International Fuel Gas Code (IFGC)
+• International Energy Conservation Code (IECC) or state energy code
+• International Fire Code (IFC) - where applicable
+
+Federal Regulations (where applicable):
+• Americans with Disabilities Act (ADA)
+• Fair Housing Act accessibility requirements
+• EPA Lead-Safe Renovation Rule (RRP) - for pre-1978 structures
+• OSHA safety regulations
+
+State & Local Requirements:
+• State contractor licensing laws
+• State energy codes (California Title 24, etc.)
+• County and municipal building regulations
+• Historic preservation requirements
+• Environmental regulations (wetlands, coastal zone, etc.)
+• HOA architectural requirements and CC&Rs
+
+Where codes conflict, the most stringent requirement shall govern unless otherwise
+directed by the building official.
+
+Contractor shall monitor code changes during construction and comply with codes
+in effect at time of permit application, except where amended codes are mandated
+by the jurisdiction.
+
+2.6 PERFORMANCE SPECIFICATIONS
+
+Structural Performance:
+• All structural work shall be engineered to meet code-required load capacities
+• Deflection limits per IRC/IBC standards
+• Proper connections and fastening per Simpson Strong-Tie or equivalent
+• Seismic and wind load resistance per jurisdiction requirements
+• Soil bearing capacity and foundation design per geotechnical report (if provided)
+
+Building Envelope Performance:
+• Weather-resistant barrier properly lapped and sealed
+• Window and door flashing per ASTM E2112 or manufacturer instructions
+• Air sealing to meet energy code requirements (ACH50 target: [ACH_TARGET])
+• Thermal envelope continuity (no gaps in insulation)
+• Moisture management - drainage plane and capillary breaks
+• Vapor retarder placement appropriate for climate zone
+
+Systems Performance:
+• HVAC system properly sized per Manual J load calculation
+• Duct system designed per Manual D
+• Equipment selection per Manual S
+• Indoor air quality per ASHRAE 62.2 (ventilation rate: [VENT_CFM] CFM)
+• Plumbing systems sized per UPC/IPC fixture unit method
+• Water pressure adequate (40-80 PSI at fixtures)
+• Electrical system adequately sized for loads and future expansion
+• Lighting levels appropriate for task and ambient requirements
+
+Accessibility (if applicable):
+• Clear floor space at fixtures per ICC A117.1 or ADA
+• Accessible routes with proper width and turning radius
+• Grab bar blocking and reinforcement installed
+• Accessible fixture heights and reach ranges
+• Door width and hardware compliance
+
+2.7 WORK NOT INCLUDED (EXCLUSIONS)
+
+The following items are specifically EXCLUDED from the Contract Price unless
+explicitly added via Change Order or noted as included in Section 9.1:
+
+Site Work & Utilities:
+✗ Grading, excavation beyond that required for foundation/utilities
+✗ Landscaping beyond restoration of access paths
+✗ Irrigation systems, sprinklers
+✗ Fencing
+✗ Paving, concrete flatwork (driveways, walkways) beyond specified areas
+✗ Retaining walls (unless specified in scope)
+✗ Underground utility service upgrades (main sewer line, water service, gas service)
+✗ Well or septic system work
+✗ Site drainage systems beyond foundation perimeter drains
+
+Structure & Envelope:
+✗ Repairs to existing structure not directly affected by scope of work
+✗ Correction of pre-existing code violations
+✗ Asbestos, lead paint, or mold abatement
+✗ Pest control and termite treatment
+✗ Chimney repairs or rebuilding (unless specified)
+✗ Foundation repairs beyond scope of work
+✗ Structural repairs to areas not part of construction scope
+
+Interior Finishes:
+✗ Furniture, fixtures, and equipment (FF&E) not permanently attached
+✗ Window treatments (blinds, shutters, curtains, drapes)
+✗ Mirrors not attached to cabinetry
+✗ Artwork, decorative items, accessories
+✗ Specialty lighting fixtures exceeding allowance
+✗ Wallpaper or specialty wall coverings (unless specified)
+✗ Epoxy or stained concrete floor finishes (unless specified)
+✗ Built-in furniture beyond specified items
+
+Appliances & Equipment:
+✗ Kitchen appliances except as noted in allowances or specifications:
+  - Refrigerator
+  - Range/cooktop (unless specified as included)
+  - Dishwasher (installation may be included if supplied by Owner)
+  - Microwave (unless specified as included)
+  - Range hood (basic exhaust may be included; upgrade hood excluded)
+  - Wine refrigerator, beverage centers
+✗ Laundry appliances (washer, dryer)
+✗ Water filtration or softening systems
+✗ Central vacuum system
+✗ Whole-house generator (unless specified)
+✗ Solar panels or renewable energy systems
+
+Technology & Communications:
+✗ Security system components and monitoring
+✗ Advanced home automation beyond specified smart devices
+✗ Whole-home audio/video systems (unless specified)
+✗ Intercom systems (beyond basic doorbell)
+✗ Telephone system beyond rough-in
+✗ Computer network equipment (routers, switches, servers)
+✗ TV mounting and setup
+
+Specialty Systems:
+✗ Elevator or wheelchair lift installation
+✗ Swimming pool, spa, or hot tub
+✗ Sauna or steam room
+✗ Outdoor kitchen or BBQ island
+✗ Fire suppression/sprinkler systems (unless code-required)
+✗ Lightning protection system
+✗ Radon mitigation system (unless required)
+
+Professional Services:
+✗ Architectural design services
+✗ Structural engineering (Owner to provide if required by jurisdiction)
+✗ Soils/geotechnical engineering
+✗ Land surveying
+✗ Environmental testing and reports
+✗ Energy modeling and HERS rating
+✗ Interior design services beyond material selection assistance
+✗ Real estate appraisal
+✗ Legal fees related to property or contract
+
+Other Exclusions:
+✗ Off-site storage or pod rental for Owner's belongings
+✗ Temporary housing or moving costs
+✗ Cleaning beyond final broom-clean (post-construction deep clean is Owner responsibility)
+✗ Final decorative touches (staging, artwork hanging, furniture arrangement)
+✗ Permits or fees for work outside described scope
+✗ Impact fees or development fees (unless specified)
+✗ Utility connection fees or capacity charges
+✗ Property taxes or assessments during construction
+✗ Warranty service for manufacturer defects (Contractor facilitates but not responsible)
+
+Owner Responsibilities (Work by Others):
+✗ Owner-performed work or work by Owner's separate contractors
+✗ Coordination and interface with Owner's contractors (Owner responsible)
+✗ Delays caused by Owner's contractors
+✗ Repairs to damage caused by Owner or Owner's contractors
+
+2.8 OWNER-SUPPLIED MATERIALS & EQUIPMENT
+
+The following items (if any) will be supplied by Owner for installation by Contractor:
+
+☐ [OWNER_SUPPLIED_ITEM_1] - Expected delivery: [DELIVERY_DATE_1]
+☐ [OWNER_SUPPLIED_ITEM_2] - Expected delivery: [DELIVERY_DATE_2]
+☐ [OWNER_SUPPLIED_ITEM_3] - Expected delivery: [DELIVERY_DATE_3]
+
+Terms for Owner-Supplied Items:
+• Owner shall deliver items to job site at time needed in construction schedule
+• Items must be delivered in new, undamaged condition with all packaging intact
+• Items must include all installation instructions, hardware, and accessories
+• Items must comply with building codes and be compatible with Contractor's work
+• Contractor will inspect upon delivery and reject damaged or incomplete items
+• Contractor is not responsible for:
+  - Manufacturer defects in Owner-supplied items
+  - Delays caused by late delivery of Owner-supplied items
+  - Storage or security of Owner-supplied items
+  - Warranty service on Owner-supplied items
+  - Suitability or code compliance of Owner-supplied items
+• Installation labor for Owner-supplied items is included in Contract Price
+• If installation reveals incompatibility or defects, Owner shall replace at Owner's
+  expense or contract for alternative, and schedule extension may apply
+
+2.9 SUBSTANTIAL COMPLETION DEFINED
+
+"Substantial Completion" occurs when:
+• All Work is complete except for minor punchlist items
+• All building department inspections are passed (or scheduled for imminent final)
+• All major systems (HVAC, plumbing, electrical) are operational
+• Space is safe and suitable for intended occupancy and use
+• Certificate of Occupancy issued (or applicable final inspection approval)
+• Only minor corrective work, adjustments, or touchup remains
+• Remaining work will not interfere with Owner's use of the space
+
+Upon Substantial Completion:
+• Owner may occupy and use the space
+• Warranty period commences
+• Contractor retains access for punchlist completion
+• Retention (if any) becomes due less punchlist holdback
+• Final payment milestone triggered (per payment schedule)
+
+2.10 FINAL COMPLETION & PROJECT CLOSEOUT
+
+"Final Completion" occurs when:
+• ALL Work is 100% complete including punchlist items
+• All required inspections passed and documented
+• Certificate of Occupancy or final sign-off received
+• Owner has conducted final walkthrough and accepted Work
+• All systems tested, balanced, and operating correctly
+• All required operations & maintenance manuals provided
+• All warranty documents provided
+• Site cleaned and all debris, equipment, and materials removed
+• All keys, garage remotes, and access codes provided to Owner
+• Owner training on systems completed (if applicable)
+
+Closeout Documents to be Provided:
+☐ Final lien waivers from Contractor and all subcontractors
+☐ Copies of all permits and inspection reports
+☐ Certificate of Occupancy
+☐ Warranty documents for all equipment and materials
+☐ Operations and maintenance manuals
+☐ Paint color/product list and extra paint (1 quart per color)
+☐ Extra flooring, tile, or other materials (as available)
+☐ Appliance manuals and warranty cards
+☐ HVAC filter size and replacement schedule
+☐ Keys, access codes, garage door openers
+☐ Final invoice with complete cost breakdown
+☐ Unconditional final lien waivers
+
+═══════════════════════════════════════════════════════════════════════════════
+ARTICLE 3: CONTRACT PRICE, PAYMENT TERMS & FINANCIAL PROVISIONS
+═══════════════════════════════════════════════════════════════════════════════
+
+3.1 CONTRACT SUM (TOTAL PRICE)
+
+The total Contract Price for completion of all Work described in this Contract is:
+
+    TOTAL CONTRACT PRICE: $[TOTAL_VALUE] (US Dollars)
+
+This is a ☐ LUMP SUM (fixed price) contract  ☐ COST-PLUS contract  ☐ TIME & MATERIALS
+
+Contract Price Basis:
+☑ The Contract Price includes ALL costs to complete the Work as specified including:
+  • All labor (including wage burden, payroll taxes, workers' comp insurance)
+  • All materials and products specified or reasonably inferable
+  • All equipment, tools, and consumables
+  • All permits and standard inspection fees
+  • All utility usage during construction
+  • All waste disposal and dumpster rental
+  • Project management and supervision
+  • General conditions and job site overhead
+  • Contractor overhead and profit
+  • Insurance costs
+  • All costs necessary to achieve Substantial and Final Completion
+
+☑ This is a FIXED PRICE - the Contract Sum may only be adjusted by written Change Order
+
+Price Breakdown by Category (for reference only):
+┌────────────────────────────────────────────────────────────────────┐
+│ Category                              Amount          % of Total    │
+├────────────────────────────────────────────────────────────────────┤
+│ Site Preparation & Demolition      $[DEMO_COST]       [DEMO_PCT]%   │
+│ Structural & Framing               $[FRAME_COST]      [FRAME_PCT]%  │
+│ Exterior Envelope                  $[EXT_COST]        [EXT_PCT]%    │
+│ Roofing                            $[ROOF_COST]       [ROOF_PCT]%   │
+│ Windows & Doors                    $[WINDOW_COST]     [WINDOW_PCT]% │
+│ Plumbing                           $[PLUMB_COST]      [PLUMB_PCT]%  │
+│ HVAC                               $[HVAC_COST]       [HVAC_PCT]%   │
+│ Electrical                         $[ELEC_COST]       [ELEC_PCT]%   │
+│ Insulation                         $[INSUL_COST]      [INSUL_PCT]%  │
+│ Drywall & Texture                  $[DW_COST]         [DW_PCT]%     │
+│ Interior Trim & Millwork           $[TRIM_COST]       [TRIM_PCT]%   │
+│ Cabinetry                          $[CAB_COST]        [CAB_PCT]%    │
+│ Countertops                        $[COUNTER_COST]    [COUNTER_PCT]%│
+│ Flooring                           $[FLOOR_COST]      [FLOOR_PCT]%  │
+│ Tile Work                          $[TILE_COST]       [TILE_PCT]%   │
+│ Painting & Finishing               $[PAINT_COST]      [PAINT_PCT]%  │
+│ Plumbing Fixtures                  $[FIXT_COST]       [FIXT_PCT]%   │
+│ Lighting Fixtures                  $[LIGHT_COST]      [LIGHT_PCT]%  │
+│ Appliances (if included)           $[APPL_COST]       [APPL_PCT]%   │
+│ Permits & Inspections              $[PERMIT_COST]     [PERMIT_PCT]% │
+│ General Conditions                 $[GC_COST]         [GC_PCT]%     │
+│ Contingency (Contractor's)         $[CONT_COST]       [CONT_PCT]%   │
+│ Profit & Overhead                  $[PROFIT_COST]     [PROFIT_PCT]% │
+├────────────────────────────────────────────────────────────────────┤
+│ TOTAL CONTRACT PRICE:              $[TOTAL_VALUE]     100.00%       │
+└────────────────────────────────────────────────────────────────────┘
+
+NOTE: The above breakdown is for informational purposes only. Contract Price is
+LUMP SUM regardless of actual costs in each category.
+
+3.2 ALLOWANCES
+
+The Contract Price includes the following ALLOWANCES for Owner-selected materials.
+Allowances include MATERIALS ONLY; installation labor is included in Contract Price.
+
+┌────────────────────────────────────────────────────────────────────┐
+│ Allowance Item                  Quantity    Unit    Allowance Total │
+├────────────────────────────────────────────────────────────────────┤
+│ Light Fixtures                  [QTY]       each    $[LIGHT_ALLOW]  │
+│ Plumbing Fixtures               [QTY]       each    $[PLUMB_ALLOW]  │
+│ Tile (specify type/location)    [QTY]       SF      $[TILE_ALLOW]   │
+│ Countertops                     [QTY]       SF      $[COUNTER_ALLOW]│
+│ Flooring (specify type/loc)     [QTY]       SF      $[FLOOR_ALLOW]  │
+│ Cabinet Hardware                [QTY]       set     $[HARD_ALLOW]   │
+│ Appliances                      [QTY]       set     $[APPL_ALLOW]   │
+│ [OTHER_ALLOWANCE]               [QTY]       [UNIT]  $[OTHER_ALLOW]  │
+├────────────────────────────────────────────────────────────────────┤
+│ TOTAL ALLOWANCES:                                   $[TOTAL_ALLOW]  │
+└────────────────────────────────────────────────────────────────────┘
+
+Allowance Terms & Conditions:
+
+Selection Process:
+• Contractor will provide Owner with product specifications and selection guidance
+• Owner shall make selections from suppliers designated by Contractor or with
+  Contractor's approval to ensure product compatibility and warranty
+• Contractor will accompany Owner to showroom/supplier for selections (if requested)
+• Contractor is not responsible for design aesthetic or Owner satisfaction with
+  selections - Owner has sole discretion on style, color, finish within allowance
+
+Selection Deadlines:
+• Selections must be made according to the project schedule
+• Contractor will provide reasonable notice (minimum 2 weeks) before selection needed
+• Deadline for selections: [SELECTION_DEADLINE]
+• Late selections may delay project completion without adjustment to completion date
+
+Allowance Reconciliation:
+• If actual material cost EXCEEDS allowance:
+  - Owner pays difference plus 15% markup
+  - Change Order issued for overage
+  - Payment due before installation unless other terms agreed
+• If actual material cost is LESS than allowance:
+  - Owner receives credit for difference (no markup reduction)
+  - Credit applied to next progress payment or final payment
+  - Contractor is entitled to labor costs based on actual installation difficulty,
+    not material price (e.g., expensive fixture may be easier to install)
+
+• Material cost = delivered price including:
+  - Product cost
+  - Sales tax
+  - Delivery/shipping charges
+  - Special order fees
+  - Restocking/return fees (if any)
+
+• Material cost does NOT include:
+  - Installation labor (always included in Contract Price)
+  - Accessories or trim required for installation (included in Contract Price)
+
+Allowance Exclusions:
+• Allowances do NOT cover modifications to rough-in if selection requires different
+  configuration than planned (charged via Change Order)
+• Custom or specialty items requiring extended lead times may delay schedule
+• Owner selections must comply with applicable building codes
+• Contractor may reject selections that are incompatible with project or substandard
+  quality, with written explanation
+
+3.3 UNIT PRICES FOR ADDITIONAL WORK
+
+In the event that changes or additions to the Work are required, the following
+unit prices shall apply unless otherwise negotiated via Change Order:
+
+Labor Rates (fully burdened, including overhead & profit):
+┌────────────────────────────────────────────────────────────────────┐
+│ Labor Classification                 Regular Rate    Premium Rate   │
+├────────────────────────────────────────────────────────────────────┤
+│ Project Manager/Superintendent       $[PM_RATE]/hr   $[PM_PREM]/hr  │
+│ Licensed Electrician                 $125/hr         $185/hr        │
+│ Licensed Plumber                     $135/hr         $200/hr        │
+│ Licensed HVAC Technician             $115/hr         $170/hr        │
+│ Master Carpenter/Lead                $95/hr          $140/hr        │
+│ Carpenter/Craftsman                  $85/hr          $125/hr        │
+│ Tile Setter                          $90/hr          $135/hr        │
+│ Drywall Installer/Finisher           $75/hr          $110/hr        │
+│ Painter                              $65/hr          $95/hr         │
+│ General Laborer                      $45/hr          $65/hr         │
+│ Helper/Apprentice                    $35/hr          $50/hr         │
+└────────────────────────────────────────────────────────────────────┘
+
+Labor Rate Notes:
+• All rates include worker's compensation, payroll taxes, benefits, overhead, profit
+• Regular rates apply: Monday-Friday, 7:00 AM - 5:00 PM
+• Premium rates apply: Evenings (after 5 PM), weekends, holidays
+• Minimum charges: 2 hours for licensed trades, 4 hours for service calls
+• Travel time charged portal-to-portal for off-site material pickups or service calls
+
+Material & Equipment Markups:
+• Materials (purchased by Contractor):        Cost + 15%
+• Equipment rental (tools, lifts, specialty): Cost + 10%
+• Delivery charges:                           Cost + 10%
+• Subcontractor work:                         Cost + 15%
+• Debris disposal:                            Cost + 15%
+
+Unit Pricing Examples (common additions):
+┌────────────────────────────────────────────────────────────────────┐
+│ Description                          Unit       Unit Price          │
+├────────────────────────────────────────────────────────────────────┤
+│ Additional recessed light            Each       $[LIGHT_UNIT]       │
+│ Additional electrical receptacle     Each       $[RECEP_UNIT]       │
+│ Additional switch                    Each       $[SWITCH_UNIT]      │
+│ Drywall repair (per SF)              SF         $[DW_REP_UNIT]      │
+│ Paint additional room                Room       $[PAINT_RM_UNIT]    │
+│ Interior door (hung, trimmed)        Each       $[DOOR_UNIT]        │
+│ Window installation                  Each       $[WINDOW_UNIT]      │
+│ Additional plumbing fixture          Each       $[PLUMB_FIX_UNIT]   │
+│ Concrete flatwork                    SF         $[CONC_SF_UNIT]     │
+│ Framing wall (per LF)                LF         $[FRAME_LF_UNIT]    │
+│ [OTHER_UNIT_ITEM]                    [UNIT]     $[OTHER_UNIT_PRICE] │
+└────────────────────────────────────────────────────────────────────┘
+
+3.4 DETAILED PAYMENT SCHEDULE
+
+Payments shall be made according to the following milestone-based schedule:
+
+┌──────────────────────────────────────────────────────────────────────────┐
+│ Payment #  Milestone/Phase                Amount        % of Total   Due │
+├──────────────────────────────────────────────────────────────────────────┤
+│ 1 - DOWN PAYMENT:                                                        │
+│    Upon contract signing              $[PMT1_AMT]     [PMT1_PCT]%  [DUE1]│
+│    • Deposit to secure materials and schedule                            │
+│    • Contractor to order long-lead items                                 │
+│    • Mobilization and job setup                                          │
+├──────────────────────────────────────────────────────────────────────────┤
+│ 2 - FRAMING/ROUGH-IN COMPLETE:                                           │
+│    When framing & rough-in done       $[PMT2_AMT]     [PMT2_PCT]%  [DUE2]│
+│    • Structural framing complete                                         │
+│    • Rough plumbing complete                                             │
+│    • Rough electrical complete                                           │
+│    • Rough HVAC complete                                                 │
+│    • Windows & exterior doors installed                                  │
+│    • Framing inspection passed                                           │
+├──────────────────────────────────────────────────────────────────────────┤
+│ 3 - CLOSED-IN/INSULATION:                                                │
+│    When building dried-in             $[PMT3_AMT]     [PMT3_PCT]%  [DUE3]│
+│    • Exterior envelope complete                                          │
+│    • Roofing complete                                                    │
+│    • Siding/exterior finish installed                                    │
+│    • Insulation installed                                                │
+│    • Drywall hung and taped                                              │
+│    • Insulation inspection passed                                        │
+├──────────────────────────────────────────────────────────────────────────┤
+│ 4 - INTERIOR FINISHES:                                                   │
+│    When finishes substantially done   $[PMT4_AMT]     [PMT4_PCT]%  [DUE4]│
+│    • Drywall finished and painted                                        │
+│    • Trim and doors installed                                            │
+│    • Cabinets installed                                                  │
+│    • Countertops installed                                               │
+│    • Flooring installed                                                  │
+│    • Tile work complete                                                  │
+├──────────────────────────────────────────────────────────────────────────┤
+│ 5 - FINAL COMPLETION:                                                    │
+│    Upon final completion              $[PMT5_AMT]     [PMT5_PCT]%  [DUE5]│
+│    • All punch list items complete                                       │
+│    • Final inspection passed                                             │
+│    • Certificate of Occupancy issued                                     │
+│    • Final cleanup complete                                              │
+│    • All closeout documents provided                                     │
+│    • Owner final walkthrough accepted                                    │
+│    • Lien waivers provided                                               │
+├──────────────────────────────────────────────────────────────────────────┤
+│ TOTAL CONTRACT PRICE:                 $[TOTAL_VALUE]  100.00%            │
+└──────────────────────────────────────────────────────────────────────────┘
+
+Payment Milestones Explained:
+• Payments become DUE when milestone criteria are met AND Contractor submits invoice
+• Owner has TEN (10) calendar days from invoice date to make payment
+• Contractor will notify Owner when milestone is achieved and request walkthrough
+• Owner may inspect Work before releasing payment
+• Payment may be reasonably withheld for defective Work or incomplete milestone items
+• Withholding must be specific and reasonable in amount (limited to value of deficiency)
+• Contractor may stop Work if payment is more than 15 days overdue (see 3.6)
+
+3.5 INVOICING & PAYMENT PROCEDURES
+
+Invoice Submission:
+• Contractor shall submit detailed invoice when payment milestone is achieved
+• Invoice shall include:
+  - Invoice number and date
+  - Contract number reference
+  - Milestone/phase completed
+  - Payment amount due per schedule
+  - Summary of work completed
+  - Any Change Orders executed and amounts due
+  - Allowance reconciliation (if applicable)
+  - Previous payment total
+  - Current payment requested
+  - Total paid to date after current payment
+  - Balance remaining on contract
+• Invoice may be submitted via:
+  ☐ Email (PDF) to: [CLIENT_EMAIL]
+  ☐ Mail to: [CLIENT_ADDRESS]
+  ☐ In person
+
+Payment Due Date:
+• Payment is DUE within TEN (10) calendar days of invoice date
+• "Invoice date" is the date Contractor emails or postmarks invoice to Owner
+• Payment is considered "made" when:
+  ☐ Check received by Contractor
+  ☐ Wire transfer or ACH deposited in Contractor's account
+  ☐ Credit card payment processed
+
+Acceptable Payment Methods:
+☑ Check (payable to: [CONTRACTOR_NAME])
+  Mail to: [CONTRACTOR_ADDRESS]
+☑ Wire Transfer
+  Bank: [BANK_NAME]
+  Routing: [ROUTING_NUMBER]
+  Account: [ACCOUNT_NUMBER]
+☑ ACH/Zelle
+  Details: [ACH_DETAILS]
+☑ Credit/Debit Card (3% processing fee added to payment amount)
+☐ Cash (for small amounts under $500 - receipt provided)
+
+Payment Documentation:
+• Contractor shall provide receipt within 3 business days of payment received
+• Owner should retain copies of all checks, wire confirmations, receipts
+• Contractor shall provide updated accounting of contract balance with each payment
+
+3.6 LATE PAYMENT TERMS & CONSEQUENCES
+
+Interest on Late Payments:
+• Payments not received within TEN (10) days of invoice date are OVERDUE
+• Overdue balances accrue interest at ONE AND ONE-HALF PERCENT (1.5%) per month
+  or EIGHTEEN PERCENT (18%) annual percentage rate (APR)
+• Interest calculated from original invoice due date
+• Interest rate is the maximum allowed by [STATE] law or 1.5% monthly, whichever is LESS
+
+Late Payment Notices:
+• If payment is 5+ days overdue, Contractor will send courtesy reminder
+• If payment is 10+ days overdue, Contractor will send formal notice via email and
+  certified mail indicating:
+  - Original invoice date and amount
+  - Number of days overdue
+  - Interest accrued to date
+  - Intent to stop work if not received within 5 days
+  - Potential for lien filing if payment not received
+
+Work Stoppage for Non-Payment:
+• If payment is FIFTEEN (15) or more days overdue, Contractor may stop Work after
+  providing FIVE (5) days written notice to Owner
+• Work stoppage notice shall be sent via:
+  - Email with read receipt
+  - Certified mail, return receipt requested
+• During work stoppage:
+  - Contractor will demobilize and secure site
+  - No further work performed until payment received
+  - Schedule will be extended day-for-day
+  - Contractor maintains right to terminate contract (see Article 12)
+• Work resumes within FIVE (5) business days of payment receipt
+• Owner is responsible for any damages or losses during stoppage period
+
+Construction Lien Rights:
+• Contractor retains lien rights under [STATE] Mechanic's Lien Law
+• Preliminary Notice (if required by state) was sent on: [PRELIM_NOTICE_DATE]
+• If payment is THIRTY (30) days overdue, Contractor may record a Mechanic's Lien
+  against the property for:
+  - Unpaid contract balance
+  - Accrued interest
+  - Cost of lien filing and recording fees
+  - Attorney fees incurred in collection (if applicable)
+• Mechanic's Lien clouds title and may prevent Owner from refinancing or selling
+• Contractor may foreclose on lien if payment not received
+
+Collection Costs:
+• Owner is responsible for ALL costs of collection including:
+  - Interest as described above
+  - Lien filing and recording fees
+  - Attorney fees (if Contractor prevails in legal action)
+  - Court costs and filing fees
+  - Collection agency fees
+  - Costs of demand letters and certified mail
+
+Credit Reporting:
+• Unpaid balances may be reported to credit bureaus
+• Collection accounts may be assigned to collection agency
+
+Payment Disputes:
+• If Owner disputes invoice amount, Owner shall:
+  - Pay undisputed portion within 10-day period
+  - Provide written explanation of disputed amount with supporting documentation
+  - Work with Contractor in good faith to resolve dispute within 15 days
+• Withholding of payment must be:
+  - Specific (identify exact deficiency)
+  - Reasonable in amount (proportional to deficiency cost to repair)
+  - Made in good faith (not pretext to delay payment)
+
+3.7 LIEN WAIVER REQUIREMENTS
+
+Conditional Lien Waivers (Progress Payments):
+• With each progress payment invoice, Contractor shall provide Conditional Lien Waiver
+• Conditional waiver becomes effective upon payment clearing Contractor's bank
+• Waiver covers work and materials through the invoice date
+• Waiver does not cover:
+  - Future work not yet performed
+  - Change Orders not yet invoiced
+  - Amounts withheld or disputed
+
+Unconditional Final Lien Waiver:
+• Upon receipt of FINAL payment, Contractor shall provide Unconditional Final Lien Waiver
+• Final waiver releases ALL lien rights for the entire project
+• Final waiver provided within FIVE (5) business days of final payment receipt
+
+Subcontractor & Supplier Lien Waivers:
+• Owner may request lien waivers from subcontractors and material suppliers
+• If requested, Contractor shall provide conditional waivers from:
+  - All subcontractors who performed work
+  - Major material suppliers (accounts over $5,000)
+• Subcontractor waivers provided with corresponding payment milestone
+• Contractor is not responsible for liens filed by parties Contractor did not contract
+  with directly (sub-subcontractors, sub-tier suppliers)
+
+Lien Waiver Forms:
+• Lien waivers shall be on standard statutory form for [STATE] if available
+• Otherwise, AIA form G706 (conditional) or G706A (unconditional)
+
+3.8 RETAINAGE (IF APPLICABLE)
+
+Retainage Amount:     ☐ None  ☐ [RETAINAGE_PCT]% of each payment
+Retainage Total:      $[RETAINAGE_TOTAL]
+Held Until:           ☐ Substantial Completion  ☐ Final Completion  ☐ [DAYS] days after final
+
+If retainage is withheld:
+• Retained amount held from each progress payment
+• Released upon achievement of specified completion milestone
+• May be reduced to $[PUNCHLIST_HOLD] for minor punchlist items after substantial completion
+• Retainage does NOT accrue interest (unless required by state law)
+• Contractor provides conditional lien waiver upon payment of retainage
+
+3.9 OWNER FINANCING CONTINGENCY
+
+Is this contract contingent on Owner obtaining financing?  ☐ Yes  ☐ No
+
+If YES:
+Financing Contingency Details:
+• Loan Type: ☐ Construction Loan  ☐ HELOC  ☐ Cash-Out Refinance  ☐ Personal Loan
+• Lender: [LENDER_NAME]
+• Loan Amount: $[LOAN_AMOUNT]
+• Loan Approval Deadline: [LOAN_DEADLINE]
+• Contingency Period: Contract voidable if financing not approved by [CONTINGENCY_END_DATE]
+
+Terms During Contingency Period:
+• Down payment is REFUNDABLE if financing falls through within contingency period
+• Contractor may order materials with understanding that deposit may be refunded
+• After contingency period expires, contract is binding and down payment is non-refundable
+• Owner shall provide weekly updates on loan status during contingency period
+• Owner shall provide copy of loan approval or denial letter within 3 days of receipt
+
+Draw Schedule Coordination:
+• If construction loan with draw schedule, Owner shall provide copy of lender's draw schedule
+• Contractor will coordinate invoicing with lender's draw requirements
+• Payment schedule may be modified to align with lender draws
+• Contractor will provide documentation required by lender for each draw:
+  - Invoices and receipts
+  - Lien waivers
+  - Photos of progress
+  - Inspection reports
+  - Other documentation reasonably requested
+
+═══════════════════════════════════════════════════════════════════════════════
+ARTICLE 4: PROJECT TIMELINE, SCHEDULE & CRITICAL DATES
+═══════════════════════════════════════════════════════════════════════════════
+
+4.1 KEY PROJECT DATES
+
+Contract Execution Date:       [CONTRACT_DATE]
+Contract Effective Date:       [EFFECTIVE_DATE]
+Anticipated Start Date:        [PROJECT_START_DATE]
+Substantial Completion:        [SUBSTANTIAL_COMPLETION_DATE]
+Final Completion:              [FINAL_COMPLETION_DATE]
+Contract Time (Duration):      [PROJECT_DURATION] calendar days
+
+Date Definitions:
+• "Contract Execution Date" = date last party signs this contract
+• "Effective Date" = date contract becomes binding (usually same as execution)
+• "Start Date" = anticipated date of commencement; actual start may vary
+• "Substantial Completion" = defined in Section 2.9
+• "Final Completion" = defined in Section 2.10
+• "Contract Time" = number of calendar days from Start to Substantial Completion
+
+Anticipated Schedule Milestones:
+┌─────────────────────────────────────────────────────────────────────────┐
+│ Milestone/Phase                  Start Date      Complete Date   Duration│
+├─────────────────────────────────────────────────────────────────────────┤
+│ Mobilization & Permits           [MOB_START]     [MOB_END]      [MOB_DUR]│
+│ Demolition                       [DEMO_START]    [DEMO_END]     [DEMO_DUR]│
+│ Rough Framing                    [FRAME_START]   [FRAME_END]    [FRAME_DUR]│
+│ Exterior Envelope & Roofing      [EXT_START]     [EXT_END]      [EXT_DUR]│
+│ Windows & Doors                  [WIN_START]     [WIN_END]      [WIN_DUR]│
+│ Rough Plumbing                   [PLUMB_START]   [PLUMB_END]    [PLUMB_DUR]│
+│ Rough Electrical                 [ELEC_START]    [ELEC_END]     [ELEC_DUR]│
+│ Rough HVAC                       [HVAC_START]    [HVAC_END]     [HVAC_DUR]│
+│ Insulation                       [INS_START]     [INS_END]      [INS_DUR]│
+│ Drywall Installation             [DW_START]      [DW_END]       [DW_DUR]│
+│ Interior Trim & Doors            [TRIM_START]    [TRIM_END]     [TRIM_DUR]│
+│ Cabinetry Installation           [CAB_START]     [CAB_END]      [CAB_DUR]│
+│ Countertop Installation          [COUNT_START]   [COUNT_END]    [COUNT_DUR]│
+│ Flooring Installation            [FLOOR_START]   [FLOOR_END]    [FLOOR_DUR]│
+│ Tile Work                        [TILE_START]    [TILE_END]     [TILE_DUR]│
+│ Plumbing Fixtures & Trim         [PLUMB_F_START] [PLUMB_F_END]  [PLUMB_F_DUR]│
+│ Electrical Fixtures & Trim       [ELEC_F_START]  [ELEC_F_END]   [ELEC_F_DUR]│
+│ Painting & Finishing             [PAINT_START]   [PAINT_END]    [PAINT_DUR]│
+│ Final Inspection & Cleanup       [FINAL_START]   [FINAL_END]    [FINAL_DUR]│
+│ Punchlist & Closeout             [PUNCH_START]   [PUNCH_END]    [PUNCH_DUR]│
+└─────────────────────────────────────────────────────────────────────────┘
+
+Schedule Notes:
+• Above schedule is PRELIMINARY and subject to refinement
+• Actual dates may shift based on permit approval, inspections, material delivery
+• Some phases overlap (e.g., plumbing and electrical may occur simultaneously)
+• Schedule will be finalized after permits are approved
+• Contractor will provide updated schedule monthly (or upon request)
+
+4.2 TIME IS OF THE ESSENCE
+
+Time is of the essence in the performance of this Contract. Both parties acknowledge
+the importance of timely performance and agree to diligently pursue completion per
+the schedule.
+
+However, the completion dates specified in Section 4.1 are ESTIMATES and NOT
+guaranteed completion dates. Completion dates are subject to adjustment for
+delays beyond Contractor's reasonable control.
+
+The estimated completion date shall be automatically extended day-for-day for
+delays caused by:
+
+Force Majeure Events:
+• Weather delays (beyond seasonal norms for region)
+• Natural disasters (earthquake, flood, tornado, hurricane, wildfire)
+• Pandemic, epidemic, or public health emergency
+• Fire, explosion, or other casualty at project site
+• Acts of terrorism or war
+• Strikes, labor disputes, or material shortages
+• Government-imposed restrictions or moratoriums
+
+Permitting & Regulatory Delays:
+• Permit approval delays beyond 30 days from complete submittal
+• Building department delays in scheduling inspections (beyond 3 business days)
+• Inspection failures due to inspector interpretation (not Contractor error)
+• Requests for additional information or revisions from building department
+• Unforeseen code requirements or jurisdictional changes
+• Third-party utility delays (power, gas, water, sewer connections)
+
+Owner-Caused Delays:
+• Late material selections beyond deadline (1 day delay = 1 day extension)
+• Changes in scope or design requiring Change Orders
+• Denial of access to work areas or delayed access approval
+• Failure to make timely payments (Work stopped during payment delinquency)
+• Delays caused by Owner's separate contractors or vendors
+• Owner-requested work stoppages or schedule modifications
+
+Project-Specific Delays:
+• Concealed conditions requiring additional work or engineering
+• Hazardous material discovery and abatement
+• Unforeseen structural issues or repairs
+• Material delivery delays beyond 2 weeks from manufacturer's quoted lead time
+• Custom item fabrication delays from suppliers
+• Subcontractor delays due to circumstances beyond Contractor's control
+• Vandalism or theft at job site
+• Utility outages affecting ability to work
+
+Notice of Delays:
+• Contractor shall notify Owner of potential delays within FIVE (5) business days
+  of becoming aware of delay cause
+• Notice shall include:
+  - Cause of delay
+  - Expected duration of delay
+  - Mitigation efforts being undertaken
+  - Requested schedule extension
+• Owner shall respond to delay notice within FIVE (5) business days
+• Failure to object to delay notice constitutes acceptance of schedule extension
+• Delays will be documented in project log and acknowledged in writing
+
+4.3 ACCELERATION & SCHEDULE RECOVERY
+
+Owner-Requested Acceleration:
+• If Owner requests accelerated schedule to achieve earlier completion, Contractor
+  may (at Contractor's sole discretion) agree to accelerate via Change Order
+• Acceleration costs may include:
+  - Overtime wages for crews (1.5x regular rate)
+  - Weekend or holiday work (1.5x-2x regular rates)
+  - Additional crews or shifts
+  - Expedited material shipping
+  - Schedule compression costs and inefficiencies
+• Acceleration is NOT guaranteed and depends on labor/material availability
+• Contractor has no obligation to accept acceleration request
+
+Contractor-Driven Schedule Recovery:
+• If project is delayed due to Contractor's fault or poor performance, Contractor
+  may undertake schedule recovery at Contractor's expense
+• Contractor will make good-faith efforts to minimize delays
+• Contractor may work extended hours or weekends at no additional cost to Owner
+  to recover from Contractor-caused delays
+
+4.4 WORKING HOURS & JOB SITE ACCESS
+
+Standard Working Hours:
+Days:          Monday through Friday
+Hours:         7:30 AM to 5:00 PM (with flexibility for trade scheduling)
+Lunch:         12:00 PM to 1:00 PM (varies by crew)
+
+Weekend/After-Hours Work:
+• Weekend work (Saturday/Sunday) available at premium rates (1.5x) if Owner requests
+• Evening work (after 6:00 PM) available at premium rates if Owner requests
+• Contractor may occasionally work weekends at no additional cost to recover schedule
+• Weekend/evening work subject to:
+  - HOA restrictions (if applicable)
+  - Municipal noise ordinances
+  - Neighbor considerations
+  - Owner approval
+
+Holidays (No Work Unless Agreed):
+• New Year's Day
+• Memorial Day
+• Independence Day (July 4th)
+• Labor Day
+• Thanksgiving Day & Friday after
+• Christmas Eve & Christmas Day
+• [OTHER_HOLIDAYS]
+
+Job Site Access Requirements:
+Owner shall provide Contractor with:
+
+Access to Work Areas:
+• Unrestricted access to all work areas during working hours
+• Keys, codes, or garage remotes for entry (if applicable)
+• Clear path from street/driveway to work areas
+• Removal of vehicles blocking access to work areas
+• Ability to store tools and materials on-site securely overnight
+• Notice: MINIMUM 24 HOURS advance notice required for access denial or restrictions
+
+Utilities:
+• Access to working electrical power (110V/220V as needed)
+• Access to water supply for construction use (mixing, cleanup, testing)
+• Access to restroom facilities OR approval for porta-potty placement
+• Dumpster/debris container placement area with reasonable access
+
+Parking:
+• Parking for contractor vehicles:
+  ☐ On-site driveway/parking
+  ☐ On-street parking (public street)
+  ☐ Other: [PARKING_LOCATION]
+• Typical vehicles: pickup trucks, cargo vans, occasional larger trucks for deliveries
+• Material delivery access for trucks up to [TRUCK_SIZE]
+
+Security & Storage:
+• If home is occupied, Owner provides security for home entry
+• If home is vacant, Contractor will secure after each day
+• Contractor may store tools and materials in:
+  ☐ Garage
+  ☐ Basement
+  ☐ Dedicated storage area: [STORAGE_LOCATION]
+  ☐ On-site job box/container
+• Owner is not responsible for tool/material theft if area is provided and Contractor
+  failed to secure items
+
+Occupied Home Considerations:
+If home is occupied during construction:
+• Owner shall relocate valuables and personal items from work areas
+• Owner shall secure pets during working hours (crated or in non-work areas)
+• Construction noise and disruption is unavoidable - normal hours will apply
+• Contractor will use reasonable dust control methods but some dust migration is inevitable
+• Contractor will maintain reasonably clean access paths and work areas
+• Owner should plan to be out of home during peak construction hours if possible
+• Owner's use of areas outside work zone is not restricted
+
+Access Denial or Restrictions:
+• If Owner denies access without 24-hour notice, schedule extends day-for-day
+• If Owner denies access for more than 5 consecutive days, Contractor may demobilize
+  and charge remobilization fee of $[REMOB_FEE] upon return
+• Repeated access denial (more than 3 instances) may be grounds for termination
+
+4.5 SUBSTANTIAL COMPLETION & OWNER OCCUPANCY
+
+Substantial Completion Walkthrough:
+• When Contractor believes Substantial Completion is achieved, Contractor will
+  request Owner walkthrough
+• Walkthrough shall occur within THREE (3) business days of request
+• During walkthrough, parties will jointly create punchlist of remaining minor items
+• Owner shall identify any deficiencies or defects at walkthrough
+• Items not identified at walkthrough may not be added later unless latent defect
+
+Punchlist Parameters:
+• Punchlist items must be minor in nature (1-2 days max to complete)
+• Punchlist items must not prevent use or occupancy of space
+• Major incomplete items prevent achievement of Substantial Completion
+• Contractor shall complete punchlist within TEN (10) business days of walkthrough
+• Owner may withhold up to $[PUNCHLIST_HOLD] or 1% of contract price (whichever
+  is greater) for punchlist completion
+
+Certificate of Substantial Completion:
+• Upon agreement that Substantial Completion is achieved, parties sign Certificate
+  of Substantial Completion (AIA G704 or equivalent)
+• Certificate documents:
+  - Date of Substantial Completion
+  - Punchlist items remaining
+  - Amount withheld for punchlist
+  - Warranty start date
+  - Responsibilities of Owner and Contractor during punchlist period
+
+Owner Occupancy:
+• Owner may occupy space after Substantial Completion is achieved
+• Contractor retains access to complete punchlist items
+• Owner shall provide access with reasonable notice (24-48 hours)
+• Contractor not responsible for damages to Owner's furnishings or belongings
+  during punchlist work
+• Owner's occupancy does not relieve Contractor of punchlist obligations
+
+4.6 FINAL COMPLETION & PROJECT CLOSEOUT
+
+Final Completion Walkthrough:
+• When all punchlist items are complete, Contractor requests final walkthrough
+• Final walkthrough shall occur within FIVE (5) business days of request
+• Owner shall perform final inspection and either:
+  ☐ Accept Work as complete
+  ☐ Identify remaining deficiencies requiring correction
+• Deficiencies identified must be:
+  - Legitimate defects or incomplete work
+  - Identified within reasonable time after completion (not months later)
+  - Material enough to warrant correction (not trivial aesthetic preferences)
+
+Final Payment Trigger:
+Final payment becomes due when:
+☑ All Work is 100% complete including punchlist items
+☑ Owner has accepted Work in writing or via signed final walkthrough form
+☑ All required inspections passed
+☑ Certificate of Occupancy or final sign-off received
+☑ All closeout documents provided (see Section 2.10)
+☑ Site is cleaned and all debris/equipment removed
+
+Final Payment Due:
+• Final invoice submitted within FIVE (5) business days of Final Completion
+• Final payment due within TEN (10) calendar days of final invoice date
+• Unconditional final lien waiver provided within 5 days of final payment receipt
+
+Project Closeout Procedures:
+See Section 2.10 for complete list of closeout deliverables.
+
+═══════════════════════════════════════════════════════════════════════════════
+[Articles 5-14 continue with same level of detail as current template...]
+═══════════════════════════════════════════════════════════════════════════════
+
+This ultra-verbose contract template is [PARTIAL - Character limit reached]
+Would you like me to continue with remaining Articles 5-14 with equal detail?

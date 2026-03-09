@@ -1,10 +1,115 @@
 <!-- View Mode: Display formatted contract -->
+<div class="contract-status-banner no-print" style="margin-bottom: 1.5rem; padding: 1rem; background:
+  {% if contract.status == 'draft' %}#fef3c7{% elif contract.status == 'sent' %}#dbeafe{% elif contract.status == 'signed' %}#d1fae5{% else %}#f3f4f6{% endif %};
+  border-left: 4px solid
+  {% if contract.status == 'draft' %}#f59e0b{% elif contract.status == 'sent' %}#3b82f6{% elif contract.status == 'signed' %}#10b981{% else %}#6b7280{% endif %};
+  border-radius: 4px;">
+  <div style="display: flex; justify-content: space-between; align-items: center;">
+    <div>
+      <strong>Contract Status:</strong>
+      <span style="text-transform: uppercase; font-weight: 600; color:
+        {% if contract.status == 'draft' %}#92400e{% elif contract.status == 'sent' %}#1e40af{% elif contract.status == 'signed' %}#065f46{% else %}#374151{% endif %};">
+        {{ contract.status or 'DRAFT' }}
+      </span>
+    </div>
+    <div style="display: flex; gap: 0.5rem;">
+      {% if contract.status == 'draft' %}
+        <button onclick="sendContractToClient({{ job.id }})" class="btn btn--primary" style="background: #3b82f6;">
+          📧 Send to Client for Signature
+        </button>
+      {% elif contract.status == 'sent' %}
+        <button onclick="markContractSigned({{ contract.id }})" class="btn btn--success" style="background: #10b981;">
+          ✓ Mark as Signed
+        </button>
+      {% elif contract.status == 'signed' %}
+        <button onclick="executeContract({{ contract.id }})" class="btn" style="background: #8b5cf6; color: white;">
+          ⚡ Execute Contract
+        </button>
+      {% endif %}
+    </div>
+  </div>
+</div>
+
 <div class="contract-actions no-print" style="margin-bottom: 2rem; display: flex; gap: 1rem; flex-wrap: wrap;">
   <button onclick="window.print()" class="btn btn--primary">🖨️ Print Contract</button>
   <a href="{{ url_for('unified_contract', job_id=job.id) }}?mode=view&format=pdf" class="btn btn--secondary">📄 Download PDF</a>
   <a href="{{ url_for('unified_contract', job_id=job.id) }}?mode=edit" class="btn">✏️ Edit Contract</a>
   <a href="{{ url_for('unified_contract', job_id=job.id) }}?mode=ai" class="btn btn--success">🤖 Generate with AI</a>
 </div>
+
+<script>
+async function sendContractToClient(jobId) {
+  if (!confirm('Send this contract to the client for signature?\n\nAn email will be sent to the client with the contract attached.')) {
+    return;
+  }
+
+  try {
+    const response = await fetch(`/api/contracts/job/${jobId}/send`, {
+      method: 'POST',
+      headers: {'Content-Type': 'application/json'}
+    });
+
+    const data = await response.json();
+
+    if (data.success) {
+      alert(data.message);
+      location.reload();
+    } else {
+      alert(`Error: ${data.message}`);
+    }
+  } catch (error) {
+    alert('Failed to send contract: ' + error.message);
+  }
+}
+
+async function markContractSigned(contractId) {
+  if (!confirm('Mark this contract as signed by the client?')) {
+    return;
+  }
+
+  try {
+    const response = await fetch(`/api/contracts/${contractId}/mark-signed`, {
+      method: 'POST',
+      headers: {'Content-Type': 'application/json'}
+    });
+
+    const data = await response.json();
+
+    if (data.success) {
+      alert(data.message);
+      location.reload();
+    } else {
+      alert(`Error: ${data.message}`);
+    }
+  } catch (error) {
+    alert('Failed to update contract status: ' + error.message);
+  }
+}
+
+async function executeContract(contractId) {
+  if (!confirm('Execute this contract?\n\nThis will:\n✓ Mark contract as executed\n✓ Activate all tasks\n✓ Update job status to active')) {
+    return;
+  }
+
+  try {
+    const response = await fetch(`/api/contracts/${contractId}/execute`, {
+      method: 'POST',
+      headers: {'Content-Type': 'application/json'}
+    });
+
+    const data = await response.json();
+
+    if (data.success) {
+      alert(data.message);
+      location.reload();
+    } else {
+      alert(`Error: ${data.message}`);
+    }
+  } catch (error) {
+    alert('Failed to execute contract: ' + error.message);
+  }
+}
+</script>
 
 <div class="contract-document print-area">
   <!-- Contract Header -->

@@ -15,8 +15,17 @@
         <button type="submit" class="btn">📧 Send to Client</button>
       </form>
       {% endif %}
+      {% if estimate.job_id and estimate.status not in ['rejected'] %}
+      <button onclick="acceptAndGenerateContract({{ estimate.id }})" class="btn btn-primary" style="background: #27ae60;">
+        ✓ Accept & Generate Contract
+      </button>
+      {% endif %}
       <a href="{{ url_for('edit_estimate', estimate_id=estimate.id) }}" class="btn btn--sm">✏️ Edit</a>
+      {% if estimate.job_id %}
+      <a href="{{ url_for('job_detail', job_id=estimate.job_id) }}" class="btn btn--sm">← Back to Job</a>
+      {% else %}
       <a href="{{ url_for('estimates_list') }}" class="btn btn--sm">← Back to Estimates</a>
+      {% endif %}
     </div>
   </div>
 
@@ -202,6 +211,44 @@
 function toggleLineItemForm() {
   const form = document.getElementById('line-item-form');
   form.style.display = form.style.display === 'none' ? 'block' : 'none';
+}
+
+async function acceptAndGenerateContract(estimateId) {
+  if (!confirm('Accept this estimate and generate contract with AI?\n\nThis will:\n✓ Mark estimate as accepted\n✓ Generate detailed contract\n✓ Create project tasks\n✓ Update job status to active')) {
+    return;
+  }
+
+  const acceptBtn = event.target;
+  acceptBtn.disabled = true;
+  acceptBtn.textContent = 'Generating...';
+
+  try {
+    const response = await fetch(`/api/estimates/${estimateId}/accept-and-contract`, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json'
+      }
+    });
+
+    const data = await response.json();
+
+    if (data.success) {
+      alert(data.message);
+      if (data.redirect_url) {
+        window.location.href = data.redirect_url;
+      } else {
+        location.reload();
+      }
+    } else {
+      alert(`Error: ${data.message}`);
+      acceptBtn.disabled = false;
+      acceptBtn.textContent = '✓ Accept & Generate Contract';
+    }
+  } catch (error) {
+    alert('Failed to accept estimate and generate contract: ' + error.message);
+    acceptBtn.disabled = false;
+    acceptBtn.textContent = '✓ Accept & Generate Contract';
+  }
 }
 </script>
 

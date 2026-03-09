@@ -225,25 +225,29 @@ class Task(db.Model):
     task_name = db.Column(db.String(200), nullable=False)
     task_description = db.Column(db.Text)
     cost = db.Column(DECIMAL(12, 2))
-    
+
     # Task Management Fields
     assigned_to = db.Column(db.String(100))  # Worker or subcontractor name
     priority = db.Column(db.Integer, default=1)  # 1-5 scale
     estimated_days = db.Column(db.Integer)
     actual_days = db.Column(db.Integer)
     is_critical_path = db.Column(db.Boolean, default=False)
-    
+
     # Status and Scheduling
     status = db.Column(db.String(20), default='not_started')  # not_started, in_progress, completed, on_hold
     scheduled_start_date = db.Column(db.Date)
     scheduled_end_date = db.Column(db.Date)
     actual_start_date = db.Column(db.Date)
     actual_end_date = db.Column(db.Date)
-    
+
     # Contract Integration
     included_in_contract = db.Column(db.Boolean, default=False)
     order_index = db.Column(db.Integer, default=1)  # Order within location
-    
+
+    # POS Quote Integration
+    pos_quote_id = db.Column(db.Integer, db.ForeignKey('pos_quote.id'))
+    pos_line_item_data = db.Column(db.Text)  # JSON data for the specific line item from POS quote
+
     # Metadata
     created_date = db.Column(db.DateTime, default=datetime.utcnow)
     updated_date = db.Column(db.DateTime, default=datetime.utcnow, onupdate=datetime.utcnow)
@@ -258,6 +262,16 @@ class Task(db.Model):
         elif self.scheduled_start_date and self.scheduled_end_date:
             return (self.scheduled_end_date - self.scheduled_start_date).days + 1
         return self.estimated_days or 1
+
+    def get_pos_line_item(self):
+        """Parse and return POS line item data as dict"""
+        if self.pos_line_item_data:
+            import json
+            try:
+                return json.loads(self.pos_line_item_data)
+            except:
+                return None
+        return None
 
 class Contract(db.Model):
     id = db.Column(db.Integer, primary_key=True)
@@ -423,6 +437,7 @@ class POSQuote(db.Model):
     # Relationships
     user = db.relationship('User', backref='pos_quotes')
     job = db.relationship('Job', backref='pos_quotes')
+    tasks = db.relationship('Task', backref='pos_quote', lazy=True)
 
     def __repr__(self):
         return f'<POSQuote {self.quote_number}>'
